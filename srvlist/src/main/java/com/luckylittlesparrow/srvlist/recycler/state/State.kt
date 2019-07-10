@@ -39,7 +39,7 @@ abstract class State {
             val oldState = field
             field = state
 
-            sectionStateCallback?.onSectionStateChanged(provideId(), field, oldState)
+            if (field != oldState) sectionStateCallback?.onSectionStateChanged(provideId(), field, oldState)
         }
 
     protected abstract fun loadingStateRequirements(): Boolean

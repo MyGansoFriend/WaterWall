@@ -4,12 +4,16 @@ import android.view.View
 import com.luckylittlesparrow.srvlist.example.R
 import com.luckylittlesparrow.srvlist.example.listsample.Item
 import com.luckylittlesparrow.srvlist.recycler.base.BaseViewHolder
+import com.luckylittlesparrow.srvlist.recycler.filterable.FilterableSection
 import com.luckylittlesparrow.srvlist.recycler.section.ItemContainer
 import com.luckylittlesparrow.srvlist.recycler.section.Section
 import com.luckylittlesparrow.srvlist.recycler.section.SectionParams
 import com.luckylittlesparrow.srvlist.recycler.util.DiffUtilItemCallback
 
-class StateSection : Section<Void, Item, Void>() {
+class StateSection : FilterableSection<Void, Item, Void>() {
+    override fun itemFilter(search: String, item: ItemContainer): Boolean {
+        return true
+    }
 
     override fun getItemViewHolder(view: View): BaseViewHolder<Item> {
         return StateItemViewHolder(view)

@@ -42,6 +42,8 @@ abstract class Section<H, I, F>(
 
     internal val sourceList = ArrayList<ItemContainer>()
 
+    internal val stateItem = StubItem()
+
     @LayoutRes
     internal var itemResourceId: Int? = null
         private set
@@ -142,6 +144,8 @@ abstract class Section<H, I, F>(
             check(contentItems != null || headerItem != null) { "Forgot to provide content items or header" }
             sourceList.add(footerItem)
         }
+
+        if (sourceList.isEmpty()) sourceList.add(stateItem)
     }
 
     abstract fun getSectionParams(): SectionParams
@@ -193,6 +197,8 @@ abstract class Section<H, I, F>(
                     || hasHeader() && itemBundle.headerItem != null
         ) { "Forgot to provide header item" }
 
+        sourceList.remove(stateItem)
+
         var isNewContent = true
         var itemsCount = 0
         val isEmpty = sourceList.isEmpty()
@@ -233,6 +239,8 @@ abstract class Section<H, I, F>(
                 if (!isNewContent) sectionStateCallback?.onSectionContentChanged(provideId())
             }
         }
+
+        if (sourceList.isEmpty()) sourceList.add(stateItem)
     }
 
     /**
@@ -268,9 +276,14 @@ abstract class Section<H, I, F>(
         if (state == SectionState.LOADED) {
             sectionStateCallback?.onSectionContentUpdated(previousList, sourceList, provideId())
         }
+
+        if (sourceList.isEmpty()) sourceList.add(stateItem)
     }
 
     internal open fun currentSize(): Int {
+        if (sourceList.first() is StubItem)
+            return if (state == SectionState.LOADED) 0 else 1
+
         return if (isExpanded) getExpandedSectionSize() else getCollapsedSectionSize()
     }
 

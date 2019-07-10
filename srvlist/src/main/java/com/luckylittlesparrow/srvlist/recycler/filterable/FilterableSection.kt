@@ -20,6 +20,7 @@ package com.luckylittlesparrow.srvlist.recycler.filterable
 import com.luckylittlesparrow.srvlist.recycler.section.ItemBundle
 import com.luckylittlesparrow.srvlist.recycler.section.ItemContainer
 import com.luckylittlesparrow.srvlist.recycler.section.Section
+import com.luckylittlesparrow.srvlist.recycler.section.StubItem
 import com.luckylittlesparrow.srvlist.recycler.state.SectionState
 
 /**
@@ -75,6 +76,8 @@ abstract class FilterableSection<H, I, F>(
     }
 
     override fun addItems(itemBundle: ItemBundle) {
+        sourceList.remove(stateItem)
+
         check(
             !hasHeader()
                     || sourceList.isNotEmpty() && sourceList.first().isHeader()
@@ -124,6 +127,49 @@ abstract class FilterableSection<H, I, F>(
                 if (!isNewContent) sectionStateCallback?.onSectionContentChanged(provideId())
             }
         }
+
+        if (sourceList.isEmpty()) sourceList.add(stateItem)
+    }
+
+    /**
+     * Replace previous items with the new items
+     */
+    override fun updateItems(itemBundle: ItemBundle) {
+        val previousList = ArrayList<ItemContainer>()
+        previousList.addAll(sourceList)
+        sourceList.clear()
+
+        check(
+            !hasHeader() || hasHeader() && itemBundle.headerItem != null
+        ) { "Forgot to provide header item" }
+
+        var itemsCount = 0
+
+
+        itemBundle.headerItem?.let {
+            sourceList.add(0, it)
+            baseList.add(0, it)
+            itemsCount++
+        }
+
+        itemBundle.contentItems?.let {
+            itemsCount += it.size
+            sourceList.addAll(it)
+            baseList.addAll(it)
+        }
+
+        itemBundle.footerItem?.let {
+            val footerIndex = getFooterIndex() + 1
+            sourceList.add(footerIndex, it)
+            baseList.add(footerIndex, it)
+            itemsCount++
+        }
+
+        if (state == SectionState.LOADED) {
+            sectionStateCallback?.onSectionContentUpdated(previousList, sourceList, provideId())
+        }
+
+        if (sourceList.isEmpty()) sourceList.add(stateItem)
     }
 
     abstract fun itemFilter(search: String, item: ItemContainer): Boolean
@@ -131,6 +177,9 @@ abstract class FilterableSection<H, I, F>(
     open fun headerFilter(search: String, item: ItemContainer): Boolean = false
 
     override fun currentSize(): Int {
+        if (sourceList.first() is StubItem)
+            return if (state == SectionState.LOADED) 0 else 1
+
         val baseSize = super.currentSize()
         return if (baseSize == sourceList.size) {
             if (filteredList.isEmpty()) baseList.size else filteredList.size

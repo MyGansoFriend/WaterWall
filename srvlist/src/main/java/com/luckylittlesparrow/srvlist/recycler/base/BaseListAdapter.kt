@@ -26,7 +26,10 @@ import com.luckylittlesparrow.srvlist.recycler.section.Section
 import com.luckylittlesparrow.srvlist.recycler.section.StubSection
 import com.luckylittlesparrow.srvlist.recycler.state.SectionState
 import com.luckylittlesparrow.srvlist.recycler.state.SectionStateCallback
-import com.luckylittlesparrow.srvlist.recycler.util.*
+import com.luckylittlesparrow.srvlist.recycler.util.DiffListUtil
+import com.luckylittlesparrow.srvlist.recycler.util.MainThreadExecutor
+import com.luckylittlesparrow.srvlist.recycler.util.inflate
+import com.luckylittlesparrow.srvlist.recycler.util.lazyFast
 import java.util.*
 import java.util.concurrent.Executors
 
@@ -45,7 +48,7 @@ abstract class BaseListAdapter : RecyclerView.Adapter<BaseViewHolder<Nothing>>()
     }
 
     init {
-        setHasStableIds(true)
+          setHasStableIds(true)
     }
 
     var defaultSettings = true
@@ -98,12 +101,15 @@ abstract class BaseListAdapter : RecyclerView.Adapter<BaseViewHolder<Nothing>>()
         }
 
         override fun onSectionStateChanged(sectionKey: String, newState: SectionState, oldState: SectionState) {
-            if (oldState != SectionState.LOADED)
-                notifyItemRangeChangedInSection(sectionKey)
-            else {
+            if (newState != SectionState.LOADED) {
                 val section = sectionMediator.getSectionByKey(sectionKey)
-                val list = section.getSectionList()
-                calculateDiff(list, list.subList(0, 1))
+                if (section.isEmpty()) notifyItemChanged(0)
+                else {
+                    val list = section.getSectionList()
+                    calculateDiff(list, list.subList(0, 1))
+                }
+            } else {
+                notifyDataSetChanged()
             }
         }
     }
@@ -123,20 +129,22 @@ abstract class BaseListAdapter : RecyclerView.Adapter<BaseViewHolder<Nothing>>()
      */
     open fun addSection(key: String, section: Section<*, *, *>) {
         check(section !is StubSection) { "Stub section not allowed to be added with key" }
-        if (sectionMediator.containsSection(key)) throw DuplicateSectionException(key)
-        addSectionToEnd(section, key)
+        if (!sectionMediator.containsSection(key)) {
+            addSectionToEnd(section, key)
+        }
     }
 
     open fun addSection(section: Section<*, *, *>): String {
         checkForStubSection(section)
-        if (sectionMediator.containsSection(section)) throw DuplicateSectionException(section.key)
-        return addSectionToEnd(section)
+        return if (!sectionMediator.containsSection(section)) {
+            addSectionToEnd(section)
+        } else section.key
     }
 
     open fun addSections(list: List<Section<*, *, *>>) {
         checkForStubSection()
         list.forEach {
-            if (sectionMediator.containsSection(it)) throw DuplicateSectionException(it.key)
+            if (sectionMediator.containsSection(it)) return
         }
         addSectionsToEnd(list)
     }

@@ -20,6 +20,7 @@ package com.luckylittlesparrow.srvlist.recycler.simple
 import com.luckylittlesparrow.srvlist.recycler.base.SectionDao
 import com.luckylittlesparrow.srvlist.recycler.section.ItemContainer
 import com.luckylittlesparrow.srvlist.recycler.section.Section
+import com.luckylittlesparrow.srvlist.recycler.section.StubItem
 import com.luckylittlesparrow.srvlist.recycler.state.SectionState
 
 internal open class SimpleSectionDao<H, I, F>(override val section: Section<H, I, F>) :
@@ -78,6 +79,8 @@ internal open class SimpleSectionDao<H, I, F>(override val section: Section<H, I
     override fun hasFooter(): Boolean = section.hasFooter()
 
     override fun isVisible(): Boolean = section.isVisible
+
+    override fun isEmpty(): Boolean = section.sourceList.first() is StubItem
 
     override fun state(): SectionState = section.state
 

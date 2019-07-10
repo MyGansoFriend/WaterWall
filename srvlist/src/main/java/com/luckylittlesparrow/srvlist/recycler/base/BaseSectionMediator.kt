@@ -209,6 +209,7 @@ internal abstract class BaseSectionMediator : SectionMediator {
             val sectionTotal = sectionDao.sectionCurrentSize()
 
             if (position >= currentPos && position <= currentPos + sectionTotal - 1) {
+                if(sectionDao.isEmpty()) return sectionDao.section.sourceList.first()
                 return sectionDao.getContentItem(position - currentPos)
             }
 

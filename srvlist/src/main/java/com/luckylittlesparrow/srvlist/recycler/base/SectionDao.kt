@@ -46,6 +46,8 @@ internal interface SectionDao<H, I, F> {
 
     fun isVisible(): Boolean
 
+    fun isEmpty(): Boolean
+
     fun state(): SectionState
 
     fun key(): String
