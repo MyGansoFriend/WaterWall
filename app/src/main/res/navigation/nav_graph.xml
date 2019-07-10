@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/nav_graph"
+    app:startDestination="@id/simpleListFragment">
+
+    <fragment
+        android:id="@+id/simpleListFragment"
+        android:name="com.luckylittlesparrow.srvlist.example.simplelist.SimpleListFragment"
+        android:label="SimpleListFragment" >
+        <action
+            android:id="@+id/action_simpleListFragment_to_eventFilterListFragment"
+            app:destination="@id/eventFilterListFragment" />
+        <action
+            android:id="@+id/action_simpleListFragment_to_stateListFragment"
+            app:destination="@id/stateListFragment" />
+        <action
+            android:id="@+id/action_simpleListFragment_to_expandableListFragment"
+            app:destination="@id/expandableListFragment" />
+        <action
+            android:id="@+id/action_simpleListFragment_to_stubListFragment"
+            app:destination="@id/stubListFragment" />
+        <action
+            android:id="@+id/action_simpleListFragment_to_defaultRVFragment"
+            app:destination="@id/defaultRVFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/eventFilterListFragment"
+        android:name="com.luckylittlesparrow.srvlist.example.sectionedlist.EventFilterListFragment"
+        android:label="EventFilterListFragment" />
+    <fragment
+        android:id="@+id/stateListFragment"
+        android:name="com.luckylittlesparrow.srvlist.example.state.StateListFragment"
+        android:label="StateListFragment" />
+    <fragment
+        android:id="@+id/expandableListFragment"
+        android:name="com.luckylittlesparrow.srvlist.example.expand.ExpandableListFragment"
+        android:label="ExpandableListFragment" />
+    <fragment
+        android:id="@+id/stubListFragment"
+        android:name="com.luckylittlesparrow.srvlist.example.stub.StubListFragment"
+        android:label="StubListFragment" />
+    <fragment
+        android:id="@+id/defaultRVFragment"
+        android:name="com.luckylittlesparrow.srvlist.example.defaultrv.DefaultRVFragment"
+        android:label="DefaultRVFragment" />
+</navigation>
