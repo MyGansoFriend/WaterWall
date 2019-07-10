@@ -41,7 +41,7 @@ class FilterSectionAddItemsTest {
         assertEquals(section.sourceList, expectedList)
         assertEquals(section.sourceList, section.baseList)
 
-        section.addItems(
+        section.addMoreItems(
             ItemBundle(
                 contentItems = TestItemsFactory.getNames(),
                 footerItem = TestItemsFactory.footer
@@ -76,7 +76,7 @@ class FilterSectionAddItemsTest {
         assertTrue(section.sourceList.isEmpty())
         assertTrue(section.baseList.isEmpty())
 
-        section.addItems(
+        section.addMoreItems(
             ItemBundle(
                 headerItem = TestItemsFactory.header,
                 contentItems = TestItemsFactory.getNames(),
@@ -110,7 +110,7 @@ class FilterSectionAddItemsTest {
         assertTrue(section.sourceList.isEmpty())
         assertTrue(section.baseList.isEmpty())
 
-        section.addItems(
+        section.addMoreItems(
             ItemBundle(
                 contentItems = TestItemsFactory.getNames(),
                 footerItem = TestItemsFactory.footer
@@ -137,7 +137,7 @@ class FilterSectionAddItemsTest {
         assertTrue(section.sourceList.isEmpty())
         assertTrue(section.baseList.isEmpty())
 
-        section.addItems(
+        section.addMoreItems(
             ItemBundle(
                 contentItems = TestItemsFactory.getNames(),
                 footerItem = TestItemsFactory.footer
@@ -182,7 +182,7 @@ class FilterSectionAddItemsTest {
         assertEquals(section.sourceList, expectedList)
         assertEquals(section.sourceList, section.baseList)
 
-        section.addItems(
+        section.addMoreItems(
             ItemBundle(
                 contentItems = TestItemsFactory.getNumbersList()
             )
@@ -243,7 +243,7 @@ class FilterSectionAddItemsTest {
         val newHeader = TestHeader("new header")
         val newFooter = TestFooter("new footer")
 
-        section.addItems(
+        section.addMoreItems(
             ItemBundle(
                 headerItem = newHeader,
                 footerItem = newFooter

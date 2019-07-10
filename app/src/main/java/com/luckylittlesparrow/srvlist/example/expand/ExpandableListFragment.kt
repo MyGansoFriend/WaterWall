@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.luckylittlesparrow.srvlist.example.ItemDecoration
 import com.luckylittlesparrow.srvlist.example.R
 import com.luckylittlesparrow.srvlist.example.listsample.ItemsFactory
-import com.luckylittlesparrow.srvlist.recycler.filterable.FilterableSectionedAdapter
 import com.luckylittlesparrow.srvlist.recycler.section.ItemBundle
 import com.luckylittlesparrow.srvlist.recycler.section.ItemContainer
 import com.luckylittlesparrow.srvlist.recycler.simple.SimpleSectionedAdapter
@@ -45,10 +44,10 @@ class ExpandableListFragment : Fragment() {
         sectionAdapter.addSection(section2)
         sectionAdapter.addSection(section3)
         sectionAdapter.addSection(section4)
-        section.addItems(ItemBundle(contentItems = ItemsFactory.getNumbersList()))
-        section2.addItems(ItemBundle(contentItems = ItemsFactory.getNumbersList()))
-        section3.addItems(ItemBundle(contentItems = ItemsFactory.getNames()))
-        section4.addItems(ItemBundle(contentItems = ItemsFactory.getSecondEvents()))
+        section.addMoreItems(ItemBundle(contentItems = ItemsFactory.getNumbersList()))
+        section2.addMoreItems(ItemBundle(contentItems = ItemsFactory.getNumbersList()))
+        section3.addMoreItems(ItemBundle(contentItems = ItemsFactory.getNames()))
+        section4.addMoreItems(ItemBundle(contentItems = ItemsFactory.getSecondEvents()))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

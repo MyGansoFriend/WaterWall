@@ -52,7 +52,7 @@ class StubSection(
     override fun getItemViewHolder(view: View): BaseViewHolder<Void> =
         EmptyViewHolder(view)
 
-    override fun addItems(itemBundle: ItemBundle) {
+    override fun addMoreItems(itemBundle: ItemBundle) {
     }
 
 }

@@ -189,7 +189,8 @@ abstract class Section<H, I, F>(
 
     override fun provideId(): String = key
 
-    open fun addItems(itemBundle: ItemBundle) {
+    open fun addMoreItems(itemBundle: ItemBundle) {
+        if (itemBundle.isEmpty()) return
         check(
             !hasHeader()
                     || sourceList.isNotEmpty()
@@ -246,7 +247,8 @@ abstract class Section<H, I, F>(
     /**
      * Replace previous items with the new items
      */
-    open fun updateItems(itemBundle: ItemBundle) {
+    open fun replaceItems(itemBundle: ItemBundle) {
+        if (itemBundle.isEmpty()) return
         val previousList = ArrayList<ItemContainer>()
         previousList.addAll(sourceList)
         sourceList.clear()

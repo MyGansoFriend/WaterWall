@@ -18,7 +18,6 @@ import com.luckylittlesparrow.srvlist.recycler.simple.SimpleSectionedAdapter
 import com.luckylittlesparrow.srvlist.recycler.state.SectionState
 import kotlinx.android.synthetic.main.fragment_expand_list.*
 import kotlinx.android.synthetic.main.fragment_simple_list.simpleRecyclerView
-import kotlinx.android.synthetic.main.fragment_state_list.*
 import kotlinx.android.synthetic.main.fragment_state_list.stateEmptyButton
 import kotlinx.android.synthetic.main.fragment_state_list.stateFailedButton
 import kotlinx.android.synthetic.main.fragment_state_list.stateLoadedButton
@@ -46,7 +45,7 @@ class StubListFragment : Fragment() {
         super.onCreate(savedInstanceState)
         stubSection.state = SectionState.EMPTY
         sectionAdapter.addSection(stubSection)
-        section.addItems(ItemBundle(contentItems = ItemsFactory.getNumbersList()))
+        section.addMoreItems(ItemBundle(contentItems = ItemsFactory.getNumbersList()))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -67,7 +66,7 @@ class StubListFragment : Fragment() {
         stateEmptyButton.setOnClickListener { stubSection.state = SectionState.EMPTY }
 
         swipeContainer.setOnRefreshListener {
-            section.updateItems(
+            section.replaceItems(
                 ItemBundle(
                     headerItem = ExpandableHeader("HEADER"),
                     contentItems = ItemsFactory.getNames()

@@ -24,4 +24,6 @@ data class ItemBundle(
     val headerItem: ItemContainer? = null,
     val contentItems: List<ItemContainer>? = null,
     val footerItem: ItemContainer? = null
-)
+) {
+    fun isEmpty() = headerItem == null && contentItems == null && footerItem == null
+}

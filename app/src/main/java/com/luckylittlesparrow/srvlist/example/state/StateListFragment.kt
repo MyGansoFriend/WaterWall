@@ -46,7 +46,7 @@ class StateListFragment : Fragment() {
         stateLoadingButton.setOnClickListener { section.state = SectionState.LOADING }
         stateLoadedButton.setOnClickListener {
             section.state = SectionState.LOADED
-            section.addItems(ItemBundle(contentItems = ItemsFactory.getNumbersList()))
+            section.addMoreItems(ItemBundle(contentItems = ItemsFactory.getNumbersList()))
         }
         stateEmptyButton.setOnClickListener { section.state = SectionState.EMPTY }
     }

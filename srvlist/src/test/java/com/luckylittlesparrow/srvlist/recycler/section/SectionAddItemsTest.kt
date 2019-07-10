@@ -43,7 +43,7 @@ class SectionAddItemsTest {
 
         assertEquals(section.sourceList, expectedList)
 
-        section.addItems(
+        section.addMoreItems(
             ItemBundle(
                 contentItems = TestItemsFactory.getNames(),
                 footerItem = TestItemsFactory.footer
@@ -76,7 +76,7 @@ class SectionAddItemsTest {
 
         assertTrue(section.sourceList.isEmpty())
 
-        section.addItems(
+        section.addMoreItems(
             ItemBundle(
                 headerItem = TestItemsFactory.header,
                 contentItems = TestItemsFactory.getNames(),
@@ -108,7 +108,7 @@ class SectionAddItemsTest {
 
         assertTrue(section.sourceList.isEmpty())
 
-        section.addItems(
+        section.addMoreItems(
             ItemBundle(
                 contentItems = TestItemsFactory.getNames(),
                 footerItem = TestItemsFactory.footer
@@ -134,7 +134,7 @@ class SectionAddItemsTest {
 
         assertTrue(section.sourceList.isEmpty())
 
-        section.addItems(
+        section.addMoreItems(
             ItemBundle(
                 contentItems = TestItemsFactory.getNames(),
                 footerItem = TestItemsFactory.footer
@@ -177,7 +177,7 @@ class SectionAddItemsTest {
 
         assertEquals(section.sourceList, expectedList)
 
-        section.addItems(
+        section.addMoreItems(
             ItemBundle(
                 contentItems = TestItemsFactory.getNumbersList()
             )
@@ -232,7 +232,7 @@ class SectionAddItemsTest {
         val newHeader = TestHeader("new header")
         val newFooter = TestFooter("new footer")
 
-        section.addItems(
+        section.addMoreItems(
             ItemBundle(
                 headerItem = newHeader,
                 footerItem = newFooter

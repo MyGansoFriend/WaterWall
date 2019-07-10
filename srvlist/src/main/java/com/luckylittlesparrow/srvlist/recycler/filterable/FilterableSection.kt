@@ -75,7 +75,8 @@ abstract class FilterableSection<H, I, F>(
         }
     }
 
-    override fun addItems(itemBundle: ItemBundle) {
+    override fun addMoreItems(itemBundle: ItemBundle) {
+        if (itemBundle.isEmpty()) return
         sourceList.remove(stateItem)
 
         check(
@@ -134,10 +135,12 @@ abstract class FilterableSection<H, I, F>(
     /**
      * Replace previous items with the new items
      */
-    override fun updateItems(itemBundle: ItemBundle) {
+    override fun replaceItems(itemBundle: ItemBundle) {
+        if (itemBundle.isEmpty()) return
         val previousList = ArrayList<ItemContainer>()
         previousList.addAll(sourceList)
         sourceList.clear()
+        baseList.clear()
 
         check(
             !hasHeader() || hasHeader() && itemBundle.headerItem != null

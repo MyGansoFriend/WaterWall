@@ -43,7 +43,7 @@ class SectionStateTest {
         section.key = "KEY"
         section.state = SectionState.LOADING
 
-        section.addItems(
+        section.addMoreItems(
             ItemBundle(
                 contentItems = TestItemsFactory.getNumbersList()
             )
