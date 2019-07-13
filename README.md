@@ -2,7 +2,7 @@
 Multifunctional RecyclerVIew library with sections/states support
 
 
-[![Build Status](https://travis-ci.com/LuckyLittleSparrow/WaterWall.svg?branch=master)
+[Build Status](https://travis-ci.com/LuckyLittleSparrow/WaterWall.svg?branch=master)
 
 ## Gradle Dependency
 
