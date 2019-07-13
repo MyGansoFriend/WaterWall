@@ -1,4 +1,6 @@
-<!--
+package com.luckylittlesparrow.waterwall.recycler.section
+
+/*
  *  Copyright 2019 Gusev Andrei
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,5 +14,11 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  -->
-<manifest package="com.luckylittlesparrow.waterwall.recycler" />
+ *
+ */
+
+/**
+ * @author Andrei Gusev
+ * @since  1.0
+ */
+internal class StubItem : ItemContainer(ItemType.ITEM)

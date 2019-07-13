@@ -5,7 +5,7 @@
 
     <fragment
         android:id="@+id/simpleListFragment"
-        android:name="com.luckylittlesparrow.srvlist.example.simplelist.SimpleListFragment"
+        android:name="com.luckylittlesparrow.waterwall.example.simplelist.SimpleListFragment"
         android:label="SimpleListFragment" >
         <action
             android:id="@+id/action_simpleListFragment_to_eventFilterListFragment"
@@ -25,22 +25,22 @@
     </fragment>
     <fragment
         android:id="@+id/eventFilterListFragment"
-        android:name="com.luckylittlesparrow.srvlist.example.sectionedlist.EventFilterListFragment"
+        android:name="com.luckylittlesparrow.waterwall.example.sectionedlist.EventFilterListFragment"
         android:label="EventFilterListFragment" />
     <fragment
         android:id="@+id/stateListFragment"
-        android:name="com.luckylittlesparrow.srvlist.example.state.StateListFragment"
+        android:name="com.luckylittlesparrow.waterwall.example.state.StateListFragment"
         android:label="StateListFragment" />
     <fragment
         android:id="@+id/expandableListFragment"
-        android:name="com.luckylittlesparrow.srvlist.example.expand.ExpandableListFragment"
+        android:name="com.luckylittlesparrow.waterwall.example.expand.ExpandableListFragment"
         android:label="ExpandableListFragment" />
     <fragment
         android:id="@+id/stubListFragment"
-        android:name="com.luckylittlesparrow.srvlist.example.stub.StubListFragment"
+        android:name="com.luckylittlesparrow.waterwall.example.stub.StubListFragment"
         android:label="StubListFragment" />
     <fragment
         android:id="@+id/defaultRVFragment"
-        android:name="com.luckylittlesparrow.srvlist.example.defaultrv.DefaultRVFragment"
+        android:name="com.luckylittlesparrow.waterwall.example.defaultrv.DefaultRVFragment"
         android:label="DefaultRVFragment" />
 </navigation>
