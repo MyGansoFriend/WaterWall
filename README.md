@@ -1,7 +1,8 @@
 # WaterWall
 Multifunctional RecyclerVIew library with sections/states support
 
-[![CircleCI](https://circleci.com/gh/LuckyLittleSparrow/WaterWall.svg?style=svg)]
+
+[![Build Status](https://travis-ci.com/LuckyLittleSparrow/WaterWall.svg?branch=master)
 
 ## Gradle Dependency
 
