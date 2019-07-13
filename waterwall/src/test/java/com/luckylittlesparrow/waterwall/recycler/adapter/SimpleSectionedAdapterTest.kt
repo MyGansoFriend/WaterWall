@@ -232,7 +232,7 @@ class SimpleSectionedAdapterTest {
         verify(sectionMediator).getVisibleItemCount()
     }
 
-
+    @Ignore
     @Test
     fun onSectionContentUpdated() {
         assertFalse(adapter.stickyHeaderHelper.isStateChanged)
