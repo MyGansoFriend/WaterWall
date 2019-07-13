@@ -4,7 +4,20 @@ Multifunctional RecyclerVIew library with sections/states support
 
 ![Build Status](https://travis-ci.com/LuckyLittleSparrow/WaterWall.svg?branch=master) [![codecov](https://codecov.io/gh/LuckyLittleSparrow/WaterWall/branch/master/graph/badge.svg)](https://codecov.io/gh/LuckyLittleSparrow/WaterWall)
 
-## Gradle Dependency
+## Add Dependency
+Download the latest AAR from [Maven Central][2] or grab via Gradle:
+```groovy
+implementation 'com.github.luckylittlesparrow:waterwall:1.0'
+```
+or Maven:
+```xml
+<dependency>
+  <groupId>com.github.luckylittlesparrow</groupId>
+  <artifactId>waterwall</artifactId>
+  <version>1.0</version>
+  <type>pom</type>
+</dependency>
+```
 
 # Copyright
 
