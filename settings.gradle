@@ -1,1 +1,1 @@
-include ':app', ':srvlist'
+include ':app', ':waterwall'

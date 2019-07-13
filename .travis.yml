@@ -32,7 +32,6 @@ before_install:
   - touch $HOME/.android/repositories.cfg
 
 script:
-  - ./gradlew clean build
   - ./gradlew build jacocoTestReport
   - ./gradlew connectedCheck
 
