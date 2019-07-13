@@ -23,6 +23,10 @@ import com.luckylittlesparrow.srvlist.recycler.section.Section
 import com.luckylittlesparrow.srvlist.recycler.section.StubItem
 import com.luckylittlesparrow.srvlist.recycler.state.SectionState
 
+/**
+ * @author Andrei Gusev
+ * @since  1.0
+ */
 internal open class SimpleSectionDao<H, I, F>(override val section: Section<H, I, F>) :
     SectionDao<H, I, F> {
 
@@ -56,6 +60,16 @@ internal open class SimpleSectionDao<H, I, F>(override val section: Section<H, I
         }
     }
 
+    override fun getVisibleItemsList(): List<ItemContainer> {
+        return if (section.isExpanded) {
+            if (state() != SectionState.LOADED) {
+                return section.sourceList.subList(0, 2)
+            } else section.sourceList
+        } else {
+            listOf(section.sourceList.first())
+        }
+    }
+
     override fun getContentItem(position: Int): ItemContainer {
         return section.sourceList[position]
     }
@@ -74,9 +88,9 @@ internal open class SimpleSectionDao<H, I, F>(override val section: Section<H, I
 
     override fun sectionOriginalSize(): Int = section.originalSize()
 
-    override fun hasHeader(): Boolean = section.hasHeader()
+    override fun hasHeader(): Boolean = section.hasHeader
 
-    override fun hasFooter(): Boolean = section.hasFooter()
+    override fun hasFooter(): Boolean = section.hasFooter
 
     override fun isVisible(): Boolean = section.isVisible
 

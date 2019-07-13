@@ -19,46 +19,49 @@ package com.luckylittlesparrow.srvlist.recycler.base
 
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.VisibleForTesting
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.luckylittlesparrow.srvlist.recycler.filterable.FilterableSectionedAdapter
 import com.luckylittlesparrow.srvlist.recycler.section.ItemContainer
 import com.luckylittlesparrow.srvlist.recycler.section.Section
 import com.luckylittlesparrow.srvlist.recycler.section.StubSection
+import com.luckylittlesparrow.srvlist.recycler.simple.SimpleSectionedAdapter
 import com.luckylittlesparrow.srvlist.recycler.state.SectionState
 import com.luckylittlesparrow.srvlist.recycler.state.SectionStateCallback
+import com.luckylittlesparrow.srvlist.recycler.sticky.StickyHeaderDecoration
+import com.luckylittlesparrow.srvlist.recycler.sticky.StickyHeaderHelper
 import com.luckylittlesparrow.srvlist.recycler.util.DiffListUtil
 import com.luckylittlesparrow.srvlist.recycler.util.MainThreadExecutor
 import com.luckylittlesparrow.srvlist.recycler.util.inflate
 import com.luckylittlesparrow.srvlist.recycler.util.lazyFast
+import java.lang.ref.WeakReference
 import java.util.*
 import java.util.concurrent.Executors
 
+/**
+ * BaseAdapter with core functionality for sectioned view types
+ *
+ * For filter purpose use [FilterableSectionedAdapter] otherwise [SimpleSectionedAdapter]
+ *
+ * Supported functionality:
+ *           States
+ *           Decorations
+ *           Expandable sections
+ *           Sticky headers
+ *           Show more, show less
+ *
+ * @see FilterableSectionedAdapter
+ * @see SimpleSectionedAdapter
+ * @see Section<H,I,F>
+ * @see SectionItemDecoration
+ * @see StickyHeaderDecoration
+ * @see supportStickyHeader
+ *
+ * @author Andrei Gusev
+ * @since  1.0
+ */
 abstract class BaseListAdapter : RecyclerView.Adapter<BaseViewHolder<Nothing>>() {
-
-    companion object {
-        private const val DEFAULT_CACHE_SIZE = 30
-
-        internal const val VIEW_TYPE_HEADER = 0
-        internal const val VIEW_TYPE_FOOTER = 1
-        internal const val VIEW_TYPE_ITEM_LOADED = 2
-        internal const val VIEW_TYPE_LOADING = 3
-        internal const val VIEW_TYPE_FAILED = 4
-        internal const val VIEW_TYPE_EMPTY = 5
-        internal const val VIEW_TYPE_ITEM = 6
-    }
-
-    init {
-          setHasStableIds(true)
-    }
-
-    var defaultSettings = true
-
-    internal lateinit var sectionMediator: SectionMediator
-
-    internal val diffListUtil: DiffListUtil by lazyFast {
-        DiffListUtil(sectionMediator)
-    }
-
     private val sectionBinder = SectionBinder()
 
     private val sectionViewTypeNumbers: MutableMap<String, Int> = LinkedHashMap()
@@ -73,104 +76,140 @@ abstract class BaseListAdapter : RecyclerView.Adapter<BaseViewHolder<Nothing>>()
 
     protected var recyclerView: RecyclerView? = null
 
-    private val sectionStateCallback = object : SectionStateCallback {
-        override fun onSectionContentUpdated(
-            previousList: List<ItemContainer>,
-            newList: List<ItemContainer>,
-            sectionKey: String
-        ) {
-            calculateDiff(previousList, newList, true)
-        }
-
-        override fun onSectionShowMoreChange(sectionKey: String, collapsedItemCount: Int, isShowMore: Boolean) {
-            if (isShowMore) notifyItemRangeInsertedInternal(sectionKey, collapsedItemCount)
-            else notifyItemRangeRemovedInSection(sectionKey)
-        }
-
-        override fun onSectionExpandChange(sectionKey: String, isExpanded: Boolean) {
-            if (isExpanded) notifyItemRangeInsertedInternal(sectionKey)
-            else notifyItemRangeRemovedInSection(sectionKey)
-        }
-
-        override fun onSectionContentChanged(sectionKey: String) {
-            notifyItemRangeChangedInSection(sectionKey)
-        }
-
-        override fun onSectionContentAdded(sectionKey: String, addItemsCount: Int) {
-            notifyItemRangeInsertedInSection(sectionKey, addItemsCount)
-        }
-
-        override fun onSectionStateChanged(sectionKey: String, newState: SectionState, oldState: SectionState) {
-            if (newState != SectionState.LOADED) {
-                val section = sectionMediator.getSectionByKey(sectionKey)
-                if (section.isEmpty()) notifyItemChanged(0)
-                else {
-                    val list = section.getSectionList()
-                    calculateDiff(list, list.subList(0, 1))
-                }
-            } else {
-                notifyDataSetChanged()
-            }
-        }
-    }
+    internal lateinit var sectionMediator: SectionMediator
 
     /**
-     * also recommended to use  recyclerView.setHasFixedSize(true) in case of const size
+     * Use default settings
+     *
+     * @see RecyclerView.setItemViewCacheSize
+     * @see RecyclerView.Adapter.setHasStableIds
+     * @see RecyclerView.setHasFixedSize
+     *
      */
-    private fun setDefaultOptimizationSettings() {
-        recyclerView?.setItemViewCacheSize(DEFAULT_CACHE_SIZE)
+    var defaultSettings = true
+
+    /* Sticky header */
+
+    /**
+     * Support sticky header functionality, section must have header support
+     *
+     * This method must be called before RecyclerView#setAdapter(RecyclerView.Adapter) [recyclerView]setAdapter]
+     * @see RecyclerView#setAdapter(RecyclerView.Adapter)
+     */
+    var supportStickyHeader = false
+        set(value) {
+            field = value
+            sectionBinder.isStickyHeader = value
+            sectionBinder.clickListener = if (value) WeakReference(clickListener) else null
+        }
+
+
+    /**
+     * Use default adapter settings, also recommended to use
+     * [recyclerView.setHasFixedSize(true)] in case of const size
+     *
+     * @see RecyclerView.setHasFixedSize(true)
+     * @see RecyclerView.Adapter.setHasStableIds(true)
+     */
+    fun setDefaultOptimizationSettings() {
+        setHasStableIds(true)
     }
 
     /**
-     * Add a section
+     * Add a section with key to the adapter
+     *
+     * In case of adding a duplicate section, nothing will happen
+     *
+     * @see Section<H, I, F>
      *
      * @param key     unique key of the section
-     * @param section section to be added
+     * @param section section to add
      */
     open fun addSection(key: String, section: Section<*, *, *>) {
         check(section !is StubSection) { "Stub section not allowed to be added with key" }
         if (!sectionMediator.containsSection(key)) {
+            check(!supportStickyHeader || supportStickyHeader && section.hasHeader) {
+                "$section must have header for \"Sticky header\" support"
+            }
             addSectionToEnd(section, key)
         }
     }
 
+    /**
+     * Add a section to the adapter, key for section will be generated and returned
+     *
+     * In case of adding a duplicate section, nothing will happen
+     *
+     * @see Section<H, I, F>
+     *
+     * @param section section to add
+     * @return Generated key
+     */
     open fun addSection(section: Section<*, *, *>): String {
         checkForStubSection(section)
         return if (!sectionMediator.containsSection(section)) {
+            check(!supportStickyHeader || supportStickyHeader && section.hasHeader) {
+                "$section must have header for \"Sticky header\" support"
+            }
             addSectionToEnd(section)
         } else section.key
     }
 
+    /**
+     * Add a list of sections to the adapter, key for section will be generated and returned
+     *
+     * In case of adding a duplicate section, nothing will happen
+     *
+     * @see Section<H, I, F>
+     *
+     * @param list list of sections to add
+     */
     open fun addSections(list: List<Section<*, *, *>>) {
+        if (list.isEmpty()) return
         checkForStubSection()
         list.forEach {
+            check(!supportStickyHeader || supportStickyHeader && it.hasHeader) {
+                "$it must have header for \"Sticky header\" support"
+            }
             if (sectionMediator.containsSection(it)) return
         }
         addSectionsToEnd(list)
     }
 
+    /**
+     * Remove section from the adapter, [true] if success [false] otherwise
+     *
+     * Stub section will be removed automatically, if new sections are provided
+     *
+     * @see Section<H, I, F>
+     *
+     * @param section section to remove
+     */
     open fun removeSection(section: Section<*, *, *>): Boolean {
         return if (section !is StubSection) removeSectionInternal(section) else false
     }
 
+    /**
+     * Remove section from the adapter by key, [true] if success [false] otherwise
+     *
+     * Stub section will be removed automatically, if new sections are provided
+     *
+     * @see Section<H, I, F>
+     *
+     * @param key key of section to remove
+     */
     open fun removeSection(key: String): Boolean {
         return removeSectionInternal(sectionKey = key)
     }
 
+    /**
+     * Remove all section inside adapter and return it to initial state
+     */
     fun clearList() {
         if (viewTypeCount > 0)
             sectionMediator.clearList()
         sectionViewTypeNumbers.clear()
         viewTypeCount = 0
-    }
-
-    private fun checkForStubSection(section: Section<*, *, *>? = null) {
-        if (section is StubSection) stubSection = section
-        else if (stubSection != null) {
-            stubSection = null
-            clearList()
-            notifyItemRemoved(0)
-        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<Nothing> {
@@ -191,7 +230,7 @@ abstract class BaseListAdapter : RecyclerView.Adapter<BaseViewHolder<Nothing>>()
     }
 
     override fun getItemId(position: Int): Long {
-        return sectionMediator.getItemByPosition(position).ID
+        return sectionMediator.getItemByPosition(position).id
     }
 
     override fun getItemCount(): Int {
@@ -275,18 +314,117 @@ abstract class BaseListAdapter : RecyclerView.Adapter<BaseViewHolder<Nothing>>()
     }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        if (defaultSettings) recyclerView.setItemViewCacheSize(DEFAULT_CACHE_SIZE)
+
         super.onAttachedToRecyclerView(recyclerView)
         this.recyclerView = recyclerView
-        if (defaultSettings) setDefaultOptimizationSettings()
+
+        sectionMediator.attachSectionStateCallback(sectionStateCallback)
+
+        if (supportStickyHeader) {
+            recyclerView.addItemDecoration(
+                StickyHeaderDecoration(
+                    stickyHeaderHelper
+                )
+            )
+        }
     }
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
         super.onDetachedFromRecyclerView(recyclerView)
         this.recyclerView = null
+
+        sectionMediator.detachSectionStateCallback()
     }
 
-    protected fun dispatchUpdates(result: DiffUtil.DiffResult) {
+    internal var currentStickyHeader: BaseViewHolder<*>? = null
+
+    internal val stickyHeaderHelper: StickyHeaderHelper by lazyFast {
+        StickyHeaderHelper(sectionMediator)
+    }
+
+    private val clickListener: OnItemClickListener by lazyFast {
+        object : OnItemClickListener {
+            override fun onItemClick(item: ItemContainer): Boolean {
+                var result = true
+                recyclerView?.let {
+                    val child = recyclerView!!.getChildAt(0)
+
+                    val itemOnZeroPosition = (recyclerView!!.getChildViewHolder(child) as BaseViewHolder<*>).item
+
+                    result = item != itemOnZeroPosition
+                    if (!result) currentStickyHeader?.performClick()
+                }
+
+                return result
+            }
+        }
+    }
+
+    internal val diffListUtil: DiffListUtil by lazyFast {
+        DiffListUtil(sectionMediator)
+    }
+
+    private val sectionStateCallback = object : SectionStateCallback {
+        override fun onSectionContentUpdated(
+            previousList: List<ItemContainer>,
+            newList: List<ItemContainer>,
+            sectionKey: String
+        ) {
+            calculateDiff(previousList, newList, true)
+            stickyHeaderHelper.stateChanged()
+        }
+
+        override fun onSectionShowMoreChange(sectionKey: String, collapsedItemCount: Int, isShowMore: Boolean) {
+            if (isShowMore) notifyItemRangeInsertedInternal(sectionKey, collapsedItemCount)
+            else notifyItemRangeRemovedInSection(sectionKey)
+
+            stickyHeaderHelper.stateChanged()
+        }
+
+        override fun onSectionExpandChange(sectionKey: String, isExpanded: Boolean) {
+            if (isExpanded) notifyItemRangeInsertedInternal(sectionKey)
+            else notifyItemRangeRemovedInSection(sectionKey)
+
+            stickyHeaderHelper.stateChanged()
+        }
+
+        override fun onSectionContentChanged(sectionKey: String) {
+            notifyItemRangeChangedInSection(sectionKey)
+            stickyHeaderHelper.stateChanged()
+        }
+
+        override fun onSectionContentAdded(sectionKey: String, addItemsCount: Int) {
+            notifyItemRangeInsertedInSection(sectionKey, addItemsCount)
+            stickyHeaderHelper.stateChanged()
+        }
+
+        override fun onSectionStateChanged(sectionKey: String, newState: SectionState, oldState: SectionState) {
+            if (newState != SectionState.LOADED) {
+                val section = sectionMediator.getSectionByKey(sectionKey)
+                if (section.isEmpty()) notifyItemChanged(0)
+                else {
+                    val list = section.getSectionList()
+                    calculateDiff(list, list.subList(0, 1))
+                }
+            } else {
+                notifyDataSetChanged()
+            }
+            stickyHeaderHelper.stateChanged()
+        }
+    }
+
+    internal fun dispatchUpdates(result: DiffUtil.DiffResult) {
         result.dispatchUpdatesTo(this)
+    }
+
+    private fun checkForStubSection(section: Section<*, *, *>? = null) {
+        if (section is StubSection) stubSection = section
+        else if (stubSection != null) {
+            stubSection = null
+            clearList()
+            notifyItemRemoved(0)
+        }
     }
 
     private fun addSectionToEnd(section: Section<*, *, *>, sectionKey: String? = null): String {
@@ -451,4 +589,19 @@ abstract class BaseListAdapter : RecyclerView.Adapter<BaseViewHolder<Nothing>>()
             sectionDao.sectionOriginalSize() - 1
         )
     }
+
+    companion object {
+        private const val DEFAULT_CACHE_SIZE = 30
+
+        internal const val VIEW_TYPE_HEADER = 0
+        internal const val VIEW_TYPE_FOOTER = 1
+        internal const val VIEW_TYPE_ITEM_LOADED = 2
+        internal const val VIEW_TYPE_LOADING = 3
+        internal const val VIEW_TYPE_FAILED = 4
+        internal const val VIEW_TYPE_EMPTY = 5
+        internal const val VIEW_TYPE_ITEM = 6
+    }
+
+    @VisibleForTesting
+    internal fun getClickListener() = clickListener
 }

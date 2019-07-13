@@ -24,13 +24,34 @@ import com.luckylittlesparrow.srvlist.recycler.section.StubItem
 import com.luckylittlesparrow.srvlist.recycler.state.SectionState
 
 /**
- * Doesn't support "show more", "expand" functions
+ * Section with filter support with configured data to be used in [FilterableSectionedAdapter].
+ *
+ * Supported functionality:
+ *           States
+ *           Decorations
+ *           Sticky headers
+ *
+ * @param H the type of header element in this section
+ * @param I the type of content element in this section
+ * @param F the type of footer element in this section
+ *
+ * @param headerItem data for header
+ * @param contentItems data for items
+ * @param footerItem data for footer
+ * @param footerItem data for footer
+ * @param headerClickListener click listener on header item
+ * @param itemClickListener click listener on content item
+ * @param footerClickListener click listener on footer item
+ *
+ * @see FilterableSectionedAdapter
+ *
+ * @author Andrei Gusev
+ * @since  1.0
  */
 abstract class FilterableSection<H, I, F>(
     headerItem: ItemContainer? = null,
     contentItems: List<ItemContainer>? = null,
     footerItem: ItemContainer? = null,
-    sectionKey: String? = null,
     headerClickListener: (ItemContainer) -> Unit = {},
     itemClickListener: (ItemContainer) -> Unit = {},
     footerClickListener: (ItemContainer) -> Unit = {}
@@ -38,7 +59,6 @@ abstract class FilterableSection<H, I, F>(
     headerItem,
     contentItems,
     footerItem,
-    sectionKey,
     headerClickListener,
     itemClickListener,
     footerClickListener
@@ -55,34 +75,22 @@ abstract class FilterableSection<H, I, F>(
         initItems(headerItem, contentItems, footerItem)
     }
 
-    private fun initResources() {
-        supportFilterHeader = getSectionParams().supportFilterHeaderFunction
-        check(!getSectionParams().supportExpansionFunction && !getSectionParams().supportShowMoreFunction)
-        { "FilterableSection doesn't support \"show more\", \"expand\" functions" }
-    }
-
-    private fun initItems(headerItem: ItemContainer?, contentItems: List<ItemContainer>?, footerItem: ItemContainer?) {
-        headerItem?.let { baseList.add(it) }
-
-        contentItems?.let {
-            check(hasHeader() && headerItem != null || !hasHeader() && headerItem == null)
-            baseList.addAll(contentItems)
-        }
-
-        footerItem?.let {
-            check(contentItems != null)
-            baseList.add(footerItem)
-        }
-    }
-
+    /**
+     * Add more items to the section, if bundle contains header and footer,
+     * and they were provided at section initialization, they will be replaced by new ones.
+     *
+     * @see ItemBundle
+     *
+     * @param itemBundle bundle with items to add
+     */
     override fun addMoreItems(itemBundle: ItemBundle) {
         if (itemBundle.isEmpty()) return
         sourceList.remove(stateItem)
 
         check(
-            !hasHeader()
+            !hasHeader
                     || sourceList.isNotEmpty() && sourceList.first().isHeader()
-                    || hasHeader() && itemBundle.headerItem != null
+                    || hasHeader && itemBundle.headerItem != null
         ) { "submit header item or resource" }
 
         var isNewContent = true
@@ -102,7 +110,7 @@ abstract class FilterableSection<H, I, F>(
 
         itemBundle.contentItems?.let {
             itemsCount += it.size
-            if (hasFooter() && sourceList.isNotEmpty() && sourceList.last().isFooter()) addItemsWithFooter(it) else {
+            if (hasFooter && sourceList.isNotEmpty() && sourceList.last().isFooter()) addItemsWithFooter(it) else {
                 sourceList.addAll(it)
                 baseList.addAll(it)
             }
@@ -133,7 +141,11 @@ abstract class FilterableSection<H, I, F>(
     }
 
     /**
-     * Replace previous items with the new items
+     * Add items or replace previous items with the new items.
+     *
+     * @see ItemBundle
+     *
+     * @param itemBundle bundle with items to add
      */
     override fun replaceItems(itemBundle: ItemBundle) {
         if (itemBundle.isEmpty()) return
@@ -143,7 +155,7 @@ abstract class FilterableSection<H, I, F>(
         baseList.clear()
 
         check(
-            !hasHeader() || hasHeader() && itemBundle.headerItem != null
+            !hasHeader || hasHeader && itemBundle.headerItem != null
         ) { "Forgot to provide header item" }
 
         var itemsCount = 0
@@ -171,12 +183,30 @@ abstract class FilterableSection<H, I, F>(
         if (state == SectionState.LOADED) {
             sectionStateCallback?.onSectionContentUpdated(previousList, sourceList, provideId())
         }
-
-        if (sourceList.isEmpty()) sourceList.add(stateItem)
     }
 
+    /**
+     * Callback for comparing item with requested string, it's guaranteed, that type of item is
+     * equal to content item type [I], and have save cast.
+     *
+     * @param search filter string
+     * @param item item to compare
+     *
+     * @return result of comparing
+     */
     abstract fun itemFilter(search: String, item: ItemContainer): Boolean
 
+    /**
+     * Callback for comparing header with requested string in case of [supportFilterHeader],
+     * it's guaranteed, that type of item is equal to header item type [H], and have save cast
+     *
+     * @see supportFilterHeader
+     *
+     * @param search filter string
+     * @param item item to compare
+     *
+     * @return result of comparing
+     */
     open fun headerFilter(search: String, item: ItemContainer): Boolean = false
 
     override fun currentSize(): Int {
@@ -189,6 +219,26 @@ abstract class FilterableSection<H, I, F>(
         } else baseSize
     }
 
+    private fun initResources() {
+        supportFilterHeader = getSectionParams().supportFilterHeaderFunction
+        check(!getSectionParams().supportExpandFunction && !getSectionParams().supportShowMoreFunction)
+        { "FilterableSection doesn't support \"show more\", \"expand\" functions" }
+    }
+
+    private fun initItems(headerItem: ItemContainer?, contentItems: List<ItemContainer>?, footerItem: ItemContainer?) {
+        headerItem?.let { baseList.add(it) }
+
+        contentItems?.let {
+            check(hasHeader && headerItem != null || !hasHeader && headerItem == null)
+            baseList.addAll(contentItems)
+        }
+
+        footerItem?.let {
+            check(contentItems != null)
+            baseList.add(footerItem)
+        }
+    }
+
     private fun addItemsWithFooter(list: List<ItemContainer>) {
         val footerIndex = getFooterIndex()
         val footerItem = sourceList.removeAt(footerIndex)
@@ -199,5 +249,4 @@ abstract class FilterableSection<H, I, F>(
         baseList.addAll(list)
         baseList.add(footerBaseItem)
     }
-
 }

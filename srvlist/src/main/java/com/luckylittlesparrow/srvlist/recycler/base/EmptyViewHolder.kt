@@ -20,6 +20,14 @@ package com.luckylittlesparrow.srvlist.recycler.base
 import android.view.View
 
 /**
- * An empty ViewHolder without data. Should be used in case, if you have only view to show
+ * An empty ViewHolder without data. Should be used in case, if you have only view to show, otherwise
+ * extend [BaseViewHolder]
+ *
+ * @see BaseViewHolder<T>
+ *
+ * @param itemView view item
+ *
+ * @author Andrei Gusev
+ * @since  1.0
  */
 open class EmptyViewHolder<T>(itemView: View) : BaseViewHolder<T>(itemView)

@@ -19,7 +19,12 @@ package com.luckylittlesparrow.srvlist.recycler.filterable
 
 import com.luckylittlesparrow.srvlist.recycler.section.ItemContainer
 import com.luckylittlesparrow.srvlist.recycler.simple.SimpleSectionDao
+import com.luckylittlesparrow.srvlist.recycler.state.SectionState
 
+/**
+ * @author Andrei Gusev
+ * @since  1.0
+ */
 internal class FilterableSectionDao<H, I, F>(section: FilterableSection<H, I, F>) : SimpleSectionDao<H, I, F>(section),
     Filterable {
     private var lastSearchString = ""
@@ -46,7 +51,7 @@ internal class FilterableSectionDao<H, I, F>(section: FilterableSection<H, I, F>
 
         lastSearchString = searchString
 
-        if (filterableSection.hasHeader()) {
+        if (filterableSection.hasHeader) {
             if (filterableSection.supportFilterHeader && filterableSection.headerFilter(
                     searchString,
                     filterableSection.sourceList.first()
@@ -70,7 +75,7 @@ internal class FilterableSectionDao<H, I, F>(section: FilterableSection<H, I, F>
         }
 
         for (i in startIndex until filterableSection.sourceList.size) {
-            if (i == getFooterIndex() && filterableSection.hasFooter()) {
+            if (i == getFooterIndex() && filterableSection.hasFooter) {
                 filterableSection.filteredList.add(filterableSection.sourceList.last())
                 break
             }
@@ -96,5 +101,15 @@ internal class FilterableSectionDao<H, I, F>(section: FilterableSection<H, I, F>
     override fun getContentItem(position: Int): ItemContainer {
         section as FilterableSection<H, I, F>
         return if (section.filteredList.isEmpty()) section.baseList[position] else section.filteredList[position]
+    }
+
+    override fun getVisibleItemsList(): List<ItemContainer> {
+        section as FilterableSection<H, I, F>
+        return when {
+            state() != SectionState.LOADED -> section.baseList.subList(0, 2)
+            section.filteredList.isEmpty() -> section.baseList
+            else -> section.filteredList
+        }
+
     }
 }

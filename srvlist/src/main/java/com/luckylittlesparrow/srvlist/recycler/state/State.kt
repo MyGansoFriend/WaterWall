@@ -1,5 +1,7 @@
 package com.luckylittlesparrow.srvlist.recycler.state
 
+import com.luckylittlesparrow.srvlist.recycler.section.Section
+
 /*
  *  Copyright 2019 Gusev Andrei
  *
@@ -17,10 +19,22 @@ package com.luckylittlesparrow.srvlist.recycler.state
  *
  */
 
+/**
+ * Base state class, that [Section] extend to support [SectionState]
+ *
+ * @see Section
+ * @see SectionState
+ *
+ * @author Andrei Gusev
+ * @since  1.0
+ */
 abstract class State {
 
-    internal var sectionStateCallback: SectionStateCallback? = null
-
+    /**
+     * Change state of the section, for every state resource must be provided in order to work
+     *
+     * @see SectionState
+     */
     var state = SectionState.LOADED
         set(state) {
             when (state) {
@@ -42,14 +56,16 @@ abstract class State {
             if (field != oldState) sectionStateCallback?.onSectionStateChanged(provideId(), field, oldState)
         }
 
-    protected abstract fun loadingStateRequirements(): Boolean
+    internal var sectionStateCallback: SectionStateCallback? = null
 
-    protected abstract fun failedStateRequirements(): Boolean
+    internal abstract fun loadingStateRequirements(): Boolean
 
-    protected abstract fun emptyStateRequirements(): Boolean
+    internal abstract fun failedStateRequirements(): Boolean
 
-    protected abstract fun loadedStateRequirements(): Boolean
+    internal abstract fun emptyStateRequirements(): Boolean
 
-    protected abstract fun provideId(): String
+    internal abstract fun loadedStateRequirements(): Boolean
+
+    internal abstract fun provideId(): String
 }
 

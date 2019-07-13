@@ -1,23 +1,15 @@
 package com.luckylittlesparrow.srvlist.recycler.mediator
 
+import com.luckylittlesparrow.srvlist.recycler.section.ItemContainer
 import com.luckylittlesparrow.srvlist.recycler.simple.SimpleSectionMediator
 import com.luckylittlesparrow.srvlist.recycler.state.SectionStateCallback
 import com.luckylittlesparrow.srvlist.recycler.testdata.SectionFactory
 import com.luckylittlesparrow.srvlist.recycler.testdata.TestItem
 import com.nhaarman.mockitokotlin2.mock
 import org.junit.Assert.*
-import org.junit.Before
 import org.junit.Test
 
 class SimpleSectionMediatorTest {
-    companion object {
-        const val itemResourceId = 1
-        const val headerResourceId = 2
-        const val footerResourceId = 3
-        const val failedResourceId = 4
-        const val loadingResourceId = 5
-        const val emptyResourceId = 6
-    }
 
     private val sectionMediator = SimpleSectionMediator()
     private val sectionStateCallback: SectionStateCallback = mock()
@@ -232,6 +224,17 @@ class SimpleSectionMediatorTest {
         assertEquals(result, 1)
     }
 
+    @Test(expected = IndexOutOfBoundsException::class)
+    fun getPositionInSectionInvalid() {
+        val sectionList = SectionFactory.getSectionList()
+
+        val itemPosition = sectionList[0].sourceList.size + 1
+
+        sectionMediator.addSections(sectionList, sectionStateCallback)
+
+        val result = sectionMediator.getPositionInSection(-1)
+    }
+
 
     @Test
     fun getItemByPosition() {
@@ -247,6 +250,17 @@ class SimpleSectionMediatorTest {
         assertEquals(result, expectedItem)
     }
 
+    @Test(expected = IndexOutOfBoundsException::class)
+    fun getItemByPositionInvalid() {
+        val sectionList = SectionFactory.getSectionList()
+        val expectedItem = sectionList[1].sourceList[1]
+
+        val itemPosition = sectionList[0].sourceList.size + 1
+
+        sectionMediator.addSections(sectionList, sectionStateCallback)
+        val result = sectionMediator.getItemByPosition(-1)
+    }
+
     @Test
     fun getSectionByItems() {
         val sectionList = SectionFactory.getSectionList()
@@ -259,6 +273,86 @@ class SimpleSectionMediatorTest {
 
         assertEquals(result, expectedSection)
 
-        assertNull(sectionMediator.getSectionByItems(expectedSection.sourceList[1],TestItem("test"))?.section)
+        assertNull(sectionMediator.getSectionByItems(expectedSection.sourceList[1], TestItem("test"))?.section)
     }
+
+
+    @Test
+    fun getSectionPositionByKey() {
+        val sectionList = SectionFactory.getSectionList()
+        val expectedSection = sectionList[1]
+
+        val itemPosition = sectionList[0].sourceList.size
+
+        sectionMediator.addSections(sectionList, sectionStateCallback)
+
+        val result = sectionMediator.getSectionPosition(expectedSection.key)
+
+        assertEquals(result, itemPosition)
+    }
+
+    @Test(expected = IndexOutOfBoundsException::class)
+    fun getSectionPositionByKeyInvalid() {
+        val sectionList = SectionFactory.getSectionList()
+        val expectedSection = sectionList[1]
+
+        val itemPosition = sectionList[0].sourceList.size + 1
+
+        sectionMediator.addSections(sectionList, sectionStateCallback)
+
+        val result = sectionMediator.getSectionPosition("asd")
+
+        assertEquals(result, itemPosition)
+    }
+
+    @Test
+    fun getVisibleItemsList() {
+        val sectionList = SectionFactory.getSectionList()
+        sectionMediator.addSections(sectionList, sectionStateCallback)
+
+        val result = sectionMediator.getVisibleItemsList()
+        val expectedList = ArrayList<ItemContainer>()
+        sectionList.forEach {
+            expectedList.addAll(it.sourceList)
+        }
+        assertEquals(expectedList, result)
+    }
+
+    @Test
+    fun getSectionByItem() {
+        val sectionList = SectionFactory.getSectionList()
+        val expectedSection = sectionList[1]
+
+        sectionMediator.addSections(sectionList, sectionStateCallback)
+
+        var result = sectionMediator.getSectionByItem(expectedSection.sourceList[2])
+
+        assertEquals(result?.section, expectedSection)
+
+        result = sectionMediator.getSectionByItem(mock())
+
+        assertNull(result)
+    }
+
+    @Test
+    fun sectionStateCallback() {
+        val sectionList = SectionFactory.getSectionList()
+        val expectedSection = sectionList[1]
+
+        sectionMediator.addSections(sectionList, sectionStateCallback)
+
+        sectionMediator.detachSectionStateCallback()
+
+        sectionList.forEach {
+            assertNull(it.sectionStateCallback)
+        }
+
+        sectionMediator.attachSectionStateCallback(sectionStateCallback)
+
+        sectionList.forEach {
+            assertEquals(it.sectionStateCallback, sectionStateCallback)
+        }
+
+    }
+
 }

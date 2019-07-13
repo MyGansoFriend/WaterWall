@@ -17,4 +17,8 @@ package com.luckylittlesparrow.srvlist.recycler.section
  *
  */
 
+/**
+ * @author Andrei Gusev
+ * @since  1.0
+ */
 internal class StubItem : ItemContainer(ItemType.ITEM)

@@ -21,7 +21,15 @@ import com.luckylittlesparrow.srvlist.recycler.section.ItemContainer
 import com.luckylittlesparrow.srvlist.recycler.section.Section
 import com.luckylittlesparrow.srvlist.recycler.state.SectionStateCallback
 
+/**
+ * @author Andrei Gusev
+ * @since  1.0
+ */
 internal interface SectionMediator {
+
+    fun attachSectionStateCallback(sectionStateCallback: SectionStateCallback)
+
+    fun detachSectionStateCallback()
 
     fun addSection(key: String, section: Section<*, *, *>, sectionStateCallback: SectionStateCallback): String
 
@@ -60,4 +68,6 @@ internal interface SectionMediator {
     fun containsSection(section: Section<*, *, *>): Boolean
 
     fun clearList()
+
+    fun getVisibleItemsList(): List<ItemContainer>
 }

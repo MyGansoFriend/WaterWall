@@ -1,5 +1,8 @@
 package com.luckylittlesparrow.srvlist.recycler.state
 
+import com.luckylittlesparrow.srvlist.recycler.filterable.FilterableSection
+import com.luckylittlesparrow.srvlist.recycler.section.Section
+
 /*
  *  Copyright 2019 Gusev Andrei
  *
@@ -18,7 +21,13 @@ package com.luckylittlesparrow.srvlist.recycler.state
  */
 
 /**
+ * State of section, trigger adapter updates on current section every time you change state
  *
+ * @see Section
+ * @see FilterableSection
+ *
+ * @author Andrei Gusev
+ * @since  1.0
  */
 enum class SectionState {
     LOADING,

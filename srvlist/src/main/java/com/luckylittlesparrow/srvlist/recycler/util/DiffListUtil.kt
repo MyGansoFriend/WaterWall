@@ -22,8 +22,11 @@ import com.luckylittlesparrow.srvlist.recycler.base.SectionMediator
 import com.luckylittlesparrow.srvlist.recycler.section.ItemContainer
 
 internal class DiffListUtil(private val sectionMediator: SectionMediator) : DiffUtil.Callback() {
-    private lateinit var oldList: List<ItemContainer>
+    @Volatile
+    private lateinit  var oldList: List<ItemContainer>
+    @Volatile
     private lateinit var newList: List<ItemContainer>
+    @Volatile
     var isTheSameSection = false
 
 

@@ -8,7 +8,7 @@ object TestItemsFactory {
     val header = TestHeader("header")
     val footer = TestFooter("footer")
 
-    fun getFullItems(){
+    fun getFullItems() {
 
     }
 

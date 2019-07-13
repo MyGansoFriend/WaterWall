@@ -19,6 +19,10 @@ package com.luckylittlesparrow.srvlist.recycler.state
 
 import com.luckylittlesparrow.srvlist.recycler.section.ItemContainer
 
+/**
+ * @author Andrei Gusev
+ * @since  1.0
+ */
 internal interface SectionStateCallback {
     fun onSectionStateChanged(sectionKey: String, newState: SectionState, oldState: SectionState)
 

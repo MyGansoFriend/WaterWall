@@ -19,4 +19,8 @@ package com.luckylittlesparrow.srvlist.recycler.simple
 
 import com.luckylittlesparrow.srvlist.recycler.base.BaseSectionMediator
 
+/**
+ * @author Andrei Gusev
+ * @since  1.0
+ */
 internal class SimpleSectionMediator : BaseSectionMediator()

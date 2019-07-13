@@ -17,11 +17,31 @@ package com.luckylittlesparrow.srvlist.recycler.section
  *
  */
 
+import androidx.recyclerview.widget.RecyclerView
+import com.luckylittlesparrow.srvlist.recycler.filterable.FilterableSectionedAdapter
+import com.luckylittlesparrow.srvlist.recycler.section.ItemContainer.ItemType
+import com.luckylittlesparrow.srvlist.recycler.simple.SimpleSectionedAdapter
 import java.util.*
 
+/**
+ * Base class for all items : [header, contentItem, footer]
+ *
+ * All models must extend this class in order to work with [SimpleSectionedAdapter]
+ * or [FilterableSectionedAdapter]
+ *
+ * @param itemType type of item: [ItemType.HEADER],[ItemType.ITEM],[ItemType.FOOTER]
+ *
+ * @author Andrei Gusev
+ * @since  1.0
+ */
 abstract class ItemContainer(val itemType: ItemType) {
 
-    val ID = UUID.randomUUID().mostSignificantBits
+    /**
+     * Auto generated id for item for [RecyclerView.Adapter.setHasStableIds]
+     *
+     * @see RecyclerView.Adapter.setHasStableIds(true)
+     */
+    val id = UUID.randomUUID().mostSignificantBits
 
     enum class ItemType {
         HEADER, FOOTER, ITEM

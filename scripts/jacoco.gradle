@@ -1,5 +1,3 @@
-package com.luckylittlesparrow.srvlist.recycler.filterable
-
 /*
  *  Copyright 2019 Gusev Andrei
  *
@@ -17,12 +15,25 @@ package com.luckylittlesparrow.srvlist.recycler.filterable
  *
  */
 
-import com.luckylittlesparrow.srvlist.recycler.section.ItemContainer
+apply plugin: 'jacoco-android'
 
-/**
- * @author Andrei Gusev
- * @since  1.0
- */
-internal interface Filterable {
-    fun filter(search: CharSequence): Pair<List<ItemContainer>, List<ItemContainer>>?
+jacoco {
+    toolVersion = "0.8.3"
+}
+
+jacocoAndroidUnitTestReport {
+    excludes += ['**/DiffUtilItemCallback.class',
+                 '**/ExtensionsKt*.class',
+                 '**/MainThreadExecutor.class',
+                 '**/StubSection*.class',
+                 '**/ItemBundle.class',
+                 '**/ItemContainer.class',
+                 '**/SectionDao*.class',
+                 '**/SectionItemDecoration.class',
+                 '**/StickyHeaderDecoration.class'
+    ]
+}
+
+tasks.withType(Test) {
+    jacoco.includeNoLocationClasses = true
 }

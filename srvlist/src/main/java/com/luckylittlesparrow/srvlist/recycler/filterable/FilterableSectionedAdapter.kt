@@ -22,38 +22,109 @@ import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.DiffUtil
 import com.luckylittlesparrow.srvlist.recycler.base.BaseListAdapter
+import com.luckylittlesparrow.srvlist.recycler.base.SectionItemDecoration
 import com.luckylittlesparrow.srvlist.recycler.section.ItemContainer
 import com.luckylittlesparrow.srvlist.recycler.section.Section
+import com.luckylittlesparrow.srvlist.recycler.simple.SimpleSectionedAdapter
 import com.luckylittlesparrow.srvlist.recycler.state.SectionState
+import com.luckylittlesparrow.srvlist.recycler.sticky.StickyHeaderDecoration
 
+/**
+ * Adapter version with filter support, more complex than [SimpleSectionedAdapter],
+ * if filter not needed, use [SimpleSectionedAdapter] instead
+ *
+ * Supported functionality:
+ *           States
+ *           Decorations
+ *           Sticky headers
+ *
+ * @see FilterableSection.supportFilterHeader
+ * @see FilterableSection.itemFilter
+ * @see FilterableSection.headerFilter
+ *
+ * @see SimpleSectionedAdapter
+ * @see FilterableSection<H,I,F>
+ * @see SectionItemDecoration
+ * @see StickyHeaderDecoration
+ * @see supportStickyHeader
+ *
+ * @author Andrei Gusev
+ * @since  1.0
+ */
 class FilterableSectionedAdapter : BaseListAdapter(), Filterable {
 
     init {
         sectionMediator = FilterableSectionMediator()
     }
 
+    /**
+     * Add a section with key to the adapter
+     *
+     * In case of adding a duplicate section, nothing will happen
+     *
+     * @see FilterableSection<H, I, F>
+     *
+     * @param key     unique key of the section
+     * @param section section to add
+     */
     override fun addSection(key: String, section: Section<*, *, *>) {
         check(section is FilterableSection) { "section must extends from FilterableSection in order to be used" }
         super.addSection(key, section)
     }
 
+    /**
+     * Add a section to the adapter, key for section will be generated and returned
+     *
+     * In case of adding a duplicate section, nothing will happen
+     *
+     * @see FilterableSection<H, I, F>
+     *
+     * @param section section to add
+     * @return Generated key
+     */
     override fun addSection(section: Section<*, *, *>): String {
         check(section is FilterableSection) { "section must extends from FilterableSection in order to be used" }
         return super.addSection(section)
     }
 
+    /**
+     * Remove section from the adapter by key, [true] if success [false] otherwise
+     *
+     * Stub section will be removed automatically, if new sections are provided
+     *
+     * @see FilterableSection<H, I, F>
+     *
+     * @param key key of section to remove
+     */
     override fun removeSection(section: Section<*, *, *>): Boolean {
         check(section is FilterableSection) { "section must extends from FilterableSection in order to be used" }
         return super.removeSection(section)
     }
 
+    /**
+     * Add a list of sections to the adapter, key for section will be generated and returned
+     *
+     * In case of adding a duplicate section, nothing will happen
+     *
+     * @see Section<H, I, F>
+     *
+     * @param list list of sections to add
+     */
     override fun addSections(list: List<Section<*, *, *>>) {
-        check(list.isNotEmpty() && list[0] is FilterableSection) { "section must extends from FilterableSection in order to be used" }
+        if (list.isEmpty()) return
+        list.forEach {
+            check(it is FilterableSection) { "section must extends from FilterableSection in order to be used" }
+        }
         super.addSections(list)
     }
 
     /**
-     * Simple reduce filter.filter(search) calling to just filter(search)
+     * Filter existing sections and update RecyclerView with the result,
+     * section must be in [SectionState.LOADED] to be filtered, otherwise it will be skipped
+     *
+     * @see FilterableSection.supportFilterHeader
+     * @see FilterableSection.itemFilter
+     * @see FilterableSection.headerFilter
      */
     fun filter(constraint: CharSequence) {
         filter.filter(constraint)
@@ -64,6 +135,7 @@ class FilterableSectionedAdapter : BaseListAdapter(), Filterable {
         return object : Filter() {
 
             override fun publishResults(constraint: CharSequence, results: FilterResults) {
+                stickyHeaderHelper.stateChanged()
                 if (results.values == null) notifyDataSetChanged()
                 else dispatchUpdates((results.values as DiffUtil.DiffResult))
                 recyclerView?.scrollToPosition(0)

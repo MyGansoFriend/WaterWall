@@ -18,7 +18,31 @@ package com.luckylittlesparrow.srvlist.recycler.simple
  */
 
 import com.luckylittlesparrow.srvlist.recycler.base.BaseListAdapter
+import com.luckylittlesparrow.srvlist.recycler.base.SectionItemDecoration
+import com.luckylittlesparrow.srvlist.recycler.filterable.FilterableSectionedAdapter
+import com.luckylittlesparrow.srvlist.recycler.section.Section
+import com.luckylittlesparrow.srvlist.recycler.sticky.StickyHeaderDecoration
 
+/**
+ * Default version of adapter, should be used in all cases except filter,
+ * for usage with filter see [FilterableSectionedAdapter]
+ *
+ * Supported functionality:
+ *           States
+ *           Decorations
+ *           Expandable sections
+ *           Sticky headers
+ *           Show more, show less
+ *
+ * @see FilterableSectionedAdapter
+ * @see Section<H,I,F>
+ * @see SectionItemDecoration
+ * @see StickyHeaderDecoration
+ * @see supportStickyHeader
+ *
+ * @author Andrei Gusev
+ * @since  1.0
+ */
 class SimpleSectionedAdapter : BaseListAdapter() {
 
     init {

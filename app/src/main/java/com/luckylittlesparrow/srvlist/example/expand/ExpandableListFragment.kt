@@ -25,10 +25,10 @@ class ExpandableListFragment : Fragment() {
     }
 
     private val sectionAdapter = SimpleSectionedAdapter()
-    private val section = ExpandableSection(ExpandableHeader("HEADER"), clickListener)
-    private val section2 = ExpandableSection(ExpandableHeader("HEADER2"), clickListener)
-    private val section3 = ExpandableSection(ExpandableHeader("HEADER3"), clickListener)
-    private val section4 = ExpandableSection(ExpandableHeader("HEADER4"), clickListener)
+    private val section = ExpandableSection(ExpandableHeader("HEADER"), clickListener, clickListener)
+    private val section2 = ExpandableSection(ExpandableHeader("HEADER2"), clickListener, clickListener)
+    private val section3 = ExpandableSection(ExpandableHeader("HEADER3"), clickListener, clickListener)
+    private val section4 = ExpandableSection(ExpandableHeader("HEADER4"), clickListener, clickListener)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,10 +57,11 @@ class ExpandableListFragment : Fragment() {
     }
 
     private fun initListeners() {
+        sectionAdapter.supportStickyHeader = true
         simpleRecyclerView.adapter = sectionAdapter
         simpleRecyclerView.layoutManager = LinearLayoutManager(context)
 
-       simpleRecyclerView.addItemDecoration(ItemDecoration(ColorDrawable(resources.getColor(R.color.black))))
+        simpleRecyclerView.addItemDecoration(ItemDecoration(ColorDrawable(resources.getColor(R.color.black))))
 
         stateFailedButton.setOnClickListener { section.state = SectionState.FAILED }
         stateLoadingButton.setOnClickListener { section.state = SectionState.LOADING }

@@ -2,7 +2,9 @@ package com.luckylittlesparrow.srvlist.recycler.dao
 
 import com.luckylittlesparrow.srvlist.recycler.filterable.FilterableSection
 import com.luckylittlesparrow.srvlist.recycler.filterable.FilterableSectionDao
+import com.luckylittlesparrow.srvlist.recycler.section.ItemContainer
 import com.luckylittlesparrow.srvlist.recycler.section.SectionParams
+import com.luckylittlesparrow.srvlist.recycler.state.SectionState
 import com.luckylittlesparrow.srvlist.recycler.testdata.*
 import com.luckylittlesparrow.srvlist.recycler.util.DiffUtilItemCallback
 import com.nhaarman.mockitokotlin2.mock
@@ -18,14 +20,6 @@ import org.hamcrest.core.Is.`is` as Is
 
 @RunWith(MockitoJUnitRunner::class)
 class FilterSectionDaoTest {
-    companion object {
-        const val itemResourceId = 1
-        const val headerResourceId = 2
-        const val footerResourceId = 3
-        const val failedResourceId = 4
-        const val loadingResourceId = 5
-        const val emptyResourceId = 6
-    }
 
     private lateinit var sectionDao: FilterableSectionDao<*, *, *>
 
@@ -36,12 +30,14 @@ class FilterSectionDaoTest {
     private val newHeader = TestHeader("new")
     private val oldHeader = TestHeader("old")
     private val diff: DiffUtilItemCallback = mock()
+
     @Before
     fun setUp() {
         val sectionParameters = SectionParams.builder()
             .headerResourceId(headerResourceId)
             .itemResourceId(itemResourceId)
             .footerResourceId(footerResourceId)
+            .loadingResourceId(loadingResourceId)
             .build()
 
         section = spy(object : FilterTestSection(
@@ -73,7 +69,7 @@ class FilterSectionDaoTest {
     @Test
     fun testFilter_PreventUnnecessaryFilter() {
         val lastSearchString = "search"
-        getLastSearchStringField().set(sectionDao, lastSearchString)
+        getField().set(sectionDao, lastSearchString)
         assertNull(sectionDao.filter(lastSearchString + "new"))
     }
 
@@ -88,7 +84,7 @@ class FilterSectionDaoTest {
     @Test
     fun testFilter_InitBaseList_EmptyLastResult() {
         val lastSearchString = "search"
-        getLastSearchStringField().set(sectionDao, lastSearchString)
+        getField().set(sectionDao, lastSearchString)
 
         sectionDao.filter("new")
         assertTrue(section.baseList.isEmpty())
@@ -98,7 +94,7 @@ class FilterSectionDaoTest {
     fun testFilter_InitBaseList_ContainsLastResult() {
         val lastSearchString = "search"
         val expectedList = TestItemsFactory.getNames2()
-        getLastSearchStringField().set(sectionDao, lastSearchString)
+        getField().set(sectionDao, lastSearchString)
         section.filteredList.addAll(expectedList)
         sectionDao.filter("new")
         assertThat(section.baseList, Is(expectedList))
@@ -116,7 +112,48 @@ class FilterSectionDaoTest {
         assertThat(result.second, Is(expectedList))
     }
 
-    private fun getLastSearchStringField(): Field {
+    @Test
+    fun testFilterSupportHeaderFilter() {
+        section.supportFilterHeader = true
+        val list = TestItemsFactory.getNames2()
+        val lastSearchString = (list[2] as TestItem).name
+
+        val result = sectionDao.filter(lastSearchString)
+
+        assertEquals(result!!.first, section.baseList)
+        assertEquals(result.second, section.filteredList)
+    }
+
+    @Test
+    fun testFilterSupportHeaderFilterNotVisible() {
+        section.supportFilterHeader = true
+        section.isVisible = false
+        val list = TestItemsFactory.getNames2()
+        val lastSearchString = (list[2] as TestItem).name
+
+        val result = sectionDao.filter(lastSearchString)
+
+        assertEquals(result!!.first, ArrayList<ItemContainer>())
+        assertEquals(result.second, section.filteredList)
+        assertTrue(section.isVisible)
+    }
+
+    @Test
+    fun getVisibleItemsList() {
+        assertTrue(section.filteredList.isEmpty())
+        assertEquals(sectionDao.sectionCurrentSize(), section.baseList.size)
+        assertEquals(sectionDao.getVisibleItemsList(), section.baseList)
+
+        val expectedList = TestItemsFactory.getNames2()
+        section.filteredList.addAll(expectedList)
+
+        assertEquals(sectionDao.getVisibleItemsList(), section.filteredList)
+
+        section.state = SectionState.LOADING
+        assertEquals(sectionDao.getVisibleItemsList(), section.sourceList.subList(0, 2))
+    }
+
+    private fun getField(): Field {
         val field = FilterableSectionDao::class.java.getDeclaredField("lastSearchString")
         field.isAccessible = true
         return field

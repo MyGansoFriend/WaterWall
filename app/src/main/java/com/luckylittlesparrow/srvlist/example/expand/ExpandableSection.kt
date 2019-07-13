@@ -12,22 +12,28 @@ import com.luckylittlesparrow.srvlist.recycler.util.DiffUtilItemCallback
 class ExpandableSection(
     headerItem: ExpandableHeader,
     itemClickListener: (ItemContainer) -> Unit,
+    headerClickListener: (ItemContainer) -> Unit,
     itemList: List<Item>? = null
 ) :
-    Section<ExpandableHeader, Item, Void>(headerItem,itemList, itemClickListener = itemClickListener) {
+    Section<ExpandableHeader, Item, Void>(
+        headerItem,
+        itemList,
+        itemClickListener = itemClickListener,
+        headerClickListener = headerClickListener
+    ) {
 
     override fun getItemViewHolder(view: View): BaseViewHolder<Item> {
         return ExpandableItemViewHolder(view, itemClickListener)
     }
 
     override fun getHeaderViewHolder(view: View): BaseViewHolder<ExpandableHeader> {
-        return ExpandableHeaderViewHolder(view, onExpandClickListener)
+        return ExpandableHeaderViewHolder(view, onExpandClickListener, headerClickListener)
     }
 
     override fun getSectionParams(): SectionParams {
         return SectionParams.builder()
             .isExpandedByDefault(true)
-            .supportExpansion(true)
+            .supportExpandFunction(true)
             .headerResourceId(R.layout.expandable_section_header)
             .itemResourceId(R.layout.section_item)
             .emptyResourceId(R.layout.section_empty)

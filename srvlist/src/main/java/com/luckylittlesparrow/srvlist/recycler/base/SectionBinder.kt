@@ -19,8 +19,17 @@ package com.luckylittlesparrow.srvlist.recycler.base
 
 import com.luckylittlesparrow.srvlist.recycler.section.ItemContainer
 import com.luckylittlesparrow.srvlist.recycler.state.SectionState
+import java.lang.ref.WeakReference
 
-class SectionBinder {
+/**
+ * @author Andrei Gusev
+ * @since  1.0
+ */
+internal class SectionBinder {
+
+    internal var isStickyHeader = false
+
+    internal var clickListener: WeakReference<OnItemClickListener>? = null
 
     fun <T> onBindContentViewHolder(
         holder: BaseViewHolder<T>,
@@ -35,15 +44,24 @@ class SectionBinder {
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun <T> onBindHeaderViewHolder(itemContainer: ItemContainer, holder: BaseViewHolder<T>) {
+        holder.isStickyHeader = isStickyHeader
+        holder.clickListener = clickListener
         holder.bindItem(itemContainer as T)
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun <T> onBindFooterViewHolder(itemContainer: ItemContainer, holder: BaseViewHolder<T>) {
+        holder.isStickyHeader = isStickyHeader
+        holder.clickListener = clickListener
         holder.bindItem(itemContainer as T)
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun <T> onBindItemViewHolder(itemContainer: ItemContainer, holder: BaseViewHolder<T>) {
+        holder.isStickyHeader = isStickyHeader
+        holder.clickListener = clickListener
         holder.bindItem(itemContainer as T)
     }
 

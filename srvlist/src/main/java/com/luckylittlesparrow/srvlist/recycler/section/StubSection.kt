@@ -21,11 +21,20 @@ import android.view.View
 import com.luckylittlesparrow.srvlist.recycler.base.BaseViewHolder
 import com.luckylittlesparrow.srvlist.recycler.base.EmptyViewHolder
 import com.luckylittlesparrow.srvlist.recycler.filterable.FilterableSection
+import com.luckylittlesparrow.srvlist.recycler.filterable.FilterableSectionedAdapter
+import com.luckylittlesparrow.srvlist.recycler.simple.SimpleSectionedAdapter
 import com.luckylittlesparrow.srvlist.recycler.util.DiffUtilItemCallback
 
 /**
  * Section for usage in case, when it's necessary to show state for all adapter (e.g match parent layout),
- * not for each section separately
+ * not for each section separately.
+ * <p> StubSection will be automaticly removed from adapter, when real sections will be added. </p>
+ *
+ * @see SimpleSectionedAdapter
+ * @see FilterableSectionedAdapter
+ *
+ * @author Andrei Gusev
+ * @since  1.0
  */
 class StubSection(
     emptyLayoutId: Int? = null,
@@ -54,5 +63,4 @@ class StubSection(
 
     override fun addMoreItems(itemBundle: ItemBundle) {
     }
-
 }

@@ -19,20 +19,39 @@ package com.luckylittlesparrow.srvlist.recycler.base
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import com.luckylittlesparrow.srvlist.recycler.section.ItemContainer
+import com.luckylittlesparrow.srvlist.recycler.filterable.FilterableSectionedAdapter
+import com.luckylittlesparrow.srvlist.recycler.simple.SimpleSectionedAdapter
+import java.lang.ref.WeakReference
 
 /**
+ * BaseViewHolder with core functionality, all ViewHolders must extend it to be used in
+ * [FilterableSectionedAdapter] and [SimpleSectionedAdapter], in case if item binding is not needed,
+ * use [EmptyViewHolder]
+ *
+ * @see EmptyViewHolder
+ * @see FilterableSectionedAdapter
+ * @see SimpleSectionedAdapter
+ *
  * @param view view item
  * @param itemClickedListener on item click listener
+ *
+ * @author Andrei Gusev
+ * @since  1.0
  */
 abstract class BaseViewHolder<T>(
     view: View,
-    itemClickedListener: (T) -> Unit = {}
+    private val itemClickedListener: (T) -> Unit = {}
 ) : RecyclerView.ViewHolder(view) {
 
+    var item: T? = null
+
     /**
-     * Bind the data to the ViewHolder for Loaded state
+     * Bind an [item] to the ViewHolder for Loaded state
      *
      * @param item content to bind
+     *
+     * @see SectionState.LOADED
      */
     open fun bindItem(item: T) {
         this.item = item
@@ -62,11 +81,38 @@ abstract class BaseViewHolder<T>(
     open fun onClickAction() {
     }
 
-    var item: T? = null
-
     init {
         view.setOnClickListener {
-            item?.let { item -> itemClickedListener(item) }
+            item?.let {
+                if ((item as ItemContainer).isHeader()) {
+                    performClick()
+                } else if (isStickyHeader) {
+                    if (clickListener?.get()?.onItemClick(item as ItemContainer) == true) {
+                        performClick()
+                    }
+                } else performClick()
+            }
         }
+
     }
+
+    /**
+     * Bind the data to the ViewHolder for sticky item
+     *
+     * @param item content to bind
+     *
+     * @see BaseListAdapter.supportStickyHeader
+     */
+    @Suppress("UNCHECKED_CAST")
+    internal fun bindStickyItem(item: ItemContainer) {
+        bindItem(item as T)
+    }
+
+    fun performClick() {
+        item?.let { item -> itemClickedListener(item) }
+    }
+
+    internal var isStickyHeader = false
+
+    internal var clickListener: WeakReference<OnItemClickListener>? = null
 }

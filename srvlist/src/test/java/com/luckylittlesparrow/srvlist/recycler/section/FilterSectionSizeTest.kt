@@ -28,7 +28,7 @@ class FilterSectionSizeTest {
             .loadingResourceId(loadingResourceId)
             .emptyResourceId(emptyResourceId)
             .failedResourceId(failedResourceId)
-            .supportExpansion(true)
+            .supportExpandFunction(true)
             .supportShowMoreFunction(true)
             .collapsedItemCount(collapsedItemCount)
             .build()
@@ -59,7 +59,7 @@ class FilterSectionSizeTest {
 
         val section = object : FilterTestSection(
             TestItemsFactory.header,
-            TestItemsFactory.getNames()as List<TestItem>,
+            TestItemsFactory.getNames() as List<TestItem>,
             TestItemsFactory.footer
         ) {
             override fun getSectionParams(): SectionParams {
@@ -90,7 +90,7 @@ class FilterSectionSizeTest {
 
         val section = object : FilterTestSection(
             TestItemsFactory.header,
-            TestItemsFactory.getNames()as List<TestItem>,
+            TestItemsFactory.getNames() as List<TestItem>,
             TestItemsFactory.footer
         ) {
             override fun getSectionParams(): SectionParams {
@@ -115,7 +115,7 @@ class FilterSectionSizeTest {
 
         val section = object : FilterTestSection(
             TestItemsFactory.header,
-            TestItemsFactory.getNames()as List<TestItem>,
+            TestItemsFactory.getNames() as List<TestItem>,
             TestItemsFactory.footer
         ) {
             override fun getSectionParams(): SectionParams {
@@ -130,5 +130,28 @@ class FilterSectionSizeTest {
         assertEquals(section.currentSize(), section.filteredList.size)
     }
 
+    @Test
+    fun sectionCurrentListSizeStub() {
+
+        val sectionParameters = SectionParams.builder()
+            .headerResourceId(headerResourceId)
+            .itemResourceId(itemResourceId)
+            .footerResourceId(footerResourceId)
+            .loadingResourceId(loadingResourceId)
+            .emptyResourceId(emptyResourceId)
+            .failedResourceId(failedResourceId)
+            .build()
+
+        val section = object : FilterTestSection(
+        ) {
+            override fun getSectionParams(): SectionParams {
+                return sectionParameters
+            }
+        }
+
+        assertEquals(section.currentSize(), 0)
+        section.state = SectionState.LOADING
+        assertEquals(section.currentSize(), 1)
+    }
 
 }

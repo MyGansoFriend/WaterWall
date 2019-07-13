@@ -21,6 +21,10 @@ import com.luckylittlesparrow.srvlist.recycler.section.ItemContainer
 import com.luckylittlesparrow.srvlist.recycler.section.Section
 import com.luckylittlesparrow.srvlist.recycler.state.SectionState
 
+/**
+ * @author Andrei Gusev
+ * @since  1.0
+ */
 internal interface SectionDao<H, I, F> {
     val section: Section<H, I, F>
 
@@ -57,4 +61,6 @@ internal interface SectionDao<H, I, F> {
     fun filter(search: CharSequence): Pair<List<ItemContainer>, List<ItemContainer>>? = null
 
     fun getContentItem(position: Int): ItemContainer
+
+    fun getVisibleItemsList(): List<ItemContainer>
 }

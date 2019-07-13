@@ -6,17 +6,23 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.luckylittlesparrow.srvlist.example.R
 import com.luckylittlesparrow.srvlist.example.listsample.ItemsFactory
 import com.luckylittlesparrow.srvlist.recycler.filterable.FilterableSectionedAdapter
+import com.luckylittlesparrow.srvlist.recycler.section.ItemContainer
 import kotlinx.android.synthetic.main.fragment_filter_list.*
 
 class EventFilterListFragment : Fragment() {
 
     private val sectionAdapter = FilterableSectionedAdapter()
+
+    private val clickListener = { item: ItemContainer ->
+        Toast.makeText(context, item.toString(), Toast.LENGTH_SHORT).show()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,7 +34,8 @@ class EventFilterListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initListeners()
-        val filterRecyclerView=view.findViewById<RecyclerView>(R.id.filterRecyclerView)
+        val filterRecyclerView = view.findViewById<RecyclerView>(R.id.filterRecyclerView)
+        sectionAdapter.supportStickyHeader = true
         filterRecyclerView.adapter = sectionAdapter
         filterRecyclerView.layoutManager = LinearLayoutManager(context)
 
@@ -43,7 +50,8 @@ class EventFilterListFragment : Fragment() {
             EventFooter("yesterday footer")
         )
 
-        sectionAdapter.addSections(listOf(section1,section2))
+
+        sectionAdapter.addSections(listOf(section1, section2))
     }
 
     private fun initListeners() {
@@ -56,7 +64,7 @@ class EventFilterListFragment : Fragment() {
             }
 
             override fun afterTextChanged(editable: Editable) {
-                 sectionAdapter.filter(editable.toString())
+                sectionAdapter.filter(editable.toString())
             }
         })
     }

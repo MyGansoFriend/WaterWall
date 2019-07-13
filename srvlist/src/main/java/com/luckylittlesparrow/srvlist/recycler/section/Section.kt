@@ -21,18 +21,42 @@ import android.view.View
 import androidx.annotation.LayoutRes
 import com.luckylittlesparrow.srvlist.recycler.base.BaseViewHolder
 import com.luckylittlesparrow.srvlist.recycler.base.EmptyViewHolder
+import com.luckylittlesparrow.srvlist.recycler.simple.SimpleSectionedAdapter
 import com.luckylittlesparrow.srvlist.recycler.state.SectionState
 import com.luckylittlesparrow.srvlist.recycler.state.State
 import com.luckylittlesparrow.srvlist.recycler.util.DiffUtilItemCallback
 
 /**
+ * Base Section aka Container with configured data to be used in [SimpleSectionedAdapter].
  *
+ * Supported functionality:
+ *           States
+ *           Decorations
+ *           Expandable sections
+ *           Sticky headers
+ *           Show more, show less
+ *
+ * @param H the type of header element in this section
+ * @param I the type of content element in this section
+ * @param F the type of footer element in this section
+ *
+ * @param headerItem data for header
+ * @param contentItems data for items
+ * @param footerItem data for footer
+ * @param footerItem data for footer
+ * @param headerClickListener click listener on header item
+ * @param itemClickListener click listener on content item
+ * @param footerClickListener click listener on footer item
+ *
+ * @see SimpleSectionedAdapter
+ *
+ * @author Andrei Gusev
+ * @since  1.0
  */
 abstract class Section<H, I, F>(
     headerItem: ItemContainer? = null,
     contentItems: List<ItemContainer>? = null,
     footerItem: ItemContainer? = null,
-    sectionKey: String? = null,
     val headerClickListener: (ItemContainer) -> Unit = {},
     val itemClickListener: (ItemContainer) -> Unit = {},
     val footerClickListener: (ItemContainer) -> Unit = {}
@@ -62,36 +86,100 @@ abstract class Section<H, I, F>(
 
     internal var isVisible = true
 
+    /**
+     * Check if section has header.
+     */
     var hasHeader: Boolean = false
         private set
 
+    /**
+     * Check if section has footer.
+     */
     var hasFooter: Boolean = false
         private set
 
+    /**
+     * Check if section expanded.
+     */
     var isExpanded: Boolean = true
         private set
 
+    /**
+     * Check if section support [SectionState].
+     *
+     * @see SectionState
+     */
     var supportStates: Boolean = false
         private set
 
-    var supportExpansion: Boolean = false
+    /**
+     * Check if section support expand/collapse functionality.
+     */
+    var supportExpandFunction: Boolean = false
         private set
 
+    /**
+     * Check if section support showMore/showLess functionality.
+     */
     var supportShowMore: Boolean = false
         private set
 
+    /**
+     * Minimum collapsed items to be shown if section support showMore/showLess functionality.
+     *
+     * @see supportShowMore
+     */
     var collapsedItemCount: Int = 4
         private set
 
+    /**
+     * Indicates if section showMore function called.
+     */
     var isShowMoreClicked: Boolean = false
         private set
 
+    /**
+     * Click listener to call, when section need to expand/collapse.
+     *
+     * Usage: In your section implementation put this listener to viewHolder
+     *
+     *     override fun getHeaderViewHolder(view: View): BaseViewHolder<ExpandableHeader> {
+     *             return ExpandableHeaderViewHolder(view, onExpandClickListener, headerClickListener)
+     *      }
+     *
+     * and invoke it on the view listener ->
+     *
+     *  expandItem.setOnClickListener {
+     *      expandClickedListener.invoke()
+     *      isExpanded = !isExpanded
+     *    }
+     *
+     * @see supportExpandFunction
+     */
     val onExpandClickListener: () -> Unit = {
-        check(supportExpansion) { "Section must support expand functionality" }
+        check(supportExpandFunction) { "Section must support expand functionality" }
         isExpanded = !isExpanded
         sectionStateCallback?.onSectionExpandChange(key, isExpanded)
     }
 
+    /**
+     * Click listener to call, when section need to showMore/showLess.
+     *
+     * Usage: In your section implementation put this listener to viewHolder
+     *
+     *     override fun getHeaderViewHolder(view: View): BaseViewHolder<ExpandableHeader> {
+     *             return ShowMoreHeaderViewHolder(view, onShowMoreClickListener, headerClickListener)
+     *      }
+     *
+     * and invoke it on the view listener ->
+     *
+     *  showMoreItem.setOnClickListener {
+     *      onShowMoreClickListener.invoke()
+     *      isExpanded = !isExpanded
+     *    }
+     * @see supportShowMore
+     *
+     */
     val onShowMoreClickListener: () -> Unit = {
         check(supportShowMore) { "Section must support \"show more\" functionality" }
         isShowMoreClicked = !isShowMoreClicked
@@ -100,7 +188,7 @@ abstract class Section<H, I, F>(
 
     init {
         setup()
-        initItems(sectionKey, headerItem, contentItems, footerItem)
+        initItems(headerItem, contentItems, footerItem)
     }
 
     private fun setup() {
@@ -121,18 +209,15 @@ abstract class Section<H, I, F>(
         supportShowMore = getSectionParams().supportShowMoreFunction
         collapsedItemCount = getSectionParams().collapsedItemCount
 
-        supportExpansion = getSectionParams().supportExpansionFunction
+        supportExpandFunction = getSectionParams().supportExpandFunction
         isExpanded = getSectionParams().isExpandedByDefault
     }
 
     private fun initItems(
-        sectionKey: String?,
         headerItem: ItemContainer?,
         contentItems: List<ItemContainer>?,
         footerItem: ItemContainer?
     ) {
-        sectionKey?.let { key = it }
-
         headerItem?.let { sourceList.add(it) }
 
         contentItems?.let {
@@ -148,32 +233,109 @@ abstract class Section<H, I, F>(
         if (sourceList.isEmpty()) sourceList.add(stateItem)
     }
 
+    /**
+     * Get mutable copy of all items stored in section.
+     *
+     * @return mutable list with items
+     */
+    fun getAllItems() = sourceList.toMutableList()
+
+    /**
+     * Check if section has no items.
+     *
+     * @return [true] if section is empty, [false] otherwise
+     */
+    fun isEmpty() = sourceList.size == 0
+
+    /**
+     * Get key of the section
+     *
+     * @return key of the section, [null] if section doesn't added to the adapter
+     */
+    fun getKey() = if (::key.isInitialized) key else null
+
+    /**
+     * Provide parameters to the section to initialize functionality.
+     *
+     * @see SectionParams
+     *
+     * @return section params
+     */
     abstract fun getSectionParams(): SectionParams
 
+    /**
+     * Provide Callback for calculating the diff between two non-null items in a list.
+     *
+     * @see DiffUtilItemCallback
+     *
+     * @return diffUtilItemCallback
+     */
     abstract fun getDiffUtilItemCallback(): DiffUtilItemCallback
 
+    /**
+     * Provide ViewHolder for content items.
+     *
+     * @see BaseViewHolder<T>
+     *
+     * @return ViewHolder
+     */
     abstract fun getItemViewHolder(view: View): BaseViewHolder<I>
 
+    /**
+     * Provide ViewHolder for header item.
+     *
+     * @see BaseViewHolder<T>
+     *
+     * @return ViewHolder
+     */
     open fun getHeaderViewHolder(view: View): BaseViewHolder<H> {
         check(hasHeader) { "Forgot to override HeaderViewHolder getter" }
         return EmptyViewHolder(view)
     }
 
+    /**
+     * Provide ViewHolder for footer item.
+     *
+     * @see BaseViewHolder<T>
+     *
+     * @return ViewHolder
+     */
     open fun getFooterViewHolder(view: View): BaseViewHolder<F> {
         check(hasFooter) { "Forgot to override FooterViewHolder getter" }
         return EmptyViewHolder(view)
     }
 
+    /**
+     * Provide ViewHolder for loading item.
+     *
+     * @see BaseViewHolder<T>
+     *
+     * @return ViewHolder
+     */
     open fun getLoadingViewHolder(view: View): BaseViewHolder<Nothing> {
         check(loadingResourceId != null) { "Forgot to override LoadingViewHolder getter" }
         return EmptyViewHolder(view)
     }
 
+    /**
+     * Provide ViewHolder for empty item.
+     *
+     * @see BaseViewHolder<T>
+     *
+     * @return ViewHolder
+     */
     open fun getEmptyViewHolder(view: View): BaseViewHolder<Nothing> {
         check(loadingResourceId != null) { "Forgot to override EmptyViewHolder getter" }
         return EmptyViewHolder(view)
     }
 
+    /**
+     * Provide ViewHolder for failed item.
+     *
+     * @see BaseViewHolder<T>
+     *
+     * @return ViewHolder
+     */
     open fun getFailedViewHolder(view: View): BaseViewHolder<Nothing> {
         check(loadingResourceId != null) { "Forgot to override FailedViewHolder getter" }
         return EmptyViewHolder(view)
@@ -187,15 +349,23 @@ abstract class Section<H, I, F>(
 
     override fun failedStateRequirements(): Boolean = failedResourceId != null
 
-    override fun provideId(): String = key
+    override fun provideId(): String = if (::key.isInitialized) key else ""
 
+    /**
+     * Add more items to the section, if bundle contains header and footer,
+     * and they were provided at section initialization, they will be replaced by new ones
+     *
+     * @see ItemBundle
+     *
+     * @param itemBundle bundle with items to add
+     */
     open fun addMoreItems(itemBundle: ItemBundle) {
         if (itemBundle.isEmpty()) return
         check(
-            !hasHeader()
+            !hasHeader
                     || sourceList.isNotEmpty()
                     && sourceList.first().isHeader()
-                    || hasHeader() && itemBundle.headerItem != null
+                    || hasHeader && itemBundle.headerItem != null
         ) { "Forgot to provide header item" }
 
         sourceList.remove(stateItem)
@@ -217,7 +387,7 @@ abstract class Section<H, I, F>(
         itemBundle.contentItems?.let {
             //itemsCount += sourceList.size
             itemsCount += it.size
-            if (!isEmpty && hasFooter() && sourceList.last().isFooter()) addItemsWithFooter(it)
+            if (!isEmpty && hasFooter && sourceList.last().isFooter()) addItemsWithFooter(it)
             else {
                 sourceList.addAll(it)
             }
@@ -240,12 +410,14 @@ abstract class Section<H, I, F>(
                 if (!isNewContent) sectionStateCallback?.onSectionContentChanged(provideId())
             }
         }
-
-        if (sourceList.isEmpty()) sourceList.add(stateItem)
     }
 
     /**
-     * Replace previous items with the new items
+     * Add items or replace previous items with the new items
+     *
+     * @see ItemBundle
+     *
+     * @param itemBundle bundle with items to add
      */
     open fun replaceItems(itemBundle: ItemBundle) {
         if (itemBundle.isEmpty()) return
@@ -254,11 +426,10 @@ abstract class Section<H, I, F>(
         sourceList.clear()
 
         check(
-            !hasHeader() || hasHeader() && itemBundle.headerItem != null
+            !hasHeader || hasHeader && itemBundle.headerItem != null
         ) { "Forgot to provide header item" }
 
         var itemsCount = 0
-
 
         itemBundle.headerItem?.let {
             sourceList.add(0, it)
@@ -278,8 +449,6 @@ abstract class Section<H, I, F>(
         if (state == SectionState.LOADED) {
             sectionStateCallback?.onSectionContentUpdated(previousList, sourceList, provideId())
         }
-
-        if (sourceList.isEmpty()) sourceList.add(stateItem)
     }
 
     internal open fun currentSize(): Int {
@@ -291,14 +460,6 @@ abstract class Section<H, I, F>(
 
     internal open fun originalSize(): Int {
         return sourceList.size
-    }
-
-    internal fun hasFooter(): Boolean {
-        return footerResourceId != null
-    }
-
-    internal fun hasHeader(): Boolean {
-        return headerResourceId != null
     }
 
     protected fun getFooterIndex(): Int = sourceList.size - 1

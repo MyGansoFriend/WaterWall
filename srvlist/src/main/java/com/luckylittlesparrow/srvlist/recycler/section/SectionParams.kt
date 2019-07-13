@@ -18,32 +18,80 @@ package com.luckylittlesparrow.srvlist.recycler.section
  */
 
 import androidx.annotation.LayoutRes
+import com.luckylittlesparrow.srvlist.recycler.filterable.FilterableSection
 
 /**
  * Class used as constructor parameters of [Section].
+ *
+ * @see Section<H,I,F>
+ * @see FilterableSection<H,I,F>
+ *
+ * @author Andrei Gusev
+ * @since  1.0
  */
 class SectionParams private constructor(builder: Builder) {
+
+    /**
+     * Layout resource for content items
+     */
     @LayoutRes
     val itemResourceId: Int?
+
+    /**
+     * Layout resource for header item
+     */
     @LayoutRes
     val headerResourceId: Int?
+
+    /**
+     * Layout resource for footer item
+     */
     @LayoutRes
     val footerResourceId: Int?
+
+    /**
+     * Layout resource for loading item
+     */
     @LayoutRes
     val loadingResourceId: Int?
+
+    /**
+     * Layout resource for failed item
+     */
     @LayoutRes
     val failedResourceId: Int?
+
+    /**
+     * Layout resource for empty item
+     */
     @LayoutRes
     val emptyResourceId: Int?
 
+    /**
+     * Support header filter in [FilterableSection]
+     *
+     * @see FilterableSection
+     */
     val supportFilterHeaderFunction: Boolean
 
-    val supportExpansionFunction: Boolean
+    /**
+     * Support expand/collapse function
+     */
+    val supportExpandFunction: Boolean
 
+    /**
+     * Support showMore/showLess function
+     */
     val supportShowMoreFunction: Boolean
 
+    /**
+     * Is Section expanded by default
+     */
     val isExpandedByDefault: Boolean
 
+    /**
+     * Minimum collapsed items to be shown if section support showMore/showLess functionality.
+     */
     val collapsedItemCount: Int
 
     init {
@@ -54,7 +102,7 @@ class SectionParams private constructor(builder: Builder) {
         failedResourceId = builder.failedResourceId
         emptyResourceId = builder.emptyResourceId
         supportFilterHeaderFunction = builder.supportFilterHeaderFunction
-        supportExpansionFunction = builder.supportExpansionFunction
+        supportExpandFunction = builder.supportExpandFunction
         isExpandedByDefault = builder.isExpandedByDefault
         supportShowMoreFunction = builder.supportShowMoreFunction
         collapsedItemCount = builder.collapsedItemCount
@@ -83,7 +131,7 @@ class SectionParams private constructor(builder: Builder) {
         var supportFilterHeaderFunction: Boolean = false
             private set
 
-        var supportExpansionFunction: Boolean = false
+        var supportExpandFunction: Boolean = false
             private set
 
         var supportShowMoreFunction: Boolean = false
@@ -177,13 +225,13 @@ class SectionParams private constructor(builder: Builder) {
         }
 
         /**
-         * Support expansion function
+         * Support expand/collapse function
          *
-         * @param supportExpansion
+         * @param supportExpandFunction
          * @return this builder
          */
-        fun supportExpansion(supportExpansion: Boolean): Builder {
-            this.supportExpansionFunction = supportExpansion
+        fun supportExpandFunction(supportExpandFunction: Boolean): Builder {
+            this.supportExpandFunction = supportExpandFunction
             return this
         }
 
@@ -199,7 +247,7 @@ class SectionParams private constructor(builder: Builder) {
         }
 
         /**
-         * Support show more function
+         * Support showMore/showLess function
          *
          * @param supportShowMoreFunction
          * @return this builder
@@ -234,7 +282,6 @@ class SectionParams private constructor(builder: Builder) {
     }
 
     companion object {
-
         fun builder(): Builder {
             return Builder()
         }

@@ -1,5 +1,3 @@
-package com.luckylittlesparrow.srvlist.recycler.util
-
 /*
  *  Copyright 2019 Gusev Andrei
  *
@@ -17,4 +15,20 @@ package com.luckylittlesparrow.srvlist.recycler.util
  *
  */
 
-class DuplicateSectionException(key: String) : Exception("Section with key:$key is already provided in Adapter")
+package com.luckylittlesparrow.srvlist.recycler.testdata
+
+import java.lang.reflect.Field
+
+fun Any.getField(fieldName: String): Field {
+    val field = this::class.java.getDeclaredField(fieldName)
+    field.isAccessible = true
+    return field
+}
+
+
+const val itemResourceId = 1
+const val headerResourceId = 2
+const val footerResourceId = 3
+const val failedResourceId = 4
+const val loadingResourceId = 5
+const val emptyResourceId = 6

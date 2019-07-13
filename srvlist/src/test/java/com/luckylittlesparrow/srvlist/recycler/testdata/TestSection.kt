@@ -1,8 +1,8 @@
 package com.luckylittlesparrow.srvlist.recycler.testdata
 
 import android.view.View
-import com.luckylittlesparrow.srvlist.recycler.base.EmptyViewHolder
 import com.luckylittlesparrow.srvlist.recycler.base.BaseViewHolder
+import com.luckylittlesparrow.srvlist.recycler.base.EmptyViewHolder
 import com.luckylittlesparrow.srvlist.recycler.section.ItemContainer
 import com.luckylittlesparrow.srvlist.recycler.section.Section
 import com.luckylittlesparrow.srvlist.recycler.section.SectionParams
@@ -12,7 +12,10 @@ open class TestSection(
     headerItem: TestHeader? = null,
     contentItems: List<TestItem>? = null,
     footerItem: TestFooter? = null
-) : Section<TestHeader, TestItem, TestFooter>(headerItem, contentItems, footerItem) {
+) : Section<TestHeader, TestItem, TestFooter>(headerItem, contentItems, footerItem,
+    itemClickListener = { item: ItemContainer -> },
+    headerClickListener = { item: ItemContainer -> },
+    footerClickListener = { item: ItemContainer -> }) {
     override fun getSectionParams(): SectionParams {
         return SectionParams.builder().build()
     }

@@ -25,6 +25,13 @@ class DiffListUtilTest {
     }
 
     @Test
+    fun isTheSameSection(){
+        assertFalse(diffListUtil.isTheSameSection)
+        diffListUtil.isTheSameSection = true
+        assertTrue(diffListUtil.isTheSameSection)
+    }
+
+    @Test
     fun areItemsTheSame() {
         whenever(sectionMediator.getSectionByItems(oldList[0], newList[0])).thenReturn(section)
         whenever(section.areItemsTheSame(oldList[0], newList[0])).thenReturn(true)
@@ -34,8 +41,27 @@ class DiffListUtilTest {
     }
 
     @Test
-    fun areItemsTheSameDifferentType() {
+    fun areItemsTheSame_SectionNull() {
+        whenever(sectionMediator.getSectionByItems(oldList[0], newList[0])).thenReturn(null)
+        whenever(section.areItemsTheSame(oldList[0], newList[0])).thenReturn(true)
 
+        val result = diffListUtil.areItemsTheSame(0, 0)
+        assertFalse(result)
+    }
+
+    @Test
+    fun areItemsTheSame_SameSection() {
+        diffListUtil.isTheSameSection = true
+
+        whenever(sectionMediator.getSectionByItem(newList[0])).thenReturn(section)
+        whenever(section.areItemsTheSame(oldList[0], newList[0])).thenReturn(true)
+
+        val result = diffListUtil.areItemsTheSame(0, 0)
+        assertTrue(result)
+    }
+
+    @Test
+    fun areItemsTheSameDifferentType() {
         val result = diffListUtil.areItemsTheSame(oldList.lastIndex, 0)
         assertFalse(result)
     }
@@ -57,9 +83,28 @@ class DiffListUtilTest {
     }
 
     @Test
-    fun areContentsTheSameDifferentType() {
+    fun areContentsTheSame_SectionNull() {
+        whenever(sectionMediator.getSectionByItems(oldList[0], newList[0])).thenReturn(null)
+        whenever(section.areContentsTheSame(oldList[0], newList[0])).thenReturn(true)
 
+        val result = diffListUtil.areContentsTheSame(0, 0)
+        assertFalse(result)
+    }
+
+    @Test
+    fun areContentsTheSameDifferentType() {
         val result = diffListUtil.areContentsTheSame(oldList.lastIndex, 0)
         assertFalse(result)
+    }
+
+    @Test
+    fun areContentsTheSame_SameSection() {
+        diffListUtil.isTheSameSection = true
+
+        whenever(sectionMediator.getSectionByItem(newList[0])).thenReturn(section)
+        whenever(section.areContentsTheSame(oldList[0], newList[0])).thenReturn(true)
+
+        val result = diffListUtil.areContentsTheSame(0, 0)
+        assertTrue(result)
     }
 }

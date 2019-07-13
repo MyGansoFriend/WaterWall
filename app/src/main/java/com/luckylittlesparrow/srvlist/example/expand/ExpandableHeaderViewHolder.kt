@@ -6,8 +6,11 @@ import android.widget.TextView
 import com.luckylittlesparrow.srvlist.example.R
 import com.luckylittlesparrow.srvlist.recycler.base.BaseViewHolder
 
-class ExpandableHeaderViewHolder constructor(view: View, val expandClickedListener: () -> Unit) :
-    BaseViewHolder<ExpandableHeader>(view) {
+class ExpandableHeaderViewHolder constructor(
+    view: View, val expandClickedListener: () -> Unit,
+    headerClickListener: (ExpandableHeader) -> Unit
+) :
+    BaseViewHolder<ExpandableHeader>(view, headerClickListener) {
 
     private var isExpanded = true
     private val itemDayTextView: TextView = view.findViewById(R.id.itemDayTextView)

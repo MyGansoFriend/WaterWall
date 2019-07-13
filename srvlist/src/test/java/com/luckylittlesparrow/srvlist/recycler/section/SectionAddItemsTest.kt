@@ -6,9 +6,9 @@ import com.luckylittlesparrow.srvlist.recycler.testdata.TestItemsFactory
 import com.luckylittlesparrow.srvlist.recycler.testdata.TestSection
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import org.junit.Assert.*
 import org.junit.Test
+import org.hamcrest.core.Is.`is` as Is
 
 class SectionAddItemsTest {
 
@@ -56,6 +56,35 @@ class SectionAddItemsTest {
         assertEquals(section.sourceList, expectedList)
     }
 
+    @Test
+    fun initSectionWithHeaderAndEmptyBundle() {
+
+        val sectionParameters = SectionParams.builder()
+            .headerResourceId(headerResourceId)
+            .itemResourceId(itemResourceId)
+            .footerResourceId(footerResourceId)
+            .build()
+
+        val section = object : TestSection(
+            headerItem = TestItemsFactory.header
+        ) {
+            override fun getSectionParams(): SectionParams {
+                return sectionParameters
+            }
+        }
+
+        val expectedList = ArrayList<ItemContainer>()
+        expectedList.add(TestItemsFactory.header)
+
+        assertEquals(section.sourceList, expectedList)
+
+        section.addMoreItems(
+            ItemBundle()
+        )
+
+        assertEquals(section.sourceList, expectedList)
+    }
+
 
     @Test
     fun initSectionWithBundle() {
@@ -74,7 +103,8 @@ class SectionAddItemsTest {
 
         val expectedList = ArrayList<ItemContainer>()
 
-        assertTrue(section.sourceList.isEmpty())
+        assertThat(section.sourceList.size, Is(1))
+        assertTrue(section.sourceList.first() is StubItem)
 
         section.addMoreItems(
             ItemBundle(
@@ -88,6 +118,7 @@ class SectionAddItemsTest {
         expectedList.addAll(TestItemsFactory.getNames())
         expectedList.add(TestItemsFactory.footer)
 
+        assertTrue(section.sourceList.first() !is StubItem)
         assertEquals(section.sourceList, expectedList)
     }
 
@@ -106,14 +137,47 @@ class SectionAddItemsTest {
             }
         }
 
-        assertTrue(section.sourceList.isEmpty())
+        assertThat(section.sourceList.size, Is(1))
+        assertTrue(section.sourceList.first() is StubItem)
 
+        val list = TestItemsFactory.getNames()
         section.addMoreItems(
             ItemBundle(
-                contentItems = TestItemsFactory.getNames(),
+                contentItems = list,
                 footerItem = TestItemsFactory.footer
             )
         )
+        assertTrue(section.sourceList.first() !is StubItem)
+        assertThat(section.sourceList.size, Is(list.size + 1))
+    }
+
+    @Test(expected = IllegalStateException::class)
+    fun replaceItemsWithBundleForgetHeader() {
+
+        val sectionParameters = SectionParams.builder()
+            .headerResourceId(headerResourceId)
+            .itemResourceId(itemResourceId)
+            .footerResourceId(footerResourceId)
+            .build()
+
+        val section = object : TestSection() {
+            override fun getSectionParams(): SectionParams {
+                return sectionParameters
+            }
+        }
+
+        assertThat(section.sourceList.size, Is(1))
+        assertTrue(section.sourceList.first() is StubItem)
+
+        val list = TestItemsFactory.getNames()
+        section.replaceItems(
+            ItemBundle(
+                contentItems = list,
+                footerItem = TestItemsFactory.footer
+            )
+        )
+        assertTrue(section.sourceList.first() !is StubItem)
+        assertThat(section.sourceList.size, Is(list.size + 1))
     }
 
     @Test
@@ -132,7 +196,8 @@ class SectionAddItemsTest {
 
         val expectedList = ArrayList<ItemContainer>()
 
-        assertTrue(section.sourceList.isEmpty())
+        assertThat(section.sourceList.size, Is(1))
+        assertTrue(section.sourceList.first() is StubItem)
 
         section.addMoreItems(
             ItemBundle(
@@ -144,6 +209,7 @@ class SectionAddItemsTest {
         expectedList.addAll(TestItemsFactory.getNames())
         expectedList.add(TestItemsFactory.footer)
 
+        assertTrue(section.sourceList.first() !is StubItem)
         assertEquals(section.sourceList, expectedList)
     }
 

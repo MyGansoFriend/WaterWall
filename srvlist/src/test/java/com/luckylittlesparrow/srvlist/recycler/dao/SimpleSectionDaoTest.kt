@@ -4,6 +4,7 @@ import com.luckylittlesparrow.srvlist.recycler.section.ItemContainer
 import com.luckylittlesparrow.srvlist.recycler.section.Section
 import com.luckylittlesparrow.srvlist.recycler.section.SectionParams
 import com.luckylittlesparrow.srvlist.recycler.simple.SimpleSectionDao
+import com.luckylittlesparrow.srvlist.recycler.state.SectionState
 import com.luckylittlesparrow.srvlist.recycler.testdata.*
 import com.luckylittlesparrow.srvlist.recycler.util.DiffUtilItemCallback
 import com.nhaarman.mockitokotlin2.mock
@@ -15,6 +16,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.junit.MockitoJUnitRunner
+import java.lang.reflect.Field
 
 
 @RunWith(MockitoJUnitRunner::class)
@@ -30,7 +32,26 @@ class SimpleSectionDaoTest {
 
     private lateinit var sectionDao: SimpleSectionDao<*, *, *>
 
-    private lateinit var section: Section<TestHeader, TestItem, TestFooter>
+    private val sectionParameters = SectionParams.builder()
+        .headerResourceId(headerResourceId)
+        .itemResourceId(itemResourceId)
+        .footerResourceId(footerResourceId)
+        .loadingResourceId(loadingResourceId)
+        .build()
+
+    private var section: Section<TestHeader, TestItem, TestFooter> = spy(object : TestSection(
+        TestItemsFactory.header,
+        TestItemsFactory.getNames(),
+        TestItemsFactory.footer
+    ) {
+        override fun getSectionParams(): SectionParams {
+            return sectionParameters
+        }
+
+        override fun getDiffUtilItemCallback(): DiffUtilItemCallback {
+            return diff
+        }
+    })
 
     private val newItem = TestItem("new")
     private val oldItem = TestItem("old")
@@ -39,25 +60,6 @@ class SimpleSectionDaoTest {
     private val diff: DiffUtilItemCallback = mock()
     @Before
     fun setUp() {
-        val sectionParameters = SectionParams.builder()
-            .headerResourceId(headerResourceId)
-            .itemResourceId(itemResourceId)
-            .footerResourceId(footerResourceId)
-            .build()
-
-        section = spy(object : TestSection(
-            TestItemsFactory.header,
-            TestItemsFactory.getNames(),
-            TestItemsFactory.footer
-        ) {
-            override fun getSectionParams(): SectionParams {
-                return sectionParameters
-            }
-
-            override fun getDiffUtilItemCallback(): DiffUtilItemCallback {
-                return diff
-            }
-        })
         sectionDao = SimpleSectionDao(section)
 
         section.sectionStateCallback = mock()
@@ -125,10 +127,10 @@ class SimpleSectionDaoTest {
         verify(section).originalSize()
 
         sectionDao.hasHeader()
-        verify(section).hasHeader()
+        verify(section).hasHeader
 
         sectionDao.hasFooter()
-        verify(section).hasFooter()
+        verify(section).hasFooter
 
         sectionDao.isVisible()
         verify(section).isVisible
@@ -144,6 +146,32 @@ class SimpleSectionDaoTest {
     fun hasItems() {
         assertFalse(sectionDao.hasItems(newItem, oldItem))
         assertTrue(sectionDao.hasItems(section.sourceList[1], section.sourceList[2]))
+    }
+
+    @Test
+    fun filter() {
+        assertNull(sectionDao.filter("s"))
+    }
+
+    @Test
+    fun getVisibleItemsList_Expanded() {
+        section.state = SectionState.LOADED
+        assertEquals(sectionDao.getVisibleItemsList(), section.sourceList)
+
+        section.state = SectionState.LOADING
+        assertEquals(sectionDao.getVisibleItemsList(), section.sourceList.subList(0, 2))
+    }
+
+    @Test
+    fun getVisibleItemsList_Collapsed() {
+        getField().set(section, false)
+        assertEquals(sectionDao.getVisibleItemsList(), listOf(section.sourceList.first()))
+    }
+
+    private fun getField(): Field {
+        val field = Section::class.java.getDeclaredField("isExpanded")
+        field.isAccessible = true
+        return field
     }
 
 }

@@ -1,5 +1,7 @@
 package com.luckylittlesparrow.srvlist.recycler.section
 
+import com.luckylittlesparrow.srvlist.recycler.filterable.FilterableSection
+
 /*
  *  Copyright 2019 Gusev Andrei
  *
@@ -18,12 +20,23 @@ package com.luckylittlesparrow.srvlist.recycler.section
  */
 
 /**
- * Container for new data submission to the Section
+ * Class container for new data submission to the Section
+ *
+ * @see Section<H,I,F>
+ * @see FilterableSection<H,I,F>
+ *
+ * @author Andrei Gusev
+ * @since  1.0
  */
 data class ItemBundle(
     val headerItem: ItemContainer? = null,
     val contentItems: List<ItemContainer>? = null,
     val footerItem: ItemContainer? = null
 ) {
+    /**
+     * Check if container is empty, there is no purpose to submit empty container, nothing will happened
+     *
+     * @return [true] if container is empty, otherwise [false]
+     */
     fun isEmpty() = headerItem == null && contentItems == null && footerItem == null
 }

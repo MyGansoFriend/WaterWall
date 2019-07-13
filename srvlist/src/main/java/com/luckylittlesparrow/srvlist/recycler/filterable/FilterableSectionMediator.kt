@@ -22,6 +22,10 @@ import com.luckylittlesparrow.srvlist.recycler.section.Section
 import com.luckylittlesparrow.srvlist.recycler.state.SectionStateCallback
 import java.util.*
 
+/**
+ * @author Andrei Gusev
+ * @since  1.0
+ */
 internal class FilterableSectionMediator : BaseSectionMediator() {
 
     @Suppress("UNCHECKED_CAST")

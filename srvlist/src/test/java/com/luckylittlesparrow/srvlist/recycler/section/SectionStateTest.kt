@@ -5,6 +5,7 @@ import com.luckylittlesparrow.srvlist.recycler.testdata.TestItemsFactory
 import com.luckylittlesparrow.srvlist.recycler.testdata.TestSection
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.never
+import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import org.junit.Test
 
@@ -88,10 +89,18 @@ class SectionStateTest {
             SectionState.EMPTY,
             SectionState.LOADED
         )
+
+        section.state = SectionState.FAILED
+
+        verify(section.sectionStateCallback)!!.onSectionStateChanged(
+            section.key,
+            SectionState.FAILED,
+            SectionState.EMPTY
+        )
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun changeSectionStateWithEmptyResources() {
+    fun changeSectionStateWithEmptyResources_EMPTY() {
         val sectionParameters = SectionParams.builder()
             .headerResourceId(headerResourceId)
             .itemResourceId(itemResourceId)
@@ -111,6 +120,93 @@ class SectionStateTest {
         section.sectionStateCallback = mock()
         section.key = "KEY"
         section.state = SectionState.EMPTY
+
+        verify(section.sectionStateCallback, never())!!.onSectionStateChanged(
+            section.key,
+            SectionState.EMPTY,
+            SectionState.LOADED
+        )
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun changeSectionStateWithEmptyResources_LOADING() {
+        val sectionParameters = SectionParams.builder()
+            .headerResourceId(headerResourceId)
+            .itemResourceId(itemResourceId)
+            .footerResourceId(footerResourceId)
+            .build()
+
+        val section = object : TestSection(
+            TestItemsFactory.header,
+            TestItemsFactory.getNames(),
+            TestItemsFactory.footer
+        ) {
+            override fun getSectionParams(): SectionParams {
+                return sectionParameters
+            }
+        }
+
+        section.sectionStateCallback = mock()
+        section.key = "KEY"
+        section.state = SectionState.LOADING
+
+        verify(section.sectionStateCallback, never())!!.onSectionStateChanged(
+            section.key,
+            SectionState.EMPTY,
+            SectionState.LOADED
+        )
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun changeSectionStateWithEmptyResources_FAILED() {
+        val sectionParameters = SectionParams.builder()
+            .headerResourceId(headerResourceId)
+            .itemResourceId(itemResourceId)
+            .footerResourceId(footerResourceId)
+            .build()
+
+        val section = object : TestSection(
+            TestItemsFactory.header,
+            TestItemsFactory.getNames(),
+            TestItemsFactory.footer
+        ) {
+            override fun getSectionParams(): SectionParams {
+                return sectionParameters
+            }
+        }
+
+        section.sectionStateCallback = mock()
+        section.key = "KEY"
+        section.state = SectionState.FAILED
+
+        verify(section.sectionStateCallback, never())!!.onSectionStateChanged(
+            section.key,
+            SectionState.EMPTY,
+            SectionState.LOADED
+        )
+    }
+
+
+    @Test(expected = IllegalArgumentException::class)
+    fun changeSectionStateWithEmptyResources_LOADED() {
+        val sectionParameters = SectionParams.builder()
+            .headerResourceId(headerResourceId)
+            .footerResourceId(footerResourceId)
+            .build()
+
+        val section = object : TestSection(
+            TestItemsFactory.header,
+            TestItemsFactory.getNames(),
+            TestItemsFactory.footer
+        ) {
+            override fun getSectionParams(): SectionParams {
+                return sectionParameters
+            }
+        }
+
+        section.sectionStateCallback = mock()
+        section.key = "KEY"
+        section.state = SectionState.LOADED
 
         verify(section.sectionStateCallback, never())!!.onSectionStateChanged(
             section.key,

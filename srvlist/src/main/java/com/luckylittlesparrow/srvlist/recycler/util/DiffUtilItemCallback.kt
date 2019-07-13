@@ -21,6 +21,11 @@ import androidx.recyclerview.widget.DiffUtil
 import com.luckylittlesparrow.srvlist.recycler.section.ItemContainer
 
 /**
- * Util class for comparing items
+ * Base util class for comparing items
+ *
+ * @see DiffUtil.ItemCallback
+ *
+ * @author Andrei Gusev
+ * @since  1.0
  */
 abstract class DiffUtilItemCallback : DiffUtil.ItemCallback<ItemContainer>()

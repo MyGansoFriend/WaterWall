@@ -1,5 +1,3 @@
-package com.luckylittlesparrow.srvlist.recycler.filterable
-
 /*
  *  Copyright 2019 Gusev Andrei
  *
@@ -17,12 +15,14 @@ package com.luckylittlesparrow.srvlist.recycler.filterable
  *
  */
 
+package com.luckylittlesparrow.srvlist.recycler.base
+
 import com.luckylittlesparrow.srvlist.recycler.section.ItemContainer
 
 /**
  * @author Andrei Gusev
  * @since  1.0
  */
-internal interface Filterable {
-    fun filter(search: CharSequence): Pair<List<ItemContainer>, List<ItemContainer>>?
+internal interface OnItemClickListener {
+    fun onItemClick(item: ItemContainer): Boolean
 }

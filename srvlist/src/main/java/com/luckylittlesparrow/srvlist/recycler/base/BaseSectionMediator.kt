@@ -25,8 +25,24 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.LinkedHashMap
 
+/**
+ * @author Andrei Gusev
+ * @since  1.0
+ */
 internal abstract class BaseSectionMediator : SectionMediator {
     protected val sections: MutableMap<String, SectionDao<Nothing, Nothing, Nothing>> = LinkedHashMap()
+
+    override fun attachSectionStateCallback(sectionStateCallback: SectionStateCallback) {
+        sections.forEach {
+            it.value.section.sectionStateCallback = sectionStateCallback
+        }
+    }
+
+    override fun detachSectionStateCallback() {
+        sections.forEach {
+            it.value.section.sectionStateCallback = null
+        }
+    }
 
     override fun getSectionList(): MutableMap<String, SectionDao<Nothing, Nothing, Nothing>> = sections
 
@@ -92,6 +108,14 @@ internal abstract class BaseSectionMediator : SectionMediator {
         return list
     }
 
+    override fun getVisibleItemsList(): List<ItemContainer> {
+        val list = ArrayList<ItemContainer>()
+        for (sectionDao in sections) {
+            list.addAll(sectionDao.value.getVisibleItemsList())
+        }
+        return list
+    }
+
     override fun getSectionByKey(key: String): SectionDao<Nothing, Nothing, Nothing> {
         sections.forEach {
             if (it.value.section.key == key) return it.value
@@ -153,7 +177,7 @@ internal abstract class BaseSectionMediator : SectionMediator {
 
             if (!sectionDao.section.isVisible) continue
 
-            if (sectionDao.section === section) return currentPos + (if (section.hasHeader()) 1 else 0)
+            if (sectionDao.section === section) return currentPos + (if (section.hasHeader) 1 else 0)
 
             val sectionTotal = sectionDao.sectionCurrentSize()
 
@@ -209,7 +233,7 @@ internal abstract class BaseSectionMediator : SectionMediator {
             val sectionTotal = sectionDao.sectionCurrentSize()
 
             if (position >= currentPos && position <= currentPos + sectionTotal - 1) {
-                if(sectionDao.isEmpty()) return sectionDao.section.sourceList.first()
+                if (sectionDao.isEmpty()) return sectionDao.section.sourceList.first()
                 return sectionDao.getContentItem(position - currentPos)
             }
 

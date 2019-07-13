@@ -11,13 +11,24 @@ import com.luckylittlesparrow.srvlist.recycler.util.DiffUtilItemCallback
 open class FilterTestSection(
     headerItem: TestHeader? = null,
     contentItems: List<TestItem>? = null,
-    footerItem: TestFooter? = null
-) : FilterableSection<TestHeader, TestItem, TestFooter>(headerItem, contentItems, footerItem) {
+    footerItem: TestFooter? = null,
+    headerClickListener: (ItemContainer) -> Unit = {},
+    itemClickListener: (ItemContainer) -> Unit = {},
+    footerClickListener: (ItemContainer) -> Unit = {}
+) : FilterableSection<TestHeader, TestItem, TestFooter>(
+    headerItem, contentItems, footerItem,
+    itemClickListener = itemClickListener,
+    headerClickListener = headerClickListener,
+    footerClickListener = footerClickListener
+) {
 
     override fun itemFilter(search: String, item: ItemContainer): Boolean {
         return (item as TestItem).name.contains(search, true)
     }
 
+    override fun headerFilter(search: String, item: ItemContainer): Boolean {
+        return true
+    }
     override fun getSectionParams(): SectionParams {
         return SectionParams.builder().build()
     }
