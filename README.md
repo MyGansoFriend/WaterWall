@@ -2,7 +2,7 @@
 Multifunctional RecyclerVIew library with sections/states support
 
 
-[![Build Status](https://travis-ci.com/LuckyLittleSparrow/WaterWall.svg?branch=master)]
+[![Build Status](https://travis-ci.com/LuckyLittleSparrow/WaterWall.svg?branch=master)](https://travis-ci.com/LuckyLittleSparrow/WaterWall)
 [![codecov](https://codecov.io/gh/LuckyLittleSparrow/WaterWall/branch/master/graph/badge.svg)](https://codecov.io/gh/LuckyLittleSparrow/WaterWall)
 [![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.svg?v=102)](https://opensource.org/licenses/Apache-2.0)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/LuckyLittleSparrow/WaterWall/blob/master/LICENSE)
