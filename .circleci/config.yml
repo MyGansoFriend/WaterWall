@@ -1,6 +1,11 @@
-version: 2
+version: 2.1
+orbs:
+  codecov: codecov/codecov@1.0.5
 jobs:
   build:
+    branches:
+      only:
+        - master
     working_directory: ~/code
     docker:
       - image: circleci/android:api-28-alpha
@@ -28,4 +33,9 @@ jobs:
           destination: reports
       - store_test_results: # for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
           path: app/build/test-results
+      - codecov:
+          command: ./gradlew build jacocoTestReport
+      - codecov/upload:
+          file: app/srvlist/build/reports/jacoco/jacocoTestDebugUnitTestReport.xml
+
       # See https://circleci.com/docs/2.0/deployment-integrations/ for deploy examples
