@@ -34,9 +34,4 @@ jobs:
           command: ./gradlew build jacocoTestReport
       - codecov/upload:
           file: app/srvlist/build/reports/jacoco/jacocoTestDebugUnitTestReport.xml
-
-#workflows:
-#  branches:
-#    only:
-#      - master
       # See https://circleci.com/docs/2.0/deployment-integrations/ for deploy examples
