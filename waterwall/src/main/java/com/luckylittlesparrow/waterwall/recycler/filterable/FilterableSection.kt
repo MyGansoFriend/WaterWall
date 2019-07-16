@@ -230,11 +230,12 @@ abstract class FilterableSection<H, I, F>(
 
         contentItems?.let {
             check(hasHeader && headerItem != null || !hasHeader && headerItem == null)
+            { "submit header item before contentItems" }
             baseList.addAll(contentItems)
         }
 
         footerItem?.let {
-            check(contentItems != null)
+            check(contentItems != null) { "It's required to submit contentItems before footerItem" }
             baseList.add(footerItem)
         }
     }

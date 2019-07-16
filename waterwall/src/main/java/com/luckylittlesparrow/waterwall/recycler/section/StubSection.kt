@@ -26,8 +26,8 @@ import com.luckylittlesparrow.waterwall.recycler.simple.SimpleSectionedAdapter
 import com.luckylittlesparrow.waterwall.recycler.util.DiffUtilItemCallback
 
 /**
- * Section for usage in case, when it's necessary to show state for all adapter (e.g match parent layout),
- * not for each section separately.
+ * Stub version of [Section] for usage in case, when it's necessary to show state for adapter (e.g match parent layout),
+ * before sections load.
  * <p> StubSection will be automaticly removed from adapter, when real sections will be added. </p>
  *
  * @see SimpleSectionedAdapter

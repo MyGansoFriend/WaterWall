@@ -78,16 +78,6 @@ abstract class BaseListAdapter : RecyclerView.Adapter<BaseViewHolder<Nothing>>()
 
     internal lateinit var sectionMediator: SectionMediator
 
-    /**
-     * Use default settings
-     *
-     * @see RecyclerView.setItemViewCacheSize
-     * @see RecyclerView.Adapter.setHasStableIds
-     * @see RecyclerView.setHasFixedSize
-     *
-     */
-    var defaultSettings = true
-
     /* Sticky header */
 
     /**
@@ -230,7 +220,7 @@ abstract class BaseListAdapter : RecyclerView.Adapter<BaseViewHolder<Nothing>>()
     }
 
     override fun getItemId(position: Int): Long {
-        return sectionMediator.getItemByPosition(position).id
+        return sectionMediator.getItemByPosition(position).ITEM_CONTAINER_ID
     }
 
     override fun getItemCount(): Int {
@@ -314,7 +304,6 @@ abstract class BaseListAdapter : RecyclerView.Adapter<BaseViewHolder<Nothing>>()
     }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
-        if (defaultSettings) recyclerView.setItemViewCacheSize(DEFAULT_CACHE_SIZE)
 
         super.onAttachedToRecyclerView(recyclerView)
         this.recyclerView = recyclerView
@@ -505,7 +494,7 @@ abstract class BaseListAdapter : RecyclerView.Adapter<BaseViewHolder<Nothing>>()
         resourceId: Int?,
         getItemFunction: (view: View) -> BaseViewHolder<Nothing>
     ): BaseViewHolder<Nothing> {
-        require(resourceId != null) { "Missing item resource id" }
+        require(resourceId != null) { "Missing item resource ITEM_CONTAINER_ID" }
         return getItemFunction(parent.inflate(resourceId))
     }
 
@@ -591,8 +580,6 @@ abstract class BaseListAdapter : RecyclerView.Adapter<BaseViewHolder<Nothing>>()
     }
 
     companion object {
-        private const val DEFAULT_CACHE_SIZE = 30
-
         internal const val VIEW_TYPE_HEADER = 0
         internal const val VIEW_TYPE_FOOTER = 1
         internal const val VIEW_TYPE_ITEM_LOADED = 2

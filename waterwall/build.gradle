@@ -17,10 +17,8 @@
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-//apply plugin: 'com.github.dcendents.android-maven'
 
 apply from: "../scripts/jacoco.gradle"
-apply from: '../scripts/publish.gradle'
 
 group = 'com.github.luckylittlesparrow'
 
@@ -68,3 +66,9 @@ dependencies {
     testImplementation 'org.powermock:powermock-module-junit4-rule:2.0.2'
     testImplementation 'org.robolectric:robolectric:4.3'
 }
+
+tasks.withType(Javadoc).all {
+    enabled = false
+}
+
+apply from: '../scripts/bintray_publish.gradle'

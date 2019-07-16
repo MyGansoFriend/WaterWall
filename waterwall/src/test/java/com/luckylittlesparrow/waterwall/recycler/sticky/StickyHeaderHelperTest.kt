@@ -93,7 +93,7 @@ class StickyHeaderHelperTest {
         )
 
         stickyHeaderHelper.resetItemsList()
-        assertNull(stickyHeaderHelper.getField("items").get(stickyHeaderHelper))
+        assertTrue((stickyHeaderHelper.getField("items").get(stickyHeaderHelper) as List<ItemContainer>).isEmpty())
     }
 
     @Test
@@ -116,7 +116,6 @@ class StickyHeaderHelperTest {
         assertEquals(stickyHeaderHelper.getHeaderLayout(1), 0)
     }
 
-
     @Test
     fun bindHeaderData() {
         assertEquals(stickyHeaderHelper.bindHeaderData(view, 0), viewHolder to list.first())
@@ -127,9 +126,9 @@ class StickyHeaderHelperTest {
         assertEquals(stickyHeaderHelper.getHeaderPositionForItem(2), 0)
     }
 
-    @Test(expected = IndexOutOfBoundsException::class)
+    @Test
     fun getHeaderPositionForItem_Invalid() {
-        stickyHeaderHelper.getHeaderPositionForItem(-1)
+        assertEquals(stickyHeaderHelper.getHeaderPositionForItem(-1), -1)
     }
 
     @Test

@@ -20,6 +20,20 @@ class SectionLogicTest {
         const val emptyResourceId = 6
     }
 
+    @Test
+    fun isEmpty() {
+        val sectionParameters = SectionParams.builder()
+            .itemResourceId(itemResourceId)
+            .build()
+
+        val section = object : TestSection(
+        ) {
+            override fun getSectionParams(): SectionParams {
+                return sectionParameters
+            }
+        }
+       assertTrue( section.isEmpty())
+    }
 
     @Test
     fun sectionOnExpandClick() {

@@ -96,7 +96,7 @@ class SimpleSectionedAdapterTest {
         adapter.onAttachedToRecyclerView(recylcerView)
 
         localRV = getField("recyclerView").get(adapter)
-        verify(recylcerView).setItemViewCacheSize(30)
+
         assertNotNull(localRV)
         verify(sectionMediator).attachSectionStateCallback(sectionStateCallback)
         verify(recylcerView, never()).addItemDecoration(StickyHeaderDecoration(adapter.stickyHeaderHelper))
@@ -105,10 +105,8 @@ class SimpleSectionedAdapterTest {
         adapter.onAttachedToRecyclerView(recylcerView)
         verify(recylcerView).addItemDecoration(any<StickyHeaderDecoration>())
 
-        adapter.defaultSettings = false
         reset(recylcerView)
         adapter.onAttachedToRecyclerView(recylcerView)
-        verify(recylcerView, never()).setItemViewCacheSize(30)
     }
 
     @Test
@@ -220,7 +218,7 @@ class SimpleSectionedAdapterTest {
         val position = 2
         val item = TestItemsFactory.footer
         whenever(sectionMediator.getItemByPosition(position)).thenReturn(item)
-        assertEquals(adapter.getItemId(position), item.id)
+        assertEquals(adapter.getItemId(position), item.ITEM_CONTAINER_ID)
         verify(sectionMediator).getItemByPosition(position)
     }
 

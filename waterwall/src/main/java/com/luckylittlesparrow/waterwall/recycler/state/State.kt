@@ -39,16 +39,16 @@ abstract class State {
         set(state) {
             when (state) {
                 SectionState.LOADING -> require(loadingStateRequirements())
-                { "Resource id for 'loading state' should be provided" }
+                { "Resource ITEM_CONTAINER_ID for 'loading state' should be provided" }
 
                 SectionState.FAILED -> require(failedStateRequirements())
-                { "Resource id for 'failed state' should be provided" }
+                { "Resource ITEM_CONTAINER_ID for 'failed state' should be provided" }
 
                 SectionState.EMPTY -> require(emptyStateRequirements())
-                { "Resource id for 'empty state' should be provided" }
+                { "Resource ITEM_CONTAINER_ID for 'empty state' should be provided" }
 
                 SectionState.LOADED -> require(loadedStateRequirements())
-                { "Resource id for 'loaded state' should be provided" }
+                { "Resource ITEM_CONTAINER_ID for 'loaded state' should be provided" }
             }
             val oldState = field
             field = state

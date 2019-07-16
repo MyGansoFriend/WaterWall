@@ -37,11 +37,11 @@ import java.util.*
 abstract class ItemContainer(val itemType: ItemType) {
 
     /**
-     * Auto generated id for item for [RecyclerView.Adapter.setHasStableIds]
+     * Auto generated ITEM_CONTAINER_ID for item for [RecyclerView.Adapter.setHasStableIds]
      *
      * @see RecyclerView.Adapter.setHasStableIds(true)
      */
-    val id = UUID.randomUUID().mostSignificantBits
+    val ITEM_CONTAINER_ID = UUID.randomUUID().mostSignificantBits
 
     enum class ItemType {
         HEADER, FOOTER, ITEM
@@ -61,4 +61,13 @@ abstract class ItemContainer(val itemType: ItemType) {
 
     fun isTheSameType(type: ItemType) = itemType == type
 
+    override fun equals(other: Any?): Boolean {
+        if (other == null) return false
+        if (other !is ItemContainer) return false
+        return if (other === this) true else this.ITEM_CONTAINER_ID == other.ITEM_CONTAINER_ID
+    }
+
+    override fun hashCode(): Int {
+        return ITEM_CONTAINER_ID.toInt()
+    }
 }

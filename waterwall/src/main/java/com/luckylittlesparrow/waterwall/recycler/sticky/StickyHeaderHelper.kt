@@ -38,9 +38,10 @@ internal class StickyHeaderHelper(
         isStateChanged = true
     }
 
-    private var items: List<ItemContainer>? = null
+    private var items: List<ItemContainer> = emptyList()
+
         get() {
-            if (field == null || isStateChanged) {
+            if (field.isEmpty() || isStateChanged) {
                 field = mediator.getVisibleItemsList()
                 isStateChanged = false
             }
@@ -48,29 +49,29 @@ internal class StickyHeaderHelper(
         }
 
     fun resetItemsList() {
-        items = null
+        items = emptyList()
     }
 
     fun isHeader(position: Int): Boolean {
-        return items!![position].isHeader()
+        return items[position].isHeader()
     }
 
     @LayoutRes
     fun getHeaderLayout(position: Int): Int {
-        return mediator.getSectionByItem(items!![position])?.section?.headerResourceId ?: 0
+        return mediator.getSectionByItem(items[position])?.section?.headerResourceId ?: 0
     }
 
     fun bindHeaderData(view: View, position: Int): Pair<BaseViewHolder<*>, ItemContainer> {
-        return mediator.getSectionByItem(items!![position])?.section?.getHeaderViewHolder(view)!! to items!![position]
+        return mediator.getSectionByItem(items[position])?.section?.getHeaderViewHolder(view)!! to items[position]
     }
 
     fun getHeaderPositionForItem(position: Int): Int {
-        if (items!!.isEmpty()) return -1
+        if (items.isEmpty()) return -1
 
         for (i in position downTo 0) {
-            if (items!![i].isHeader()) return i
+            if (items[i].isHeader()) return i
         }
 
-        throw IndexOutOfBoundsException("Invalid position")
+        return -1
     }
 }

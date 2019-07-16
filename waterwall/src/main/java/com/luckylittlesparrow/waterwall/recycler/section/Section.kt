@@ -241,11 +241,18 @@ abstract class Section<H, I, F>(
     fun getAllItems() = sourceList.toMutableList()
 
     /**
-     * Check if section has no items.
+     * Check if section is Empty
      *
      * @return [true] if section is empty, [false] otherwise
      */
-    fun isEmpty() = sourceList.size == 0
+    fun isEmpty() = sourceList.first() is StubItem
+
+    /**
+     * Check if section is not empty.
+     *
+     * @return [true] if section is not empty, [false] otherwise
+     */
+    fun isNotEmpty() = sourceList.first() !is StubItem
 
     /**
      * Get key of the section
@@ -264,7 +271,7 @@ abstract class Section<H, I, F>(
     abstract fun getSectionParams(): SectionParams
 
     /**
-     * Provide Callback for calculating the diff between two non-null items in a list.
+     * Provide Callback for calculating the diff between two non-null content items in a list.
      *
      * @see DiffUtilItemCallback
      *
@@ -325,7 +332,7 @@ abstract class Section<H, I, F>(
      * @return ViewHolder
      */
     open fun getEmptyViewHolder(view: View): BaseViewHolder<Nothing> {
-        check(loadingResourceId != null) { "Forgot to override EmptyViewHolder getter" }
+        check(emptyResourceId != null) { "Forgot to override EmptyViewHolder getter" }
         return EmptyViewHolder(view)
     }
 
@@ -337,7 +344,7 @@ abstract class Section<H, I, F>(
      * @return ViewHolder
      */
     open fun getFailedViewHolder(view: View): BaseViewHolder<Nothing> {
-        check(loadingResourceId != null) { "Forgot to override FailedViewHolder getter" }
+        check(failedResourceId != null) { "Forgot to override FailedViewHolder getter" }
         return EmptyViewHolder(view)
     }
 

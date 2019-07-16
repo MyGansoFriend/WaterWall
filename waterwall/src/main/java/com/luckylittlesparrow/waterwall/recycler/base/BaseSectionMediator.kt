@@ -131,11 +131,7 @@ internal abstract class BaseSectionMediator : SectionMediator {
     }
 
     override fun containsSection(section: Section<*, *, *>): Boolean {
-        try {
-            section.key
-        } catch (e: UninitializedPropertyAccessException) {
-            return false
-        }
+        runCatching { section.key }.onFailure { return false }
 
         sections.forEach {
             if (it.value.section.key == section.key) return true

@@ -66,10 +66,8 @@ internal class StickyHeaderDecoration(private val stickyHeaderHelper: StickyHead
         val pair = stickyHeaderHelper.bindHeaderData(header, headerPosition)
 
         currentStickyHeader = pair.first
-        try {
-            pair.first.bindStickyItem(pair.second)
-        } catch (ignored: Exception) {
-        }
+
+        runCatching { pair.first.bindStickyItem(pair.second) }
 
         return header
     }

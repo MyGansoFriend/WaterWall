@@ -89,9 +89,6 @@ class SimpleSectionDaoTest {
     @Test
     fun areItemsTheSameWithNotItems() {
         assertFalse(sectionDao.areItemsTheSame(oldHeader, newHeader))
-        assertTrue(sectionDao.areItemsTheSame(oldHeader, oldHeader))
-
-        verify(diff, never()).areItemsTheSame(oldHeader, newHeader)
     }
 
     @Test

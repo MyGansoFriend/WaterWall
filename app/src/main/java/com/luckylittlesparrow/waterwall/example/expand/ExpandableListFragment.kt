@@ -13,6 +13,7 @@ import com.luckylittlesparrow.waterwall.example.R
 import com.luckylittlesparrow.waterwall.example.listsample.ItemsFactory
 import com.luckylittlesparrow.waterwall.recycler.section.ItemBundle
 import com.luckylittlesparrow.waterwall.recycler.section.ItemContainer
+import com.luckylittlesparrow.waterwall.recycler.section.StubSection
 import com.luckylittlesparrow.waterwall.recycler.simple.SimpleSectionedAdapter
 import com.luckylittlesparrow.waterwall.recycler.state.SectionState
 import kotlinx.android.synthetic.main.fragment_simple_list.simpleRecyclerView
@@ -39,14 +40,27 @@ class ExpandableListFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //section.state = SectionState.EMPTY
+
+//        val stubSection=StubSection(
+//            emptyLayoutId = R.layout.section_empty
+//        )
+//        stubSection.state = SectionState.EMPTY
+//        sectionAdapter.addSection(
+//            stubSection
+//        )
         sectionAdapter.addSection(section)
         sectionAdapter.addSection(section2)
         sectionAdapter.addSection(section3)
         sectionAdapter.addSection(section4)
         section.addMoreItems(ItemBundle(contentItems = ItemsFactory.getNumbersList()))
+        section.addMoreItems(ItemBundle(contentItems = ItemsFactory.getNumbersList()))
+        section2.addMoreItems(ItemBundle(contentItems = ItemsFactory.getNumbersList()))
+        section2.addMoreItems(ItemBundle(contentItems = ItemsFactory.getNumbersList()))
+        section2.addMoreItems(ItemBundle(contentItems = ItemsFactory.getNumbersList()))
         section2.addMoreItems(ItemBundle(contentItems = ItemsFactory.getNumbersList()))
         section3.addMoreItems(ItemBundle(contentItems = ItemsFactory.getNames()))
+        section3.addMoreItems(ItemBundle(contentItems = ItemsFactory.getNames()))
+        section4.addMoreItems(ItemBundle(contentItems = ItemsFactory.getSecondEvents()))
         section4.addMoreItems(ItemBundle(contentItems = ItemsFactory.getSecondEvents()))
     }
 

@@ -36,7 +36,14 @@ internal open class SimpleSectionDao<H, I, F>(override val section: Section<H, I
                 oldItem,
                 newItem
             )
-            else -> oldItem == newItem
+            ItemContainer.ItemType.HEADER -> section.getDiffUtilItemCallback().areHeadersContentsTheSame(
+                oldItem,
+                newItem
+            )
+            ItemContainer.ItemType.FOOTER -> section.getDiffUtilItemCallback().areFootersContentsTheSame(
+                oldItem,
+                newItem
+            )
         }
     }
 
@@ -46,7 +53,15 @@ internal open class SimpleSectionDao<H, I, F>(override val section: Section<H, I
                 oldItem,
                 newItem
             )
-            else -> oldItem == newItem
+            ItemContainer.ItemType.HEADER -> section.getDiffUtilItemCallback().areHeadersTheSame(
+                oldItem,
+                newItem
+            )
+            ItemContainer.ItemType.FOOTER -> section.getDiffUtilItemCallback().areFootersTheSame(
+                oldItem,
+                newItem
+            )
+
         }
     }
 
@@ -61,7 +76,7 @@ internal open class SimpleSectionDao<H, I, F>(override val section: Section<H, I
     }
 
     override fun getVisibleItemsList(): List<ItemContainer> {
-        return if (section.isExpanded) {
+        return if (section.isExpanded && section.isNotEmpty()) {
             if (state() != SectionState.LOADED) {
                 return section.sourceList.subList(0, 2)
             } else section.sourceList

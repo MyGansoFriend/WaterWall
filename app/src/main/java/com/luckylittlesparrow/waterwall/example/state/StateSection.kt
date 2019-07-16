@@ -29,9 +29,6 @@ class StateSection : FilterableSection<Void, Item, Void>() {
 
     override fun getDiffUtilItemCallback(): DiffUtilItemCallback {
         return object : DiffUtilItemCallback() {
-            override fun areItemsTheSame(oldItem: ItemContainer, newItem: ItemContainer): Boolean {
-                return (oldItem as Item) == (newItem as Item)
-            }
 
             override fun areContentsTheSame(oldItem: ItemContainer, newItem: ItemContainer) =
                 (oldItem as Item).body == (newItem as Item).body
