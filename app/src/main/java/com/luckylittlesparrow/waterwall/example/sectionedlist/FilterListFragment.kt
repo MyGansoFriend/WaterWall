@@ -16,7 +16,7 @@ import com.luckylittlesparrow.waterwall.recycler.filterable.FilterableSectionedA
 import com.luckylittlesparrow.waterwall.recycler.section.ItemContainer
 import kotlinx.android.synthetic.main.fragment_filter_list.*
 
-class EventFilterListFragment : Fragment() {
+class FilterListFragment : Fragment() {
 
     private val sectionAdapter = FilterableSectionedAdapter()
 
@@ -40,18 +40,18 @@ class EventFilterListFragment : Fragment() {
         filterRecyclerView.layoutManager = LinearLayoutManager(context)
 
 
-        val section1 = EventSection(
-            EventHeader("today"), ItemsFactory.getNames(),
-            EventFooter("today footer")
+        val section1 = FilterSection(
+            FilterHeader("today"), ItemsFactory.getNames(),
+            FilterFooter("today footer")
         )
 
-        val section2 = EventSection(
-            EventHeader("yesterday"), ItemsFactory.getNumbersList(),
-            EventFooter("yesterday footer")
+        val section2 = FilterSection(
+            FilterHeader("yesterday"), ItemsFactory.getNumbersList(),
+            FilterFooter("yesterday footer")
         )
 
 
-        sectionAdapter.addSections(listOf(section1, section2))
+        sectionAdapter.addMoreSections(listOf(section1, section2))
     }
 
     private fun initListeners() {

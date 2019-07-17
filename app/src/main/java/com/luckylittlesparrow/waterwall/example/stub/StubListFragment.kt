@@ -68,7 +68,7 @@ class StubListFragment : Fragment() {
         stateEmptyButton.setOnClickListener { stubSection.state = SectionState.EMPTY }
 
         swipeContainer.setOnRefreshListener {
-            section.replaceItems(
+            section.submitItems(
                 ItemBundle(
                     headerItem = ExpandableHeader("HEADER"),
                     contentItems = ItemsFactory.getNames()

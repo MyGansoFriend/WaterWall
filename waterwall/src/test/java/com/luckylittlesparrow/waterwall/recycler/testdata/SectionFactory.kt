@@ -38,7 +38,7 @@ object SectionFactory {
                 return sectionParameters
             }
         }
-        section.key = UUID.randomUUID().toString()
+        section.sectionKey = UUID.randomUUID().toString()
         return section
     }
 
@@ -54,7 +54,7 @@ object SectionFactory {
         val list = LinkedHashMap<String, SimpleSectionDao<*, *, *>>()
         for (i in 1 until 100) {
             val section = getSection()
-            list[section.key] = SimpleSectionDao(section)
+            list[section.sectionKey!!] = SimpleSectionDao(section)
         }
         return list
     }
@@ -78,7 +78,7 @@ object SectionFactory {
                 return sectionParameters
             }
         }
-        section.key = UUID.randomUUID().toString()
+        section.sectionKey = UUID.randomUUID().toString()
         return section
     }
 
@@ -97,7 +97,7 @@ object SectionFactory {
                 return sectionParameters
             }
         }
-        section.key = UUID.randomUUID().toString()
+        section.sectionKey = UUID.randomUUID().toString()
         return section
     }
 
@@ -113,7 +113,7 @@ object SectionFactory {
         val list = LinkedHashMap<String, SectionDao<Nothing, Nothing, Nothing>>()
         for (i in 1 until 100) {
             val section = getFilterableSection() as FilterableSection<Nothing, Nothing, Nothing>
-            list[section.key] = FilterableSectionDao(section)
+            list[section.sectionKey!!] = FilterableSectionDao(section)
         }
         return list
     }

@@ -6,6 +6,7 @@ import com.luckylittlesparrow.waterwall.recycler.testdata.TestSection
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -32,7 +33,7 @@ class SectionLogicTest {
                 return sectionParameters
             }
         }
-       assertTrue( section.isEmpty())
+        assertTrue(section.isEmpty())
     }
 
     @Test
@@ -58,14 +59,14 @@ class SectionLogicTest {
         }
 
         section.sectionStateCallback = mock()
-        section.key = "KEY"
+        section.sectionKey = "KEY"
 
         section.onExpandClickListener.invoke()
 
         assertFalse(section.isExpanded)
 
         verify(section.sectionStateCallback)!!.onSectionExpandChange(
-            section.key,
+            section.sectionKey!!,
             false
         )
     }
@@ -94,14 +95,14 @@ class SectionLogicTest {
         }
 
         section.sectionStateCallback = mock()
-        section.key = "KEY"
+        section.sectionKey = "KEY"
 
         section.onExpandClickListener.invoke()
 
         assertTrue(section.isExpanded)
 
         verify(section.sectionStateCallback)!!.onSectionExpandChange(
-            section.key,
+            section.sectionKey!!,
             true
         )
     }
@@ -128,12 +129,12 @@ class SectionLogicTest {
         }
 
         section.sectionStateCallback = mock()
-        section.key = "KEY"
+        section.sectionKey = "KEY"
 
         section.onExpandClickListener.invoke()
 
         verify(section.sectionStateCallback)!!.onSectionExpandChange(
-            section.key,
+            section.sectionKey!!,
             true
         )
     }
@@ -160,7 +161,7 @@ class SectionLogicTest {
         }
 
         section.sectionStateCallback = mock()
-        section.key = "KEY"
+        section.sectionKey = "KEY"
 
         section.onShowMoreClickListener.invoke()
     }
@@ -188,14 +189,14 @@ class SectionLogicTest {
         }
 
         section.sectionStateCallback = mock()
-        section.key = "KEY"
+        section.sectionKey = "KEY"
 
         section.onShowMoreClickListener.invoke()
 
         assertTrue(section.isShowMoreClicked)
 
         verify(section.sectionStateCallback)!!.onSectionShowMoreChange(
-            section.key,
+            section.sectionKey!!,
             4,
             true
         )
@@ -228,7 +229,7 @@ class SectionLogicTest {
         assertEquals(section.currentSize(), collapsedItemCount)
 
         section.sectionStateCallback = mock()
-        section.key = "KEY"
+        section.sectionKey = "KEY"
 
         section.onShowMoreClickListener.invoke()
 
@@ -237,7 +238,7 @@ class SectionLogicTest {
         assertTrue(section.isShowMoreClicked)
 
         verify(section.sectionStateCallback)!!.onSectionShowMoreChange(
-            section.key,
+            section.sectionKey!!,
             collapsedItemCount,
             true
         )
@@ -247,7 +248,7 @@ class SectionLogicTest {
         assertFalse(section.isShowMoreClicked)
 
         verify(section.sectionStateCallback)!!.onSectionShowMoreChange(
-            section.key,
+            section.sectionKey!!,
             collapsedItemCount,
             false
         )
@@ -278,7 +279,7 @@ class SectionLogicTest {
         }
 
         section.sectionStateCallback = mock()
-        section.key = "KEY"
+        section.sectionKey = "KEY"
 
         section.onExpandClickListener.invoke()
         var collapsedSize = 0
@@ -309,7 +310,7 @@ class SectionLogicTest {
         }
 
         section.sectionStateCallback = mock()
-        section.key = "KEY"
+        section.sectionKey = "KEY"
 
         section.onExpandClickListener.invoke()
         var collapsedSize = 0
@@ -430,7 +431,7 @@ class SectionLogicTest {
 
         section.state = SectionState.LOADED
         section.sectionStateCallback = mock()
-        section.key = "KEY"
+        section.sectionKey = "KEY"
 
         assertFalse(section.isEmpty())
 
@@ -443,7 +444,7 @@ class SectionLogicTest {
         newList.addAll(TestItemsFactory.getNumbersList())
         newList.add(TestItemsFactory.footer)
 
-        section.replaceItems(
+        section.submitItems(
             ItemBundle(
                 TestItemsFactory.header,
                 TestItemsFactory.getNumbersList(),
@@ -457,7 +458,7 @@ class SectionLogicTest {
         verify(section.sectionStateCallback)!!.onSectionContentUpdated(
             previousList,
             newList,
-            section.key
+            section.sectionKey!!
         )
     }
 
@@ -487,7 +488,7 @@ class SectionLogicTest {
 
         section.state = SectionState.LOADING
         section.sectionStateCallback = mock()
-        section.key = "KEY"
+        section.sectionKey = "KEY"
 
         val previousList = section.getAllItems()
         val newList = ArrayList<ItemContainer>()
@@ -496,7 +497,7 @@ class SectionLogicTest {
         newList.addAll(TestItemsFactory.getNumbersList())
         newList.add(TestItemsFactory.footer)
 
-        section.replaceItems(
+        section.submitItems(
             ItemBundle(
                 TestItemsFactory.header,
                 TestItemsFactory.getNumbersList(),
@@ -511,7 +512,7 @@ class SectionLogicTest {
         verify(section.sectionStateCallback, never())!!.onSectionContentUpdated(
             previousList,
             newList,
-            section.key
+            section.sectionKey!!
         )
     }
 
@@ -543,7 +544,7 @@ class SectionLogicTest {
 
         section.state = SectionState.LOADING
         section.sectionStateCallback = mock()
-        section.key = "KEY"
+        section.sectionKey = "KEY"
 
         val previousList = section.getAllItems()
         val newList = ArrayList<ItemContainer>()
@@ -554,7 +555,7 @@ class SectionLogicTest {
 
         assertFalse(section.sourceList.first() is StubItem)
 
-        section.replaceItems(
+        section.submitItems(
             ItemBundle(
             )
         )
@@ -563,8 +564,68 @@ class SectionLogicTest {
         verify(section.sectionStateCallback, never())!!.onSectionContentUpdated(
             previousList,
             newList,
-            section.key
+            section.sectionKey!!
         )
     }
 
+    @Test
+    fun clearSection() {
+        val sectionParameters = SectionParams.builder()
+            .headerResourceId(headerResourceId)
+            .itemResourceId(itemResourceId)
+            .footerResourceId(footerResourceId)
+            .build()
+
+        val section = object : TestSection(
+            TestItemsFactory.header,
+            TestItemsFactory.getNames(),
+            TestItemsFactory.footer
+        ) {
+            override fun getSectionParams(): SectionParams {
+                return sectionParameters
+            }
+        }
+        val previousList = section.getAllItems()
+
+        section.sectionStateCallback = mock()
+        section.sectionKey = "KEY"
+
+        assertFalse(section.isEmpty())
+        assertTrue(section.isNotEmpty())
+        section.clearSection()
+        assertTrue(section.isEmpty())
+        assertFalse(section.isNotEmpty())
+
+        verify(section.sectionStateCallback)!!.onSectionContentUpdated(
+            previousList,
+            section.sourceList,
+            section.sectionKey!!
+        )
+    }
+
+    @Test
+    fun clearEmptySection() {
+        val sectionParameters = SectionParams.builder()
+            .headerResourceId(headerResourceId)
+            .itemResourceId(itemResourceId)
+            .footerResourceId(footerResourceId)
+            .build()
+
+        val section = object : TestSection(
+        ) {
+            override fun getSectionParams(): SectionParams {
+                return sectionParameters
+            }
+        }
+        val previousList = section.getAllItems()
+
+        section.sectionStateCallback = mock()
+        section.sectionKey = "KEY"
+
+        assertTrue(section.isEmpty())
+        assertFalse(section.isNotEmpty())
+        section.clearSection()
+
+        verifyNoMoreInteractions(section.sectionStateCallback)
+    }
 }

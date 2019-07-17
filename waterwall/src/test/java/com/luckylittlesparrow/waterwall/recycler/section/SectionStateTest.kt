@@ -40,7 +40,7 @@ class SectionStateTest {
         }
 
         section.sectionStateCallback = mock()
-        section.key = "KEY"
+        section.sectionKey = "KEY"
         section.state = SectionState.LOADING
 
         section.addMoreItems(
@@ -50,11 +50,11 @@ class SectionStateTest {
         )
 
         verify(section.sectionStateCallback, never())!!.onSectionContentAdded(
-            section.key,
+            section.sectionKey!!,
             TestItemsFactory.getNumbersList().size
         )
         verify(section.sectionStateCallback, never())!!.onSectionContentChanged(
-            section.key
+            section.sectionKey!!
         )
     }
 
@@ -80,11 +80,11 @@ class SectionStateTest {
         }
 
         section.sectionStateCallback = mock()
-        section.key = "KEY"
+        section.sectionKey = "KEY"
         section.state = SectionState.EMPTY
 
         verify(section.sectionStateCallback)!!.onSectionStateChanged(
-            section.key,
+            section.sectionKey!!,
             SectionState.EMPTY,
             SectionState.LOADED
         )
@@ -92,7 +92,7 @@ class SectionStateTest {
         section.state = SectionState.FAILED
 
         verify(section.sectionStateCallback)!!.onSectionStateChanged(
-            section.key,
+            section.sectionKey!!,
             SectionState.FAILED,
             SectionState.EMPTY
         )
@@ -117,11 +117,11 @@ class SectionStateTest {
         }
 
         section.sectionStateCallback = mock()
-        section.key = "KEY"
+        section.sectionKey = "KEY"
         section.state = SectionState.EMPTY
 
         verify(section.sectionStateCallback, never())!!.onSectionStateChanged(
-            section.key,
+            section.sectionKey!!,
             SectionState.EMPTY,
             SectionState.LOADED
         )
@@ -146,11 +146,11 @@ class SectionStateTest {
         }
 
         section.sectionStateCallback = mock()
-        section.key = "KEY"
+        section.sectionKey = "KEY"
         section.state = SectionState.LOADING
 
         verify(section.sectionStateCallback, never())!!.onSectionStateChanged(
-            section.key,
+            section.sectionKey!!,
             SectionState.EMPTY,
             SectionState.LOADED
         )
@@ -175,11 +175,11 @@ class SectionStateTest {
         }
 
         section.sectionStateCallback = mock()
-        section.key = "KEY"
+        section.sectionKey = "KEY"
         section.state = SectionState.FAILED
 
         verify(section.sectionStateCallback, never())!!.onSectionStateChanged(
-            section.key,
+            section.sectionKey!!,
             SectionState.EMPTY,
             SectionState.LOADED
         )
@@ -204,11 +204,11 @@ class SectionStateTest {
         }
 
         section.sectionStateCallback = mock()
-        section.key = "KEY"
+        section.sectionKey = "KEY"
         section.state = SectionState.LOADED
 
         verify(section.sectionStateCallback, never())!!.onSectionStateChanged(
-            section.key,
+            section.sectionKey!!,
             SectionState.EMPTY,
             SectionState.LOADED
         )

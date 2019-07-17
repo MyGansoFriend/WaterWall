@@ -34,7 +34,7 @@ internal class FilterableSectionMediator : BaseSectionMediator() {
         section: Section<*, *, *>,
         sectionStateCallback: SectionStateCallback
     ): String {
-        section.key = key
+        section.sectionKey = key
         section.sectionStateCallback = sectionStateCallback
         sections[key] = FilterableSectionDao(section as FilterableSection<Nothing, Nothing, Nothing>)
         return key
@@ -44,7 +44,7 @@ internal class FilterableSectionMediator : BaseSectionMediator() {
     override fun addSections(list: List<Section<*, *, *>>, sectionStateCallback: SectionStateCallback) {
         list.forEach {
             val key = UUID.randomUUID().toString()
-            it.key = key
+            it.sectionKey = key
             it.sectionStateCallback = sectionStateCallback
             sections[key] = FilterableSectionDao(it as FilterableSection<Nothing, Nothing, Nothing>)
         }

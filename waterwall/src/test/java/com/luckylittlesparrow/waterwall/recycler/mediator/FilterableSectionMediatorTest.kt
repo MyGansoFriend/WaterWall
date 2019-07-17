@@ -32,7 +32,7 @@ class FilterableSectionMediatorTest {
 
     @Test
     fun addSectionWithKey() {
-        val key = "key"
+        val key = "sectionKey"
         val section = SectionFactory.getFilterableSection()
         val result = sectionMediator.addSection(key, section, sectionStateCallback)
 
@@ -51,7 +51,7 @@ class FilterableSectionMediatorTest {
         val resultList = sectionMediator.getSectionList()
 
         for (i in 0 until sectionList.size) {
-            assertTrue(resultList.containsKey(sectionList[i].key))
+            assertTrue(resultList.containsKey(sectionList[i].sectionKey))
         }
     }
 }

@@ -8,7 +8,6 @@ import com.luckylittlesparrow.waterwall.recycler.state.SectionState
 import com.luckylittlesparrow.waterwall.recycler.testdata.*
 import com.luckylittlesparrow.waterwall.recycler.util.DiffUtilItemCallback
 import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.spy
 import com.nhaarman.mockitokotlin2.verify
 import org.junit.Assert.*
@@ -57,13 +56,16 @@ class SimpleSectionDaoTest {
     private val oldItem = TestItem("old")
     private val newHeader = TestHeader("new")
     private val oldHeader = TestHeader("old")
+
+    private val newFooter = TestFooter("new")
+    private val oldFooter = TestFooter("old")
     private val diff: DiffUtilItemCallback = mock()
     @Before
     fun setUp() {
         sectionDao = SimpleSectionDao(section)
 
         section.sectionStateCallback = mock()
-        section.key = "KEY"
+        section.sectionKey = "KEY"
     }
 
     @Test
@@ -73,11 +75,9 @@ class SimpleSectionDaoTest {
     }
 
     @Test
-    fun areContentsTheSameWithNotItems() {
-        assertFalse(sectionDao.areContentsTheSame(oldHeader, newHeader))
-        assertTrue(sectionDao.areContentsTheSame(newHeader, newHeader))
-
-        verify(diff, never()).areContentsTheSame(oldHeader, newHeader)
+    fun areContentsTheSameWithHeaders() {
+        sectionDao.areContentsTheSame(oldHeader, newHeader)
+        verify(diff).areHeadersContentsTheSame(oldHeader, newHeader)
     }
 
     @Test
@@ -87,8 +87,21 @@ class SimpleSectionDaoTest {
     }
 
     @Test
-    fun areItemsTheSameWithNotItems() {
+    fun areItemsTheSameWithHeaders() {
         assertFalse(sectionDao.areItemsTheSame(oldHeader, newHeader))
+        verify(diff).areHeadersTheSame(oldHeader, newHeader)
+    }
+
+    @Test
+    fun areItemsTheSameWithFooters() {
+        assertFalse(sectionDao.areItemsTheSame(oldFooter, newFooter))
+        verify(diff).areFootersTheSame(oldFooter, newFooter)
+    }
+
+    @Test
+    fun areContentTheSameWithFooters() {
+        assertFalse(sectionDao.areContentsTheSame(oldFooter, newFooter))
+        verify(diff).areFootersContentsTheSame(oldFooter, newFooter)
     }
 
     @Test
@@ -136,7 +149,7 @@ class SimpleSectionDaoTest {
         verify(section).state
 
         sectionDao.key()
-        verify(section).key
+        verify(section).sectionKey
     }
 
     @Test

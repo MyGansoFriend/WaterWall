@@ -70,13 +70,13 @@ class SimpleSectionedAdapterTest {
         adapter.supportStickyHeader = false
 
         assertFalse(adapter.supportStickyHeader)
-        assertFalse(binder.isStickyHeader)
+        assertFalse(binder.isStickyHeaderSupported)
         assertNull(binder.clickListener)
 
         adapter.supportStickyHeader = true
 
         assertTrue(adapter.supportStickyHeader)
-        assertTrue(binder.isStickyHeader)
+        assertTrue(binder.isStickyHeaderSupported)
         assertNotNull(binder.clickListener)
     }
 
@@ -153,7 +153,7 @@ class SimpleSectionedAdapterTest {
         val sectionStateCallback = getField("sectionStateCallback").get(adapter) as SectionStateCallback
 
         whenever(sectionMediator.containsSection(section)).thenReturn(true)
-        assertEquals(adapter.addSection(section), section.key)
+        assertEquals(adapter.addSection(section), section.sectionKey)
         verify(sectionMediator, never()).addSection(section, sectionStateCallback)
     }
 
@@ -177,9 +177,9 @@ class SimpleSectionedAdapterTest {
     fun removeSection() {
         val section = SectionFactory.getSection()
         adapter.addSection(section)
-        whenever(sectionMediator.removeSection(section.key)).thenReturn(true)
-        adapter.removeSection(section.key)
-        verify(sectionMediator).removeSection(section.key)
+        whenever(sectionMediator.removeSection(section.sectionKey!!)).thenReturn(true)
+        adapter.removeSection(section.sectionKey!!)
+        verify(sectionMediator).removeSection(section.sectionKey!!)
     }
 
     @Test
@@ -202,10 +202,10 @@ class SimpleSectionedAdapterTest {
 //        val sectionStateCallback = getField("sectionStateCallback").get(adapter) as SectionStateCallback
 //        val section = SectionFactory.getSection() as Section<Nothing, Nothing, Nothing>
 //        val map = LinkedHashMap<String, SectionDao<Nothing, Nothing, Nothing>>()
-//        map[section.key] = SimpleSectionDao(section)
+//        map[section.sectionKey] = SimpleSectionDao(section)
 //
 //        whenever(sectionMediator.getSectionList()).thenReturn(map)
-//        whenever(sectionMediator.addSection(section, sectionStateCallback)).thenReturn(section.key)
+//        whenever(sectionMediator.addSection(section, sectionStateCallback)).thenReturn(section.sectionKey)
 //
 //
 //        adapter.addSection(section)
@@ -242,12 +242,12 @@ class SimpleSectionedAdapterTest {
         sectionStateCallback.onSectionContentUpdated(
             oldList,
             newList,
-            "key"
+            "sectionKey"
         )
 
         assertTrue(adapter.stickyHeaderHelper.isStateChanged)
-        assertEquals(adapter.diffListUtil.getField("oldList").get(adapter.diffListUtil), oldList)
-        assertEquals(adapter.diffListUtil.getField("newList").get(adapter.diffListUtil), newList)
+        assertEquals(adapter.diffListUtilBySections.getField("oldList").get(adapter.diffListUtilBySections), oldList)
+        assertEquals(adapter.diffListUtilBySections.getField("newList").get(adapter.diffListUtilBySections), newList)
     }
 
 
@@ -266,13 +266,13 @@ class SimpleSectionedAdapterTest {
 
         val sectionDao = SimpleSectionDao(section)
 
-        whenever(sectionMediator.getSectionByKey(section.key)).thenReturn(sectionDao)
+        whenever(sectionMediator.getSectionByKey(section.sectionKey!!)).thenReturn(sectionDao)
         whenever(sectionMediator.getSectionPosition(section)).thenReturn(startPosition)
-       // doNothing().whenever(spyAdapter).notifyItemRangeInsertedInternal(section.key, startPosition)
+       // doNothing().whenever(spyAdapter).notifyItemRangeInsertedInternal(section.sectionKey, startPosition)
 
 
         sectionStateCallback.onSectionShowMoreChange(
-            section.key,
+            section.sectionKey!!,
             startPosition,
             true
         )

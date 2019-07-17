@@ -27,7 +27,7 @@ import java.lang.ref.WeakReference
  */
 internal class SectionBinder {
 
-    internal var isStickyHeader = false
+    internal var isStickyHeaderSupported = false
 
     internal var clickListener: WeakReference<OnItemClickListener>? = null
 
@@ -46,21 +46,21 @@ internal class SectionBinder {
 
     @Suppress("UNCHECKED_CAST")
     fun <T> onBindHeaderViewHolder(itemContainer: ItemContainer, holder: BaseViewHolder<T>) {
-        holder.isStickyHeader = isStickyHeader
+        holder.isStickyHeaderSupported = isStickyHeaderSupported
         holder.clickListener = clickListener
         holder.bindItem(itemContainer as T)
     }
 
     @Suppress("UNCHECKED_CAST")
     fun <T> onBindFooterViewHolder(itemContainer: ItemContainer, holder: BaseViewHolder<T>) {
-        holder.isStickyHeader = isStickyHeader
+        holder.isStickyHeaderSupported = isStickyHeaderSupported
         holder.clickListener = clickListener
         holder.bindItem(itemContainer as T)
     }
 
     @Suppress("UNCHECKED_CAST")
     fun <T> onBindItemViewHolder(itemContainer: ItemContainer, holder: BaseViewHolder<T>) {
-        holder.isStickyHeader = isStickyHeader
+        holder.isStickyHeaderSupported = isStickyHeaderSupported
         holder.clickListener = clickListener
         holder.bindItem(itemContainer as T)
     }

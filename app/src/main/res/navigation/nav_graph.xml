@@ -25,7 +25,7 @@
     </fragment>
     <fragment
         android:id="@+id/eventFilterListFragment"
-        android:name="com.luckylittlesparrow.waterwall.example.sectionedlist.EventFilterListFragment"
+        android:name="com.luckylittlesparrow.waterwall.example.sectionedlist.FilterListFragment"
         android:label="EventFilterListFragment" />
     <fragment
         android:id="@+id/stateListFragment"

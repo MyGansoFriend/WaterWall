@@ -100,7 +100,7 @@ class BaseViewHolderTest {
         assertTrue(result)
 
         result = false
-        viewHolder.isStickyHeader = true
+        viewHolder.isStickyHeaderSupported = true
         captor.value.onClick(view)
         assertTrue(result)
     }

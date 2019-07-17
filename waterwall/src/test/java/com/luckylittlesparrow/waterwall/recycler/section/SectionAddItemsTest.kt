@@ -170,7 +170,7 @@ class SectionAddItemsTest {
         assertTrue(section.sourceList.first() is StubItem)
 
         val list = TestItemsFactory.getNames()
-        section.replaceItems(
+        section.submitItems(
             ItemBundle(
                 contentItems = list,
                 footerItem = TestItemsFactory.footer
@@ -233,7 +233,7 @@ class SectionAddItemsTest {
         }
 
         section.sectionStateCallback = mock()
-        section.key = "KEY"
+        section.sectionKey = "KEY"
 
         val expectedList = ArrayList<ItemContainer>()
 
@@ -258,7 +258,7 @@ class SectionAddItemsTest {
         assertTrue(section.sourceList.first().isHeader())
 
         verify(section.sectionStateCallback)!!.onSectionContentAdded(
-            section.key,
+            section.sectionKey!!,
             TestItemsFactory.getNumbersList().size
         )
     }
@@ -283,7 +283,7 @@ class SectionAddItemsTest {
         }
 
         section.sectionStateCallback = mock()
-        section.key = "KEY"
+        section.sectionKey = "KEY"
 
         val expectedList = ArrayList<ItemContainer>()
 
@@ -316,7 +316,7 @@ class SectionAddItemsTest {
         assertTrue(section.sourceList.first().isHeader())
 
         verify(section.sectionStateCallback)!!.onSectionContentChanged(
-            section.key
+            section.sectionKey!!
         )
     }
 }

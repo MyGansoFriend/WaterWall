@@ -113,7 +113,7 @@ internal open class SimpleSectionDao<H, I, F>(override val section: Section<H, I
 
     override fun state(): SectionState = section.state
 
-    override fun key(): String = section.key
+    override fun key(): String? = section.sectionKey
 
     override fun getFooterIndex(): Int = section.sourceList.size - 1
 }

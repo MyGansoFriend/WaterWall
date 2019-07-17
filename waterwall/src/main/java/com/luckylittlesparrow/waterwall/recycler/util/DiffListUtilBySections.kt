@@ -20,20 +20,22 @@ package com.luckylittlesparrow.waterwall.recycler.util
 import androidx.recyclerview.widget.DiffUtil
 import com.luckylittlesparrow.waterwall.recycler.base.SectionMediator
 import com.luckylittlesparrow.waterwall.recycler.section.ItemContainer
+import java.util.concurrent.CopyOnWriteArrayList
 
-internal class DiffListUtil(private val sectionMediator: SectionMediator) : DiffUtil.Callback() {
-    @Volatile
-    private lateinit  var oldList: List<ItemContainer>
-    @Volatile
+internal class DiffListUtilBySections(private val sectionMediator: SectionMediator) : DiffUtil.Callback() {
+
+    private lateinit var oldList: List<ItemContainer>
+
     private lateinit var newList: List<ItemContainer>
     @Volatile
     var isTheSameSection = false
 
 
     fun submitLists(oldList: List<ItemContainer>, newList: List<ItemContainer>) {
-        this.newList = newList
-        this.oldList = oldList
+        this.newList = CopyOnWriteArrayList(newList)
+        this.oldList = CopyOnWriteArrayList(oldList)
     }
+
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
         val oldElement = oldList[oldItemPosition]

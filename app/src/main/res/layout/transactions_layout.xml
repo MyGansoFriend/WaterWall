@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/transactionListBottomSheetView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:orientation="vertical"
+    android:background="@color/very_light_grey"
+    app:behavior_hideable="false"
+    app:behavior_peekHeight="56dp"
+    app:behavior_skipCollapsed="false"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <TextView
+        android:id="@+id/transactionListTitleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:minHeight="56dp"
+        android:text="Transactions"
+        android:textColor="@color/black"
+        android:textSize="19sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/transactionListUpdateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:minHeight="56dp"
+        android:text="Update"
+        android:textColor="@color/black"
+        android:textSize="19sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/transactionListTitleTextView"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/transactionListCloseImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:src="@drawable/ic_close_black_24dp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/transactionListSeparateView"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@color/very_light_grey"
+        app:layout_constraintBottom_toBottomOf="@+id/transactionListTitleTextView"
+        tools:layout_editor_absoluteX="1dp" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/transactionListRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:visibility="visible"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toTopOf="@+id/transactionListSeparateView"
+        tools:listitem="@layout/transactiom_view_item" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

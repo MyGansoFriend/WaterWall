@@ -57,12 +57,13 @@ abstract class Section<H, I, F>(
     headerItem: ItemContainer? = null,
     contentItems: List<ItemContainer>? = null,
     footerItem: ItemContainer? = null,
+    key: String? = null,
     val headerClickListener: (ItemContainer) -> Unit = {},
     val itemClickListener: (ItemContainer) -> Unit = {},
     val footerClickListener: (ItemContainer) -> Unit = {}
 ) : State() {
 
-    internal lateinit var key: String
+    internal var sectionKey: String? = null
 
     internal val sourceList = ArrayList<ItemContainer>()
 
@@ -159,7 +160,7 @@ abstract class Section<H, I, F>(
     val onExpandClickListener: () -> Unit = {
         check(supportExpandFunction) { "Section must support expand functionality" }
         isExpanded = !isExpanded
-        sectionStateCallback?.onSectionExpandChange(key, isExpanded)
+        sectionStateCallback?.onSectionExpandChange(sectionKey!!, isExpanded)
     }
 
     /**
@@ -183,12 +184,12 @@ abstract class Section<H, I, F>(
     val onShowMoreClickListener: () -> Unit = {
         check(supportShowMore) { "Section must support \"show more\" functionality" }
         isShowMoreClicked = !isShowMoreClicked
-        sectionStateCallback?.onSectionShowMoreChange(key, collapsedItemCount, isShowMoreClicked)
+        sectionStateCallback?.onSectionShowMoreChange(sectionKey!!, collapsedItemCount, isShowMoreClicked)
     }
 
     init {
         setup()
-        initItems(headerItem, contentItems, footerItem)
+        initItems(headerItem, contentItems, footerItem, key)
     }
 
     private fun setup() {
@@ -216,8 +217,10 @@ abstract class Section<H, I, F>(
     private fun initItems(
         headerItem: ItemContainer?,
         contentItems: List<ItemContainer>?,
-        footerItem: ItemContainer?
+        footerItem: ItemContainer?,
+        key: String?
     ) {
+        key?.let { sectionKey = key }
         headerItem?.let { sourceList.add(it) }
 
         contentItems?.let {
@@ -255,11 +258,11 @@ abstract class Section<H, I, F>(
     fun isNotEmpty() = sourceList.first() !is StubItem
 
     /**
-     * Get key of the section
+     * Get sectionKey of the section
      *
-     * @return key of the section, [null] if section doesn't added to the adapter
+     * @return sectionKey of the section, [null] if section doesn't added to the adapter
      */
-    fun getKey() = if (::key.isInitialized) key else null
+    fun getKey() = sectionKey
 
     /**
      * Provide parameters to the section to initialize functionality.
@@ -356,7 +359,7 @@ abstract class Section<H, I, F>(
 
     override fun failedStateRequirements(): Boolean = failedResourceId != null
 
-    override fun provideId(): String = if (::key.isInitialized) key else ""
+    override fun provideId(): String = sectionKey ?: ""
 
     /**
      * Add more items to the section, if bundle contains header and footer,
@@ -426,7 +429,7 @@ abstract class Section<H, I, F>(
      *
      * @param itemBundle bundle with items to add
      */
-    open fun replaceItems(itemBundle: ItemBundle) {
+    open fun submitItems(itemBundle: ItemBundle) {
         if (itemBundle.isEmpty()) return
         val previousList = ArrayList<ItemContainer>()
         previousList.addAll(sourceList)
@@ -456,6 +459,18 @@ abstract class Section<H, I, F>(
         if (state == SectionState.LOADED) {
             sectionStateCallback?.onSectionContentUpdated(previousList, sourceList, provideId())
         }
+    }
+
+    /**
+     * Removes all of the elements from this section. The Section will
+     * be empty after this call returns.
+     */
+    open fun clearSection() {
+        if (isEmpty()) return
+        val previousList = ArrayList(sourceList)
+        sourceList.clear()
+        sourceList.add(StubItem())
+        sectionStateCallback?.onSectionContentUpdated(previousList, sourceList, provideId())
     }
 
     internal open fun currentSize(): Int {

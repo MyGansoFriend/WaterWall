@@ -7,7 +7,7 @@ import com.luckylittlesparrow.waterwall.example.listsample.Item
 import com.luckylittlesparrow.waterwall.recycler.base.BaseViewHolder
 
 
-class EventItemViewHolder constructor(view: View, itemClickedListener: (Item) -> Unit) :
+class FilterItemViewHolder constructor(view: View, itemClickedListener: (Item) -> Unit) :
     BaseViewHolder<Item>(view, itemClickedListener) {
 
     private val eventItemDescriptionTextView: TextView = view.findViewById(R.id.eventItemDescriptionTextView)

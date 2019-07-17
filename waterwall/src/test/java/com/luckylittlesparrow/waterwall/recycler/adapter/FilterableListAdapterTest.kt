@@ -62,8 +62,8 @@ class FilterableListAdapterTest {
     @Test(expected = IllegalStateException::class)
     fun addSectionWithKeyError() {
         val section = SectionFactory.getSection()
-        adapter.addSection(section.key, section)
-        verify(sectionMediator, never()).addSection(section.key, section, sectionStateCallback)
+        adapter.addSection(section.sectionKey!!, section)
+        verify(sectionMediator, never()).addSection(section.sectionKey!!, section, sectionStateCallback)
     }
 
     @Test(expected = IllegalStateException::class)
@@ -83,16 +83,16 @@ class FilterableListAdapterTest {
     @Test
     fun addSectionWithKey() {
         val section = SectionFactory.getFilterableSection()
-        adapter.addSection(section.key, section)
-        verify(sectionMediator).addSection(section.key, section, sectionStateCallback)
+        adapter.addSection(section.sectionKey!!, section)
+        verify(sectionMediator).addSection(section.sectionKey!!, section, sectionStateCallback)
     }
 
     @Test(expected = IllegalStateException::class)
     fun addSectionWithKey_SupportSticky() {
         val section=SectionFactory.getFilterableSectionWithoutHeader()
 
-        adapter.addSection(section.key, section)
-        verify(sectionMediator).addSection(section.key, section, sectionStateCallback)
+        adapter.addSection(section.sectionKey!!, section)
+        verify(sectionMediator).addSection(section.sectionKey!!, section, sectionStateCallback)
     }
 
     @Test(expected = IllegalStateException::class)
@@ -106,14 +106,14 @@ class FilterableListAdapterTest {
     @Test(expected = IllegalStateException::class)
     fun addSectionsError() {
         val sections = SectionFactory.getSectionList()
-        adapter.addSections(sections)
+        adapter.addMoreSections(sections)
         verify(sectionMediator, never()).addSections(sections, sectionStateCallback)
     }
 
 
     @Test
     fun addSectionsEmptyList() {
-        adapter.addSections(listOf())
+        adapter.addMoreSections(listOf())
         verify(sectionMediator, never()).addSections(listOf(), sectionStateCallback)
     }
 
@@ -121,14 +121,14 @@ class FilterableListAdapterTest {
     @Test
     fun addSectionsSections() {
         val sections = SectionFactory.getFilterableSectionList()
-        adapter.addSections(sections)
+        adapter.addMoreSections(sections)
         verify(sectionMediator).addSections(sections, sectionStateCallback)
     }
 
     @Test(expected = IllegalStateException::class)
     fun addSectionsSections_Sticky() {
         val sections = SectionFactory.getFilterableSectionWithoutHeader()
-        adapter.addSections(listOf(sections))
+        adapter.addMoreSections(listOf(sections))
     }
 
 //    @Test

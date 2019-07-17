@@ -1,0 +1,108 @@
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'maven-publish'
+
+ext {
+    bintrayRepo = 'WaterWall'
+    bintrayName = 'com.luckylittlesparrow.waterwall'
+
+    publishedGroupId = 'com.luckylittlesparrow'
+    libraryName = 'WaterWall'
+    artifact = 'waterwall'
+
+    libraryDescription = 'Multifunctional RecyclerVIew library with sections/states support'
+
+    siteUrl = 'https://github.com/LuckyLittleSparrow/WaterWall'
+    gitUrl = 'https://github.com/LuckyLittleSparrow/WaterWall.git'
+
+    libraryVersion = '1.0.3'
+
+    developerId = 'LuckyLittleSparrow'
+    developerName = 'Andrei Gusev'
+    developerEmail = 'slip.gusev@gmail.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
+group = publishedGroupId
+version = libraryVersion
+
+install {
+    repositories.mavenInstaller {
+        pom.project {
+            packaging 'aar'
+            groupId publishedGroupId
+            artifactId artifact
+
+            name libraryName
+            description libraryDescription
+            url siteUrl
+
+            licenses {
+                license {
+                    name licenseName
+                    url licenseUrl
+                }
+            }
+            developers {
+                developer {
+                    id developerId
+                    name developerName
+                    email developerEmail
+                }
+            }
+            scm {
+                connection gitUrl
+                developerConnection gitUrl
+                url siteUrl
+            }
+        }
+    }
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+bintray {
+    user = 'luckylittlesparrow'
+    key = '2ea9c14f751e3c8a588607614e2b56a66c9147bb'
+
+    configurations = ['archives']
+    pkg {
+        repo = bintrayRepo
+        name = bintrayName
+        desc = libraryDescription
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = allLicenses
+        dryRun = false
+        publish = true
+        override = false
+        publicDownloadNumbers = true
+        version {
+            desc = libraryDescription
+        }
+    }
+}

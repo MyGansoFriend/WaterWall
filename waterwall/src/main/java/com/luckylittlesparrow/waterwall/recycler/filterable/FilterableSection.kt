@@ -52,6 +52,7 @@ abstract class FilterableSection<H, I, F>(
     headerItem: ItemContainer? = null,
     contentItems: List<ItemContainer>? = null,
     footerItem: ItemContainer? = null,
+    key: String? = null,
     headerClickListener: (ItemContainer) -> Unit = {},
     itemClickListener: (ItemContainer) -> Unit = {},
     footerClickListener: (ItemContainer) -> Unit = {}
@@ -59,6 +60,7 @@ abstract class FilterableSection<H, I, F>(
     headerItem,
     contentItems,
     footerItem,
+    key,
     headerClickListener,
     itemClickListener,
     footerClickListener
@@ -147,7 +149,7 @@ abstract class FilterableSection<H, I, F>(
      *
      * @param itemBundle bundle with items to add
      */
-    override fun replaceItems(itemBundle: ItemBundle) {
+    override fun submitItems(itemBundle: ItemBundle) {
         if (itemBundle.isEmpty()) return
         val previousList = ArrayList<ItemContainer>()
         previousList.addAll(sourceList)
@@ -208,6 +210,12 @@ abstract class FilterableSection<H, I, F>(
      * @return result of comparing
      */
     open fun headerFilter(search: String, item: ItemContainer): Boolean = false
+
+    override fun clearSection() {
+        baseList.clear()
+        filteredList.clear()
+        super.clearSection()
+    }
 
     override fun currentSize(): Int {
         if (sourceList.first() is StubItem)

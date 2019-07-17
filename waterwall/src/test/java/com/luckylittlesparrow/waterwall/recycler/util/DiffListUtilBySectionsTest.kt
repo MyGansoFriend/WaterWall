@@ -10,10 +10,10 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 
-class DiffListUtilTest {
+class DiffListUtilBySectionsTest {
     private val sectionMediator: SectionMediator = mock()
     private val section: SectionDao<Nothing, Nothing, Nothing> = mock()
-    private val diffListUtil = DiffListUtil(sectionMediator)
+    private val diffListUtil = DiffListUtilBySections(sectionMediator)
 
     private val oldList = TestItemsFactory.getNames2()
     private val newList = TestItemsFactory.getNumbersList()

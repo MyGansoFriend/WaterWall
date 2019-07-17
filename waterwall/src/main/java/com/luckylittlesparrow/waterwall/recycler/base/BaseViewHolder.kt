@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.luckylittlesparrow.waterwall.recycler.section.ItemContainer
 import com.luckylittlesparrow.waterwall.recycler.filterable.FilterableSectionedAdapter
 import com.luckylittlesparrow.waterwall.recycler.simple.SimpleSectionedAdapter
+import com.luckylittlesparrow.waterwall.recycler.state.SectionState
 import java.lang.ref.WeakReference
 
 /**
@@ -86,7 +87,7 @@ abstract class BaseViewHolder<T>(
             item?.let {
                 if ((item as ItemContainer).isHeader()) {
                     performClick()
-                } else if (isStickyHeader) {
+                } else if (isStickyHeaderSupported) {
                     if (clickListener?.get()?.onItemClick(item as ItemContainer) == true) {
                         performClick()
                     }
@@ -112,7 +113,7 @@ abstract class BaseViewHolder<T>(
         item?.let { item -> itemClickedListener(item) }
     }
 
-    internal var isStickyHeader = false
+    internal var isStickyHeaderSupported = false
 
     internal var clickListener: WeakReference<OnItemClickListener>? = null
 }

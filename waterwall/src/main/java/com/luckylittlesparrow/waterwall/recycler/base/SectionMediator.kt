@@ -27,6 +27,8 @@ import com.luckylittlesparrow.waterwall.recycler.state.SectionStateCallback
  */
 internal interface SectionMediator {
 
+    fun stateChanged()
+
     fun attachSectionStateCallback(sectionStateCallback: SectionStateCallback)
 
     fun detachSectionStateCallback()

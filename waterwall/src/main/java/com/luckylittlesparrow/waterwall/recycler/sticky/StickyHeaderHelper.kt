@@ -39,7 +39,6 @@ internal class StickyHeaderHelper(
     }
 
     private var items: List<ItemContainer> = emptyList()
-
         get() {
             if (field.isEmpty() || isStateChanged) {
                 field = mediator.getVisibleItemsList()
@@ -53,6 +52,7 @@ internal class StickyHeaderHelper(
     }
 
     fun isHeader(position: Int): Boolean {
+        if (position > items.size) return false
         return items[position].isHeader()
     }
 
@@ -66,6 +66,7 @@ internal class StickyHeaderHelper(
     }
 
     fun getHeaderPositionForItem(position: Int): Int {
+        if (position > items.size) return -1
         if (items.isEmpty()) return -1
 
         for (i in position downTo 0) {

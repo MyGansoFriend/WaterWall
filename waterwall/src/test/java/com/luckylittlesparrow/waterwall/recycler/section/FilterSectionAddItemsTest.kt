@@ -223,7 +223,7 @@ class FilterSectionAddItemsTest {
         }
 
         section.sectionStateCallback = mock()
-        section.key = "KEY"
+        section.sectionKey = "KEY"
 
         val expectedList = ArrayList<ItemContainer>()
 
@@ -251,7 +251,7 @@ class FilterSectionAddItemsTest {
         assertEquals(section.sourceList, section.baseList)
 
         verify(section.sectionStateCallback)!!.onSectionContentAdded(
-            section.key,
+            section.sectionKey!!,
             TestItemsFactory.getNumbersList().size
         )
     }
@@ -276,7 +276,7 @@ class FilterSectionAddItemsTest {
         }
 
         section.sectionStateCallback = mock()
-        section.key = "KEY"
+        section.sectionKey = "KEY"
 
         val expectedList = ArrayList<ItemContainer>()
 
@@ -319,8 +319,9 @@ class FilterSectionAddItemsTest {
         assertTrue(section.baseList.last().isFooter())
         assertTrue(section.baseList.first().isHeader())
 
+        assertFalse(section.supportFilterHeader)
         verify(section.sectionStateCallback)!!.onSectionContentChanged(
-            section.key
+            section.sectionKey!!
         )
     }
 
@@ -365,7 +366,7 @@ class FilterSectionAddItemsTest {
         }
 
         section.sectionStateCallback = mock()
-        section.key = "KEY"
+        section.sectionKey = "KEY"
 
         val expectedList = ArrayList<ItemContainer>()
 
@@ -384,7 +385,7 @@ class FilterSectionAddItemsTest {
         val newHeader = TestHeader("new header")
         val newFooter = TestFooter("new footer")
 
-        section.replaceItems(
+        section.submitItems(
             ItemBundle(
                 headerItem = newHeader,
                 contentItems = TestItemsFactory.getNumbersList(),
@@ -418,7 +419,7 @@ class FilterSectionAddItemsTest {
         verify(section.sectionStateCallback)!!.onSectionContentUpdated(
             expectedList,
             newList,
-            section.key
+            section.sectionKey!!
         )
     }
 
@@ -443,7 +444,7 @@ class FilterSectionAddItemsTest {
         }
 
         section.sectionStateCallback = mock()
-        section.key = "KEY"
+        section.sectionKey = "KEY"
         section.state = SectionState.LOADING
 
         val expectedList = ArrayList<ItemContainer>()
@@ -455,7 +456,7 @@ class FilterSectionAddItemsTest {
         val newHeader = TestHeader("new header")
         val newFooter = TestFooter("new footer")
 
-        section.replaceItems(
+        section.submitItems(
             ItemBundle(
                 headerItem = newHeader,
                 contentItems = TestItemsFactory.getNumbersList(),
@@ -466,7 +467,7 @@ class FilterSectionAddItemsTest {
         verify(section.sectionStateCallback, never())!!.onSectionContentUpdated(
             expectedList,
             expectedList,
-            section.key
+            section.sectionKey!!
         )
     }
 
@@ -490,7 +491,7 @@ class FilterSectionAddItemsTest {
         }
 
         section.sectionStateCallback = mock()
-        section.key = "KEY"
+        section.sectionKey = "KEY"
 
         val expectedList = ArrayList<ItemContainer>()
 
@@ -501,7 +502,7 @@ class FilterSectionAddItemsTest {
         assertEquals(section.sourceList, expectedList)
 
 
-        section.replaceItems(
+        section.submitItems(
             ItemBundle(
             )
         )
@@ -511,7 +512,7 @@ class FilterSectionAddItemsTest {
         verify(section.sectionStateCallback, never())!!.onSectionContentUpdated(
             expectedList,
             expectedList,
-            section.key
+            section.sectionKey!!
         )
     }
 
@@ -534,7 +535,7 @@ class FilterSectionAddItemsTest {
             }
         }
 
-        section.replaceItems(
+        section.submitItems(
             ItemBundle(
                 contentItems = TestItemsFactory.getNumbersList()
             )

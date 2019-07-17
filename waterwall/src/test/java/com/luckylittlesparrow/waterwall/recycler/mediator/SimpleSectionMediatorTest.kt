@@ -16,7 +16,7 @@ class SimpleSectionMediatorTest {
 
     @Test
     fun addSectionWithKey() {
-        val key = "key"
+        val key = "sectionKey"
         val section = SectionFactory.getSection()
         val result = sectionMediator.addSection(key, section, sectionStateCallback)
 
@@ -44,7 +44,7 @@ class SimpleSectionMediatorTest {
         val resultList = sectionMediator.getSectionList()
 
         for (i in 0 until sectionList.size) {
-            assertTrue(resultList.containsKey(sectionList[i].key))
+            assertTrue(resultList.containsKey(sectionList[i].sectionKey))
         }
     }
 
@@ -67,11 +67,11 @@ class SimpleSectionMediatorTest {
         val sectionToRemove = sectionList[10]
         sectionMediator.addSections(sectionList, sectionStateCallback)
 
-        assertTrue(sectionMediator.removeSection(sectionToRemove.key))
+        assertTrue(sectionMediator.removeSection(sectionToRemove.sectionKey!!))
 
-        assertFalse(sectionMediator.containsSection(sectionToRemove.key))
+        assertFalse(sectionMediator.containsSection(sectionToRemove.sectionKey!!))
 
-        assertFalse(sectionMediator.removeSection(sectionToRemove.key))
+        assertFalse(sectionMediator.removeSection(sectionToRemove.sectionKey!!))
     }
 
     @Test
@@ -109,7 +109,7 @@ class SimpleSectionMediatorTest {
 
         sectionMediator.addSections(sectionList, sectionStateCallback)
 
-        val section = sectionMediator.getSectionByKey(expectedSection.key).section
+        val section = sectionMediator.getSectionByKey(expectedSection.sectionKey!!).section
 
         assertEquals(expectedSection, section)
 
@@ -122,7 +122,7 @@ class SimpleSectionMediatorTest {
 
         sectionMediator.addSections(sectionList, sectionStateCallback)
 
-        val section = sectionMediator.getSectionByKey("key").section
+        val section = sectionMediator.getSectionByKey("sectionKey").section
     }
 
 
@@ -137,11 +137,11 @@ class SimpleSectionMediatorTest {
 
         assertTrue(result)
 
-        result = sectionMediator.containsSection(expectedSection.key)
+        result = sectionMediator.containsSection(expectedSection.sectionKey!!)
 
         assertTrue(result)
 
-        result = sectionMediator.containsSection("key")
+        result = sectionMediator.containsSection("sectionKey")
 
         assertFalse(result)
     }
@@ -165,7 +165,7 @@ class SimpleSectionMediatorTest {
 
         items -= sectionList[2].sourceList.size
         items -= sectionList[4].sourceList.size
-
+        sectionMediator.stateChanged()
         assertEquals(sectionMediator.getVisibleItemCount(), items)
     }
 
@@ -286,7 +286,7 @@ class SimpleSectionMediatorTest {
 
         sectionMediator.addSections(sectionList, sectionStateCallback)
 
-        val result = sectionMediator.getSectionPosition(expectedSection.key)
+        val result = sectionMediator.getSectionPosition(expectedSection.sectionKey!!)
 
         assertEquals(result, itemPosition)
     }

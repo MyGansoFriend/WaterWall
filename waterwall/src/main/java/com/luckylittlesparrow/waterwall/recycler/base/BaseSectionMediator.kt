@@ -32,6 +32,12 @@ import kotlin.collections.LinkedHashMap
 internal abstract class BaseSectionMediator : SectionMediator {
     protected val sections: MutableMap<String, SectionDao<Nothing, Nothing, Nothing>> = LinkedHashMap()
 
+    override fun stateChanged() {
+        visibleItemCount = -1
+    }
+
+    private var visibleItemCount = -1
+
     override fun attachSectionStateCallback(sectionStateCallback: SectionStateCallback) {
         sections.forEach {
             it.value.section.sectionStateCallback = sectionStateCallback
@@ -52,7 +58,8 @@ internal abstract class BaseSectionMediator : SectionMediator {
         section: Section<*, *, *>,
         sectionStateCallback: SectionStateCallback
     ): String {
-        section.key = key
+        stateChanged()
+        section.sectionKey = key
         section.sectionStateCallback = sectionStateCallback
         sections[key] = SimpleSectionDao(section as Section<Nothing, Nothing, Nothing>)
         return key
@@ -60,7 +67,7 @@ internal abstract class BaseSectionMediator : SectionMediator {
 
     override fun addSection(section: Section<*, *, *>, sectionStateCallback: SectionStateCallback): String {
         return addSection(
-            UUID.randomUUID().toString(),
+            section.sectionKey ?: UUID.randomUUID().toString(),
             section,
             sectionStateCallback
         )
@@ -68,9 +75,10 @@ internal abstract class BaseSectionMediator : SectionMediator {
 
     @Suppress("UNCHECKED_CAST")
     override fun addSections(list: List<Section<*, *, *>>, sectionStateCallback: SectionStateCallback) {
+        stateChanged()
         list.forEach {
-            val key = UUID.randomUUID().toString()
-            it.key = key
+            val key = it.sectionKey ?: UUID.randomUUID().toString()
+            it.sectionKey = key
             it.sectionStateCallback = sectionStateCallback
             sections[key] = SimpleSectionDao(it as Section<Nothing, Nothing, Nothing>)
         }
@@ -81,6 +89,7 @@ internal abstract class BaseSectionMediator : SectionMediator {
             if (sectionDao.value.section == section) {
                 section.sectionStateCallback = null
                 sections.remove(sectionDao.key)
+                stateChanged()
                 return true
             }
         }
@@ -88,12 +97,14 @@ internal abstract class BaseSectionMediator : SectionMediator {
     }
 
     override fun removeSection(sectionKey: String): Boolean {
+        stateChanged()
         val sectionDao = sections.remove(sectionKey)
         sectionDao?.section?.sectionStateCallback = null
         return sectionDao != null
     }
 
     override fun clearList() {
+        stateChanged()
         for (sectionDao in sections) {
             sectionDao.value.section.sectionStateCallback = null
         }
@@ -117,35 +128,38 @@ internal abstract class BaseSectionMediator : SectionMediator {
     }
 
     override fun getSectionByKey(key: String): SectionDao<Nothing, Nothing, Nothing> {
-        sections.forEach {
-            if (it.value.section.key == key) return it.value
-        }
-        throw NoSuchElementException()
+//        sections.forEach {
+//            if (it.value.section.sectionKey == sectionKey) return it.value
+//        }
+        return sections[key] ?: throw NoSuchElementException()
     }
 
     override fun containsSection(key: String): Boolean {
-        sections.forEach {
-            if (it.value.section.key == key) return true
-        }
-        return false
+//        sections.forEach {
+//            if (it.value.section.sectionKey == sectionKey) return true
+//        }
+        return sections.containsKey(key)
+        // return false
     }
 
     override fun containsSection(section: Section<*, *, *>): Boolean {
-        runCatching { section.key }.onFailure { return false }
+        if (section.sectionKey == null) return false
 
         sections.forEach {
-            if (it.value.section.key == section.key) return true
+            if (it.value.section.sectionKey == section.sectionKey) return true
         }
         return false
     }
 
     override fun getVisibleItemCount(): Int {
+        if (visibleItemCount != -1) return visibleItemCount
         var count = 0
 
         sections.forEach {
             if (it.value.section.isVisible) count += it.value.sectionCurrentSize()
         }
 
+        visibleItemCount = count
         return count
     }
 
@@ -190,7 +204,7 @@ internal abstract class BaseSectionMediator : SectionMediator {
 
             if (!sectionDao.section.isVisible) continue
 
-            if (sectionDao.section.key === sectionKey) return currentPos
+            if (sectionDao.section.sectionKey === sectionKey) return currentPos
 
             val sectionTotal = sectionDao.sectionCurrentSize()
 

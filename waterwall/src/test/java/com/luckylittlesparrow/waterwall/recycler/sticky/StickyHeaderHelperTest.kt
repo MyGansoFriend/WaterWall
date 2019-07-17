@@ -78,9 +78,10 @@ class StickyHeaderHelperTest {
 
     @Test
     fun stateChanged() {
-        assertFalse(stickyHeaderHelper.getField("isStateChanged").get(stickyHeaderHelper) as Boolean)
+        assertFalse(stickyHeaderHelper.isStateChanged)
         stickyHeaderHelper.stateChanged()
-        assertTrue(stickyHeaderHelper.getField("isStateChanged").get(stickyHeaderHelper) as Boolean)
+
+        assertTrue(stickyHeaderHelper.isStateChanged)
     }
 
     @Test
@@ -100,6 +101,7 @@ class StickyHeaderHelperTest {
     fun isHeader() {
         assertTrue(stickyHeaderHelper.isHeader(0))
         assertFalse(stickyHeaderHelper.isHeader(1))
+        assertFalse(stickyHeaderHelper.isHeader(1000))
     }
 
     @Test
@@ -124,6 +126,7 @@ class StickyHeaderHelperTest {
     @Test
     fun getHeaderPositionForItem() {
         assertEquals(stickyHeaderHelper.getHeaderPositionForItem(2), 0)
+        assertEquals(stickyHeaderHelper.getHeaderPositionForItem(1000), -1)
     }
 
     @Test

@@ -56,7 +56,7 @@ class FilterSectionDaoTest {
         sectionDao = FilterableSectionDao(section)
 
         section.sectionStateCallback = mock()
-        section.key = "KEY"
+        section.sectionKey = "KEY"
     }
 
     @Test

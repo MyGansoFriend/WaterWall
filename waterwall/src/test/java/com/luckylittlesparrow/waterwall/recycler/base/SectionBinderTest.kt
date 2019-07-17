@@ -48,9 +48,9 @@ class SectionBinderTest {
 
     @Test
     fun isStickyHeader() {
-        assertFalse(sectionBinder.isStickyHeader)
-        sectionBinder.isStickyHeader = true
-        assertTrue(sectionBinder.isStickyHeader)
+        assertFalse(sectionBinder.isStickyHeaderSupported)
+        sectionBinder.isStickyHeaderSupported = true
+        assertTrue(sectionBinder.isStickyHeaderSupported)
     }
 
     @Test
@@ -95,43 +95,43 @@ class SectionBinderTest {
 
     @Test
     fun onBindHeaderViewHolder() {
-        assertFalse(viewHolder.isStickyHeader)
+        assertFalse(viewHolder.isStickyHeaderSupported)
         assertNull(viewHolder.clickListener)
-        sectionBinder.isStickyHeader = true
+        sectionBinder.isStickyHeaderSupported = true
         sectionBinder.clickListener = clickListener
 
 
         sectionBinder.onBindHeaderViewHolder(item, viewHolder)
         assertEquals(viewHolder.item, item)
-        assertTrue(viewHolder.isStickyHeader)
+        assertTrue(viewHolder.isStickyHeaderSupported)
         assertEquals(viewHolder.clickListener, clickListener)
     }
 
     @Test
     fun onBindFooterViewHolder() {
-        assertFalse(viewHolder.isStickyHeader)
+        assertFalse(viewHolder.isStickyHeaderSupported)
         assertNull(viewHolder.clickListener)
-        sectionBinder.isStickyHeader = true
+        sectionBinder.isStickyHeaderSupported = true
         sectionBinder.clickListener = clickListener
 
 
         sectionBinder.onBindFooterViewHolder(item, viewHolder)
         assertEquals(viewHolder.item, item)
-        assertTrue(viewHolder.isStickyHeader)
+        assertTrue(viewHolder.isStickyHeaderSupported)
         assertEquals(viewHolder.clickListener, clickListener)
     }
 
     @Test
     fun onBindItemViewHolder() {
-        assertFalse(viewHolder.isStickyHeader)
+        assertFalse(viewHolder.isStickyHeaderSupported)
         assertNull(viewHolder.clickListener)
-        sectionBinder.isStickyHeader = true
+        sectionBinder.isStickyHeaderSupported = true
         sectionBinder.clickListener = clickListener
 
 
         sectionBinder.onBindItemViewHolder(item, viewHolder)
         assertEquals(viewHolder.item, item)
-        assertTrue(viewHolder.isStickyHeader)
+        assertTrue(viewHolder.isStickyHeaderSupported)
         assertEquals(viewHolder.clickListener, clickListener)
     }
 }

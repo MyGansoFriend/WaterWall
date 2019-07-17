@@ -54,7 +54,7 @@ internal interface SectionDao<H, I, F> {
 
     fun state(): SectionState
 
-    fun key(): String
+    fun key(): String?
 
     fun getFooterIndex(): Int
 

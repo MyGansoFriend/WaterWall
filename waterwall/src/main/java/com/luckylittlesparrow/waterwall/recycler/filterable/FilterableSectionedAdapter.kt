@@ -58,13 +58,13 @@ class FilterableSectionedAdapter : BaseListAdapter(), Filterable {
     }
 
     /**
-     * Add a section with key to the adapter
+     * Add a section with sectionKey to the adapter
      *
      * In case of adding a duplicate section, nothing will happen
      *
      * @see FilterableSection<H, I, F>
      *
-     * @param key     unique key of the section
+     * @param key     unique sectionKey of the section
      * @param section section to add
      */
     override fun addSection(key: String, section: Section<*, *, *>) {
@@ -73,14 +73,14 @@ class FilterableSectionedAdapter : BaseListAdapter(), Filterable {
     }
 
     /**
-     * Add a section to the adapter, key for section will be generated and returned
+     * Add a section to the adapter, sectionKey for section will be generated and returned
      *
      * In case of adding a duplicate section, nothing will happen
      *
      * @see FilterableSection<H, I, F>
      *
      * @param section section to add
-     * @return Generated key
+     * @return Generated sectionKey
      */
     override fun addSection(section: Section<*, *, *>): String {
         check(section is FilterableSection) { "section must extends from FilterableSection in order to be used" }
@@ -88,13 +88,13 @@ class FilterableSectionedAdapter : BaseListAdapter(), Filterable {
     }
 
     /**
-     * Remove section from the adapter by key, [true] if success [false] otherwise
+     * Remove section from the adapter by sectionKey, [true] if success [false] otherwise
      *
      * Stub section will be removed automatically, if new sections are provided
      *
      * @see FilterableSection<H, I, F>
      *
-     * @param key key of section to remove
+     * @param sectionKey sectionKey of section to remove
      */
     override fun removeSection(section: Section<*, *, *>): Boolean {
         check(section is FilterableSection) { "section must extends from FilterableSection in order to be used" }
@@ -102,7 +102,7 @@ class FilterableSectionedAdapter : BaseListAdapter(), Filterable {
     }
 
     /**
-     * Add a list of sections to the adapter, key for section will be generated and returned
+     * Add a list of sections to the adapter, sectionKey for section will be generated and returned
      *
      * In case of adding a duplicate section, nothing will happen
      *
@@ -110,12 +110,12 @@ class FilterableSectionedAdapter : BaseListAdapter(), Filterable {
      *
      * @param list list of sections to add
      */
-    override fun addSections(list: List<Section<*, *, *>>) {
+    override fun addMoreSections(list: List<Section<*, *, *>>) {
         if (list.isEmpty()) return
         list.forEach {
             check(it is FilterableSection) { "section must extends from FilterableSection in order to be used" }
         }
-        super.addSections(list)
+        super.addMoreSections(list)
     }
 
     /**
@@ -136,6 +136,7 @@ class FilterableSectionedAdapter : BaseListAdapter(), Filterable {
 
             override fun publishResults(constraint: CharSequence, results: FilterResults) {
                 stickyHeaderHelper.stateChanged()
+                sectionMediator.stateChanged()
                 if (results.values == null) notifyDataSetChanged()
                 else dispatchUpdates((results.values as DiffUtil.DiffResult))
                 recyclerView?.scrollToPosition(0)
@@ -164,8 +165,8 @@ class FilterableSectionedAdapter : BaseListAdapter(), Filterable {
                         newList.addAll(pair.second)
                     }
 
-                    diffListUtil.submitLists(oldList, newList)
-                    filterResult.values = DiffUtil.calculateDiff(diffListUtil)
+                    diffListUtilBySections.submitLists(oldList, newList)
+                    filterResult.values = DiffUtil.calculateDiff(diffListUtilBySections)
                 }
 
                 return filterResult

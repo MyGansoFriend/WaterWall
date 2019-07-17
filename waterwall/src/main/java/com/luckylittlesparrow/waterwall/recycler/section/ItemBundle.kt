@@ -38,5 +38,5 @@ data class ItemBundle(
      *
      * @return [true] if container is empty, otherwise [false]
      */
-    fun isEmpty() = headerItem == null && contentItems == null && footerItem == null
+    fun isEmpty() = headerItem == null && contentItems.isNullOrEmpty() && footerItem == null
 }

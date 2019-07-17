@@ -9,26 +9,26 @@ import com.luckylittlesparrow.waterwall.recycler.section.ItemContainer
 import com.luckylittlesparrow.waterwall.recycler.section.SectionParams
 import com.luckylittlesparrow.waterwall.recycler.util.DiffUtilItemCallback
 
-class EventSection(
-    headerItem: EventHeader,
+class FilterSection(
+    headerItem: FilterHeader,
     contentItems: List<Item>,
-    footerItem: EventFooter
-) : FilterableSection<EventHeader, Item, EventFooter>(headerItem, contentItems, footerItem) {
+    footerItem: FilterFooter
+) : FilterableSection<FilterHeader, Item, FilterFooter>(headerItem, contentItems, footerItem) {
 
     override fun itemFilter(search: String, item: ItemContainer): Boolean {
         return (item as Item).body.contains(search, true)
     }
 
     override fun getItemViewHolder(view: View): BaseViewHolder<Item> {
-        return EventItemViewHolder(view, itemClickListener)
+        return FilterItemViewHolder(view, itemClickListener)
     }
 
-    override fun getHeaderViewHolder(view: View): BaseViewHolder<EventHeader> {
-        return EventHeaderViewHolder(view, headerClickListener)
+    override fun getHeaderViewHolder(view: View): BaseViewHolder<FilterHeader> {
+        return FilterHeaderViewHolder(view, headerClickListener)
     }
 
-    override fun getFooterViewHolder(view: View): BaseViewHolder<EventFooter> {
-        return EventFooterViewHolder(view)
+    override fun getFooterViewHolder(view: View): BaseViewHolder<FilterFooter> {
+        return FilterFooterViewHolder(view)
     }
 
     override fun getSectionParams(): SectionParams {

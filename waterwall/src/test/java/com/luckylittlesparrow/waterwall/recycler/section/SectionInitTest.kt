@@ -71,7 +71,9 @@ class SectionInitTest {
                 return sectionParameters
             }
         }
-
+        val key = "KEY"
+        section.sectionKey = key
+        assertThat(key, Is(section.getKey()))
         assertThat(section.itemResourceId, Is(itemResourceId))
         assertThat(section.headerResourceId, Is(headerResourceId))
         assertThat(section.footerResourceId, Is(footerResourceId))
