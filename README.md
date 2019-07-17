@@ -12,7 +12,7 @@ Multifunctional RecyclerVIew library with sections/states support
 ## Add Dependency
 Download the latest AAR from [Maven Central][2] or grab via Gradle:
 ```groovy
-implementation 'com.luckylittlesparrow:waterwall:1.0.0'
+implementation 'com.luckylittlesparrow:waterwall:1.0.1'
 ```
 or Maven:
 ```xml
