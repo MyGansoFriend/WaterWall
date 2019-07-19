@@ -9,13 +9,12 @@ Multifunctional RecyclerVIew library with sections/states support
  [ ![Download](https://api.bintray.com/packages/luckylittlesparrow/WaterWall/com.luckylittlesparrow.waterwall/images/download.svg) ](https://bintray.com/luckylittlesparrow/WaterWall/com.luckylittlesparrow.waterwall/_latestVersion)
 
 
-### What is WaterWall?
-A Library that will help you with implementing list structures in your application. Helpfulness is also about saving time and making your day a little bit easier, the main purpose of this library is to save time of developer on implementing again and againg the same tasks with UI lists. 
+WaterWall will help you with implementing list structures in your application. Helpfulness is also about saving time and making your day a little bit easier, the main purpose of this library is to save time of developer on implementing again and againg the same tasks with UI lists. 
 Most of the cool features you could search for before on the Internet to implement in your app are now available out of the box without putting any effort into implementing them.
 
 
 ## Add Dependency
-Download the latest AAR from [Maven Central][2] or grab via Gradle:
+Use Gradle:
 ```groovy
 implementation 'com.luckylittlesparrow:waterwall:1.0.4'
 ```
@@ -29,7 +28,7 @@ or Maven:
 </dependency>
 ```
 
-# Quickstart
+## Quickstart
 
 
 ### Declare a Section class
@@ -201,24 +200,24 @@ When you want to submit items to the section, if section is empty, it's better t
         stateEmptyButton.setOnClickListener { section.state = SectionState.EMPTY }
 ```
 
-# Examples
+## Examples
 
 - [States usage example](app/src/main/java/com/luckylittlesparrow/waterwall/example/state/StateListFragment.kt)
 - [Filter section example](app/src/main/java/com/luckylittlesparrow/waterwall/example/sectionedlist/FilterListFragment.kt)
 - [Expandable section example](app/src/main/java/com/luckylittlesparrow/waterwall/example/expand/ExpandableListFragment.kt)
 - [Stub section example](app/src/main/java/com/luckylittlesparrow/waterwall/example/stub/StubListFragment.kt)
 
-### Reporting issues
+## Reporting issues
 
 Found a bug or a problem on a specific feature? Open an issue on [Github issues](https://github.com/LuckyLittleSparrow/WaterWall/issues)
 
-### Getting Help
+## Getting Help
 
 Any question about WaterWall usage? 
 - Don't be afraid to write me in telegram, I will be glad to help, if I can [telegram](https://t.me/LuckySparrow)
 - Post your question on issues section [Github issues](https://github.com/LuckyLittleSparrow/WaterWall/issues)
 
-# Copyright
+## Copyright
 
     Copyright 2019 Gusev Andrei
 
