@@ -78,40 +78,7 @@ class FilterSection(
     override fun itemFilter(search: String, item: ItemContainer): Boolean {
         return (item as Item).body.contains(search, true)
     }
-
-    override fun getItemViewHolder(view: View): BaseViewHolder<Item> {
-        return FilterItemViewHolder(view, itemClickListener)
-    }
-
-    override fun getHeaderViewHolder(view: View): BaseViewHolder<FilterHeader> {
-        return FilterHeaderViewHolder(view, headerClickListener)
-    }
-
-    override fun getFooterViewHolder(view: View): BaseViewHolder<FilterFooter> {
-        return FilterFooterViewHolder(view)
-    }
-
-    override fun getSectionParams(): SectionParams {
-        return SectionParams.builder()
-            .itemResourceId(R.layout.event_section_item)
-            .headerResourceId(R.layout.event_section_header)
-            .footerResourceId(R.layout.event_section_footer)
-            .failedResourceId(R.layout.event_section_fail)
-            .loadingResourceId(R.layout.event_section_loading)
-            .build()
-    }
-
-    override fun getDiffUtilItemCallback(): DiffUtilItemCallback {
-        return object : DiffUtilItemCallback() {
-            override fun areItemsTheSame(oldItem: ItemContainer, newItem: ItemContainer): Boolean {
-                return (oldItem as Item) == (newItem as Item)
-            }
-
-            override fun areContentsTheSame(oldItem: ItemContainer, newItem: ItemContainer) =
-                (oldItem as Item).body == (newItem as Item).body
-        }
-    }
-}
+...
 ```
 
 ## Configure section params
