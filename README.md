@@ -5,7 +5,7 @@ Multifunctional RecyclerVIew library with sections/states support
 [![codecov](https://codecov.io/gh/LuckyLittleSparrow/WaterWall/branch/master/graph/badge.svg)](https://codecov.io/gh/LuckyLittleSparrow/WaterWall)
 [![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.svg?v=102)](https://opensource.org/licenses/Apache-2.0)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/LuckyLittleSparrow/WaterWall/blob/master/LICENSE)
-[![API](https://img.shields.io/badge/API-19%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=19)
+[![API](https://img.shields.io/badge/API-19%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=16)
  [ ![Download](https://api.bintray.com/packages/luckylittlesparrow/WaterWall/com.luckylittlesparrow.waterwall/images/download.svg) ](https://bintray.com/luckylittlesparrow/WaterWall/com.luckylittlesparrow.waterwall/_latestVersion)
 
 
@@ -185,7 +185,6 @@ If you have multiple sections and if you don't want to create section before loa
 
 ## States control
 To change view state presentation use setter to section.state and adapter will update section automaticly.
-When you want to submit items to the section, if section is empty, it's better to chage state to Loaded first, because both calls addItems and change state will trigger adapter to update, but if section empty, Loaded state wont trigger it.
 ```kotlin
 
         stateFailedButton.setOnClickListener { section.state = SectionState.FAILED }
