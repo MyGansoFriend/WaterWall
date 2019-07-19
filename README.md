@@ -217,6 +217,16 @@ Any question about WaterWall usage?
 - Don't be afraid to write me in telegram, I will be glad to help, if I can [telegram](https://t.me/LuckySparrow)
 - Post your question on issues section [Github issues](https://github.com/LuckyLittleSparrow/WaterWall/issues)
 
+## Future releases
+Will be added support for:
+- animations (only default supported right now)
+- snapping
+- swipe to dismiss
+- search
+- drag and drop items
+- horizontal scroll aka rv in rv
+- scroll to section
+
 ## Copyright
 
     Copyright 2019 Gusev Andrei
