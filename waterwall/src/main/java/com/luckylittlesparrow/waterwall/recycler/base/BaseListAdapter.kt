@@ -31,10 +31,7 @@ import com.luckylittlesparrow.waterwall.recycler.state.SectionState
 import com.luckylittlesparrow.waterwall.recycler.state.SectionStateCallback
 import com.luckylittlesparrow.waterwall.recycler.sticky.StickyHeaderDecoration
 import com.luckylittlesparrow.waterwall.recycler.sticky.StickyHeaderHelper
-import com.luckylittlesparrow.waterwall.recycler.util.DiffListUtilBySections
-import com.luckylittlesparrow.waterwall.recycler.util.MainThreadExecutor
-import com.luckylittlesparrow.waterwall.recycler.util.inflate
-import com.luckylittlesparrow.waterwall.recycler.util.lazyFast
+import com.luckylittlesparrow.waterwall.recycler.util.*
 import java.lang.ref.WeakReference
 import java.util.*
 import java.util.concurrent.Executors
@@ -367,10 +364,6 @@ abstract class BaseListAdapter : RecyclerView.Adapter<BaseViewHolder<Nothing>>()
         }
     }
 
-    internal val diffListUtilBySections: DiffListUtilBySections by lazyFast {
-        DiffListUtilBySections(sectionMediator)
-    }
-
     private val sectionStateCallback = object : SectionStateCallback {
         override fun onSectionContentUpdated(
             previousList: List<ItemContainer>,
@@ -502,11 +495,26 @@ abstract class BaseListAdapter : RecyclerView.Adapter<BaseViewHolder<Nothing>>()
         val oldList = sectionMediator.getAllItemsList()
         if (oldList.isNotEmpty()) clearList()
         sectionMediator.addSections(list, sectionStateCallback)
+
         list.forEach {
             sectionViewTypeNumbers[it.sectionKey!!] = viewTypeCount
             viewTypeCount += VIEW_TYPE_ITEM
         }
-        notifyDataSetChanged()
+        val newList = sectionMediator.getAllItemsList()
+        if (oldList.isEmpty()) super.notifyItemRangeInserted(0, newList.size) else {
+
+            ioExecutor.execute {
+
+                val diffListUtilByItems = DiffListUtilByItems(sectionMediator)
+                diffListUtilByItems.submitLists(oldList, newList)
+
+                val result = DiffUtil.calculateDiff(diffListUtilByItems)
+
+                mainUIExecutor.execute {
+                    result.dispatchUpdatesTo(this)
+                }
+            }
+        }
     }
 
     private fun calculateDiff(
@@ -515,6 +523,7 @@ abstract class BaseListAdapter : RecyclerView.Adapter<BaseViewHolder<Nothing>>()
         isTheSameSection: Boolean = false
     ) {
         ioExecutor.execute {
+            val diffListUtilBySections = DiffListUtilBySections(sectionMediator)
             diffListUtilBySections.submitLists(oldList, newList)
             diffListUtilBySections.isTheSameSection = isTheSameSection && oldList.size == newList.size
 

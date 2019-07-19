@@ -24,13 +24,22 @@ import com.luckylittlesparrow.waterwall.recycler.section.ItemBundle
 import kotlin.random.Random
 
 class TransactionViewModel {
+    private val transactionsCache: List<ItemBundle>
+
+    init {
+        transactionsCache = getTransactions()
+    }
 
     private val _transactions = MutableLiveData<List<ItemBundle>>()
 
     internal val transactions: LiveData<List<ItemBundle>> = _transactions
 
     fun onStart() {
-        _transactions.postValue(getTransactions())
+        _transactions.postValue(transactionsCache)
+    }
+
+    fun onRefresh() {
+        _transactions.postValue(transactionsCache.subList(0, 2))
     }
 
     private fun getTransactions(): List<ItemBundle> {

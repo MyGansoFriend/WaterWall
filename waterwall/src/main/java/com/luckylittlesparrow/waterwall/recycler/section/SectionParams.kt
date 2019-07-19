@@ -272,9 +272,9 @@ class SectionParams private constructor(builder: Builder) {
         }
 
         /**
-         * Build an instance of SectionParameters.
+         * Build an instance of Section parameters.
          *
-         * @return an instance of SectionParameters
+         * @return an instance of Section parameters
          */
         fun build(): SectionParams {
             return SectionParams(this)

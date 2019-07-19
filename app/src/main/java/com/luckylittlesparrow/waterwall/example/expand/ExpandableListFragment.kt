@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.luckylittlesparrow.waterwall.example.ItemDecoration
 import com.luckylittlesparrow.waterwall.example.R
+import com.luckylittlesparrow.waterwall.example.listsample.Item
 import com.luckylittlesparrow.waterwall.example.listsample.ItemsFactory
 import com.luckylittlesparrow.waterwall.recycler.section.ItemBundle
 import com.luckylittlesparrow.waterwall.recycler.section.ItemContainer
@@ -21,15 +22,19 @@ import kotlinx.android.synthetic.main.fragment_state_list.*
 
 class ExpandableListFragment : Fragment() {
 
-    private val clickListener = { item: ItemContainer ->
+    private val clickListener = { item: Item ->
+        Toast.makeText(context, item.toString(), Toast.LENGTH_SHORT).show()
+    }
+
+    private val headerClickListener = { item: ExpandableHeader ->
         Toast.makeText(context, item.toString(), Toast.LENGTH_SHORT).show()
     }
 
     private val sectionAdapter = SimpleSectionedAdapter()
-    private val section = ExpandableSection(ExpandableHeader("HEADER"), clickListener, clickListener)
-    private val section2 = ExpandableSection(ExpandableHeader("HEADER2"), clickListener, clickListener)
-    private val section3 = ExpandableSection(ExpandableHeader("HEADER3"), clickListener, clickListener)
-    private val section4 = ExpandableSection(ExpandableHeader("HEADER4"), clickListener, clickListener)
+    private val section = ExpandableSection(ExpandableHeader("HEADER"), clickListener, headerClickListener)
+    private val section2 = ExpandableSection(ExpandableHeader("HEADER2"), clickListener, headerClickListener)
+    private val section3 = ExpandableSection(ExpandableHeader("HEADER3"), clickListener, headerClickListener)
+    private val section4 = ExpandableSection(ExpandableHeader("HEADER4"), clickListener, headerClickListener)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

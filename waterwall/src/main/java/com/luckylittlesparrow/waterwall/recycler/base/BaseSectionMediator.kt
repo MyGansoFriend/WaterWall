@@ -128,18 +128,11 @@ internal abstract class BaseSectionMediator : SectionMediator {
     }
 
     override fun getSectionByKey(key: String): SectionDao<Nothing, Nothing, Nothing> {
-//        sections.forEach {
-//            if (it.value.section.sectionKey == sectionKey) return it.value
-//        }
         return sections[key] ?: throw NoSuchElementException()
     }
 
     override fun containsSection(key: String): Boolean {
-//        sections.forEach {
-//            if (it.value.section.sectionKey == sectionKey) return true
-//        }
         return sections.containsKey(key)
-        // return false
     }
 
     override fun containsSection(section: Section<*, *, *>): Boolean {

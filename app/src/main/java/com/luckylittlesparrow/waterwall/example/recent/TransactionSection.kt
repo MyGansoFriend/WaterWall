@@ -49,8 +49,13 @@ class TransactionSection(
 
     override fun getDiffUtilItemCallback(): DiffUtilItemCallback {
         return object : DiffUtilItemCallback() {
+
+            override fun areHeadersTheSame(oldItem: ItemContainer, newItem: ItemContainer): Boolean {
+                return (oldItem as TransactionHeader).date == (newItem as TransactionHeader).date
+            }
+
             override fun areItemsTheSame(oldItem: ItemContainer, newItem: ItemContainer): Boolean {
-                return (oldItem as TransactionItem) == (newItem as TransactionItem)
+                return (oldItem as TransactionItem).message == (newItem as TransactionItem).message
             }
 
             override fun areContentsTheSame(oldItem: ItemContainer, newItem: ItemContainer) =

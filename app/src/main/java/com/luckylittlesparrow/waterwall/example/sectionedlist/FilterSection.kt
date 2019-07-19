@@ -20,11 +20,11 @@ class FilterSection(
     }
 
     override fun getItemViewHolder(view: View): BaseViewHolder<Item> {
-        return FilterItemViewHolder(view, itemClickListener)
+        return FilterItemViewHolder(view)
     }
 
     override fun getHeaderViewHolder(view: View): BaseViewHolder<FilterHeader> {
-        return FilterHeaderViewHolder(view, headerClickListener)
+        return FilterHeaderViewHolder(view)
     }
 
     override fun getFooterViewHolder(view: View): BaseViewHolder<FilterFooter> {

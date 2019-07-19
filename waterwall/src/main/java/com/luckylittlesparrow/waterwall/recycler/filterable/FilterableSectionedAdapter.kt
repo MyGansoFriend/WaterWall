@@ -28,6 +28,8 @@ import com.luckylittlesparrow.waterwall.recycler.section.Section
 import com.luckylittlesparrow.waterwall.recycler.simple.SimpleSectionedAdapter
 import com.luckylittlesparrow.waterwall.recycler.state.SectionState
 import com.luckylittlesparrow.waterwall.recycler.sticky.StickyHeaderDecoration
+import com.luckylittlesparrow.waterwall.recycler.util.DiffListUtilBySections
+import com.luckylittlesparrow.waterwall.recycler.util.lazyFast
 
 /**
  * Adapter version with filter support, more complex than [SimpleSectionedAdapter],
@@ -172,5 +174,9 @@ class FilterableSectionedAdapter : BaseListAdapter(), Filterable {
                 return filterResult
             }
         }
+    }
+
+    internal val diffListUtilBySections: DiffListUtilBySections by lazyFast {
+        DiffListUtilBySections(sectionMediator)
     }
 }

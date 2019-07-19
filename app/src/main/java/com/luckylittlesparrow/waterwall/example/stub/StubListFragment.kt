@@ -33,7 +33,11 @@ class StubListFragment : Fragment() {
     private val section = ExpandableSection(ExpandableHeader("HEADER"), clickListener, clickListener)
     private val section2 =
         ExpandableSection(ExpandableHeader("HEADER"), clickListener, clickListener, ItemsFactory.getNumbersList())
-    private val stubSection = StubSection(R.layout.section_empty, R.layout.section_failed, R.layout.section_loading)
+    private val stubSection = StubSection(
+        R.layout.section_empty,
+        R.layout.section_failed,
+        R.layout.section_loading
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

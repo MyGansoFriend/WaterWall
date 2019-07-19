@@ -11,15 +11,13 @@ import com.luckylittlesparrow.waterwall.recycler.util.DiffUtilItemCallback
 
 class ExpandableSection(
     headerItem: ExpandableHeader,
-    itemClickListener: (ItemContainer) -> Unit,
-    headerClickListener: (ItemContainer) -> Unit,
+    val itemClickListener: (Item) -> Unit,
+    val headerClickListener: (ExpandableHeader) -> Unit,
     itemList: List<Item>? = null
 ) :
     Section<ExpandableHeader, Item, Void>(
         headerItem,
-        itemList,
-        itemClickListener = itemClickListener,
-        headerClickListener = headerClickListener
+        itemList
     ) {
 
     override fun getItemViewHolder(view: View): BaseViewHolder<Item> {

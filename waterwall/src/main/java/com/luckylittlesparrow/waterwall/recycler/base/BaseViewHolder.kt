@@ -27,8 +27,8 @@ import java.lang.ref.WeakReference
 
 /**
  * BaseViewHolder with core functionality, all ViewHolders must extend it to be used in
- * [FilterableSectionedAdapter] and [SimpleSectionedAdapter], in case if item binding is not needed,
- * use [EmptyViewHolder]
+ * [FilterableSectionedAdapter] and [SimpleSectionedAdapter],
+ * in case if item binding is not needed, use [EmptyViewHolder]
  *
  * @see EmptyViewHolder
  * @see FilterableSectionedAdapter

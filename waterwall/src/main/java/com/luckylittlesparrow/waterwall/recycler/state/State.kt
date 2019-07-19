@@ -53,8 +53,14 @@ abstract class State {
             val oldState = field
             field = state
 
-            if (field != oldState) sectionStateCallback?.onSectionStateChanged(provideId(), field, oldState)
+
+            if (field != oldState) {
+                if (field == SectionState.LOADED && isEmpty()) return
+                sectionStateCallback?.onSectionStateChanged(provideId(), field, oldState)
+            }
         }
+
+    abstract fun isEmpty(): Boolean
 
     internal var sectionStateCallback: SectionStateCallback? = null
 

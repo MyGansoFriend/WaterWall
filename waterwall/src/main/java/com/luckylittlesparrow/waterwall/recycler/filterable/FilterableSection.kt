@@ -52,18 +52,12 @@ abstract class FilterableSection<H, I, F>(
     headerItem: ItemContainer? = null,
     contentItems: List<ItemContainer>? = null,
     footerItem: ItemContainer? = null,
-    key: String? = null,
-    headerClickListener: (ItemContainer) -> Unit = {},
-    itemClickListener: (ItemContainer) -> Unit = {},
-    footerClickListener: (ItemContainer) -> Unit = {}
+    key: String? = null
 ) : Section<H, I, F>(
     headerItem,
     contentItems,
     footerItem,
-    key,
-    headerClickListener,
-    itemClickListener,
-    footerClickListener
+    key
 ) {
 
     internal var baseList = ArrayList<ItemContainer>()
@@ -93,7 +87,7 @@ abstract class FilterableSection<H, I, F>(
             !hasHeader
                     || sourceList.isNotEmpty() && sourceList.first().isHeader()
                     || hasHeader && itemBundle.headerItem != null
-        ) { "submit header item or resource" }
+        ) { FORGOT_HEADER_RESOURCE }
 
         var isNewContent = true
         var itemsCount = 0
@@ -156,9 +150,7 @@ abstract class FilterableSection<H, I, F>(
         sourceList.clear()
         baseList.clear()
 
-        check(
-            !hasHeader || hasHeader && itemBundle.headerItem != null
-        ) { "Forgot to provide header item" }
+        check(!hasHeader || hasHeader && itemBundle.headerItem != null) { FORGOT_HEADER }
 
         var itemsCount = 0
 
@@ -211,6 +203,10 @@ abstract class FilterableSection<H, I, F>(
      */
     open fun headerFilter(search: String, item: ItemContainer): Boolean = false
 
+    /**
+     * Removes all of the elements from this section. The Section will
+     * be empty after this call returns.
+     */
     override fun clearSection() {
         baseList.clear()
         filteredList.clear()
@@ -229,21 +225,19 @@ abstract class FilterableSection<H, I, F>(
 
     private fun initResources() {
         supportFilterHeader = getSectionParams().supportFilterHeaderFunction
-        check(!getSectionParams().supportExpandFunction && !getSectionParams().supportShowMoreFunction)
-        { "FilterableSection doesn't support \"show more\", \"expand\" functions" }
+        check(!getSectionParams().supportExpandFunction && !getSectionParams().supportShowMoreFunction) { SECTION_SUPPORT }
     }
 
     private fun initItems(headerItem: ItemContainer?, contentItems: List<ItemContainer>?, footerItem: ItemContainer?) {
         headerItem?.let { baseList.add(it) }
 
         contentItems?.let {
-            check(hasHeader && headerItem != null || !hasHeader && headerItem == null)
-            { "submit header item before contentItems" }
+            check(hasHeader && headerItem != null || !hasHeader && headerItem == null) { HEADER_ITEM_BEFORE_ITEMS }
             baseList.addAll(contentItems)
         }
 
         footerItem?.let {
-            check(contentItems != null) { "It's required to submit contentItems before footerItem" }
+            check(contentItems != null) { ITEMS_BEFORE_FOOTER }
             baseList.add(footerItem)
         }
     }
@@ -257,5 +251,13 @@ abstract class FilterableSection<H, I, F>(
         val footerBaseItem = baseList.removeAt(footerIndex)
         baseList.addAll(list)
         baseList.add(footerBaseItem)
+    }
+
+    companion object {
+        private const val FORGOT_HEADER = "Forgot to provide header item"
+        private const val FORGOT_HEADER_RESOURCE = "Submit header item or resource"
+        private const val HEADER_ITEM_BEFORE_ITEMS = "Submit header item before contentItems"
+        private const val ITEMS_BEFORE_FOOTER = "It's required to submit contentItems before footerItem"
+        private const val SECTION_SUPPORT = "FilterableSection doesn't support \"show more\", \"expand\" functions"
     }
 }

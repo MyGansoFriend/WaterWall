@@ -21,9 +21,11 @@ import androidx.recyclerview.widget.DiffUtil
 import com.luckylittlesparrow.waterwall.recycler.section.ItemContainer
 
 /**
- * Base util class for comparing items
+ * Base util class for comparing items, ensure that you implements comparison correctly,
+ * otherwise items in Recycler View will be updated
  *
  * @see DiffUtil.ItemCallback
+ * @see Object.equals
  *
  * @author Andrei Gusev
  * @since  1.0

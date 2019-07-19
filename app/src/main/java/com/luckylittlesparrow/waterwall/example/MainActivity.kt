@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity() {
 
         listAdapter = SimpleSectionedAdapter().apply {
             supportStickyHeader = true
+            setDefaultOptimizationSettings()
         }
 
         stubSection = StubSection(
@@ -45,7 +46,8 @@ class MainActivity : AppCompatActivity() {
             BottomSheetBehavior.from<View>(transactionListBottomSheetView)
 
         transactionListRecyclerView.adapter = listAdapter
-        listAdapter.supportStickyHeader = true
+        transactionListRecyclerView.setHasFixedSize(true)
+
         transactionListRecyclerView.addItemDecoration(
             TransactionDecoration(
                 ColorDrawable(
@@ -73,6 +75,7 @@ class MainActivity : AppCompatActivity() {
         if (list.isEmpty()) {
             stubSection.state = SectionState.EMPTY
         } else {
+
             val sections = ArrayList<TransactionSection>()
             list.forEach {
                 sections.add(TransactionSection(it.headerItem, it.contentItems))
@@ -82,7 +85,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initListeners() {
-        transactionListUpdateTextView.setOnClickListener { viewModel.onStart() }
+        transactionListUpdateTextView.setOnClickListener { viewModel.onRefresh() }
         transactionListTitleTextView.setOnClickListener { onRecentTextClicked() }
         transactionListCloseImageView.setOnClickListener { onCloseClicked() }
         bottomSheetBehavior.setBottomSheetCallback(object :

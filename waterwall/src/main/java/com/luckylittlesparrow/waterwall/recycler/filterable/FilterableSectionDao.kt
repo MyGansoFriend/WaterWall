@@ -64,10 +64,7 @@ internal class FilterableSectionDao<H, I, F>(section: FilterableSection<H, I, F>
                     return Pair(ArrayList(), filterableSection.filteredList)
                 }
 
-                return Pair(
-                    filterableSection.baseList,
-                    filterableSection.filteredList
-                )
+                return Pair(filterableSection.baseList, filterableSection.filteredList)
             }
 
             filterableSection.filteredList.add(filterableSection.sourceList.first())

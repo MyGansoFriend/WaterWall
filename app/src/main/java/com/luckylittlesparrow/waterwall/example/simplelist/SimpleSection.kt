@@ -10,9 +10,9 @@ import com.luckylittlesparrow.waterwall.recycler.section.SectionParams
 import com.luckylittlesparrow.waterwall.recycler.util.DiffUtilItemCallback
 
 class SimpleSection(
-    itemClickListener: (ItemContainer) -> Unit,
+    private val itemClickListener: (ExampleItem) -> Unit,
     contentItems: List<ExampleItem>
-) : Section<Void, ExampleItem, Void>(contentItems = contentItems, itemClickListener = itemClickListener) {
+) : Section<Void, ExampleItem, Void>(contentItems = contentItems) {
 
     override fun getItemViewHolder(view: View): BaseViewHolder<ExampleItem> {
         return ItemViewHolder(view, itemClickListener)

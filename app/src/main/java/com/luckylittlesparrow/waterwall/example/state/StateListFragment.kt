@@ -28,9 +28,8 @@ class StateListFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //  section.state = SectionState.EMPTY
+        section.state = SectionState.EMPTY
         sectionAdapter.addSection(section)
-        //
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -43,11 +42,14 @@ class StateListFragment : Fragment() {
         simpleRecyclerView.layoutManager = LinearLayoutManager(context)
 
         stateFailedButton.setOnClickListener { section.state = SectionState.FAILED }
+
         stateLoadingButton.setOnClickListener { section.state = SectionState.LOADING }
+
         stateLoadedButton.setOnClickListener {
             section.state = SectionState.LOADED
             section.addMoreItems(ItemBundle(contentItems = ItemsFactory.getNumbersList()))
         }
+
         stateEmptyButton.setOnClickListener { section.state = SectionState.EMPTY }
     }
 }

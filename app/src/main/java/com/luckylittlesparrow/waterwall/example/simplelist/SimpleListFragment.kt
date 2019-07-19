@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.fragment_simple_list.*
 
 class SimpleListFragment : Fragment() {
 
-    private val sectionAdapter = SimpleSectionedAdapter()
+
 
     private val clickListener = { item: ItemContainer ->
         when ((item as ExampleItem).type) {
@@ -36,6 +36,8 @@ class SimpleListFragment : Fragment() {
             }
         }
     }
+
+    private val sectionAdapter = SimpleSectionedAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -57,11 +57,12 @@ abstract class Section<H, I, F>(
     headerItem: ItemContainer? = null,
     contentItems: List<ItemContainer>? = null,
     footerItem: ItemContainer? = null,
-    key: String? = null,
-    val headerClickListener: (ItemContainer) -> Unit = {},
-    val itemClickListener: (ItemContainer) -> Unit = {},
-    val footerClickListener: (ItemContainer) -> Unit = {}
+    key: String? = null
 ) : State() {
+
+    private val headerClickListener: (ItemContainer) -> Unit = {}
+    private val itemClickListener: (ItemContainer) -> Unit = {}
+    private val footerClickListener: (ItemContainer) -> Unit = {}
 
     internal var sectionKey: String? = null
 
@@ -158,7 +159,7 @@ abstract class Section<H, I, F>(
      * @see supportExpandFunction
      */
     val onExpandClickListener: () -> Unit = {
-        check(supportExpandFunction) { "Section must support expand functionality" }
+        check(supportExpandFunction) { SECTION_SUPPORT_EXPAND }
         isExpanded = !isExpanded
         sectionStateCallback?.onSectionExpandChange(sectionKey!!, isExpanded)
     }
@@ -182,7 +183,7 @@ abstract class Section<H, I, F>(
      *
      */
     val onShowMoreClickListener: () -> Unit = {
-        check(supportShowMore) { "Section must support \"show more\" functionality" }
+        check(supportShowMore) { SECTION_SUPPORT_SHOW_MORE }
         isShowMoreClicked = !isShowMoreClicked
         sectionStateCallback?.onSectionShowMoreChange(sectionKey!!, collapsedItemCount, isShowMoreClicked)
     }
@@ -224,12 +225,12 @@ abstract class Section<H, I, F>(
         headerItem?.let { sourceList.add(it) }
 
         contentItems?.let {
-            check(hasHeader && headerItem != null || !hasHeader && headerItem == null) { "Forgot to provide header item or resource" }
+            check(hasHeader && headerItem != null || !hasHeader && headerItem == null) { HEADER_ITEM_BEFORE_ITEMS }
             sourceList.addAll(contentItems)
         }
 
         footerItem?.let {
-            check(contentItems != null || headerItem != null) { "Forgot to provide content items or header" }
+            check(contentItems != null || headerItem != null) { ITEMS_BEFORE_FOOTER }
             sourceList.add(footerItem)
         }
 
@@ -248,7 +249,7 @@ abstract class Section<H, I, F>(
      *
      * @return [true] if section is empty, [false] otherwise
      */
-    fun isEmpty() = sourceList.first() is StubItem
+    override fun isEmpty() = sourceList.first() is StubItem
 
     /**
      * Check if section is not empty.
@@ -299,7 +300,7 @@ abstract class Section<H, I, F>(
      * @return ViewHolder
      */
     open fun getHeaderViewHolder(view: View): BaseViewHolder<H> {
-        check(hasHeader) { "Forgot to override HeaderViewHolder getter" }
+        check(hasHeader) { FORGOT_OVERRIDE_HEADER_VH }
         return EmptyViewHolder(view)
     }
 
@@ -311,7 +312,7 @@ abstract class Section<H, I, F>(
      * @return ViewHolder
      */
     open fun getFooterViewHolder(view: View): BaseViewHolder<F> {
-        check(hasFooter) { "Forgot to override FooterViewHolder getter" }
+        check(hasFooter) { FORGOT_OVERRIDE_FOOTER_VH }
         return EmptyViewHolder(view)
     }
 
@@ -323,7 +324,7 @@ abstract class Section<H, I, F>(
      * @return ViewHolder
      */
     open fun getLoadingViewHolder(view: View): BaseViewHolder<Nothing> {
-        check(loadingResourceId != null) { "Forgot to override LoadingViewHolder getter" }
+        check(loadingResourceId != null) { FORGOT_OVERRIDE_LOADING_VH }
         return EmptyViewHolder(view)
     }
 
@@ -335,7 +336,7 @@ abstract class Section<H, I, F>(
      * @return ViewHolder
      */
     open fun getEmptyViewHolder(view: View): BaseViewHolder<Nothing> {
-        check(emptyResourceId != null) { "Forgot to override EmptyViewHolder getter" }
+        check(emptyResourceId != null) { FORGOT_OVERRIDE_EMPTY_VH }
         return EmptyViewHolder(view)
     }
 
@@ -347,7 +348,7 @@ abstract class Section<H, I, F>(
      * @return ViewHolder
      */
     open fun getFailedViewHolder(view: View): BaseViewHolder<Nothing> {
-        check(failedResourceId != null) { "Forgot to override FailedViewHolder getter" }
+        check(failedResourceId != null) { FORGOT_OVERRIDE_FAILED_VH }
         return EmptyViewHolder(view)
     }
 
@@ -376,7 +377,7 @@ abstract class Section<H, I, F>(
                     || sourceList.isNotEmpty()
                     && sourceList.first().isHeader()
                     || hasHeader && itemBundle.headerItem != null
-        ) { "Forgot to provide header item" }
+        ) { FORGOT_HEADER }
 
         sourceList.remove(stateItem)
 
@@ -423,6 +424,19 @@ abstract class Section<H, I, F>(
     }
 
     /**
+     * Add items or replace previous items with the new items and change state to the Loaded
+     *
+     * @see ItemBundle
+     *
+     * @param itemBundle bundle with items to add
+     */
+    open fun submitItemsWithLoadedState(itemBundle: ItemBundle) {
+        sourceList.clear()
+        state = SectionState.LOADED
+        submitItems(itemBundle)
+    }
+
+    /**
      * Add items or replace previous items with the new items
      *
      * @see ItemBundle
@@ -435,9 +449,7 @@ abstract class Section<H, I, F>(
         previousList.addAll(sourceList)
         sourceList.clear()
 
-        check(
-            !hasHeader || hasHeader && itemBundle.headerItem != null
-        ) { "Forgot to provide header item" }
+        check(!hasHeader || hasHeader && itemBundle.headerItem != null) { FORGOT_HEADER }
 
         var itemsCount = 0
 
@@ -503,5 +515,18 @@ abstract class Section<H, I, F>(
         val footerItem = sourceList.removeAt(getFooterIndex())
         sourceList.addAll(list)
         sourceList.add(footerItem)
+    }
+
+    companion object {
+        private const val FORGOT_HEADER = "Forgot to provide header item"
+        private const val SECTION_SUPPORT_EXPAND = "Section must support expand functionality"
+        private const val SECTION_SUPPORT_SHOW_MORE = "Section must support \"show more\" functionality"
+        private const val HEADER_ITEM_BEFORE_ITEMS = "Submit header item before contentItems"
+        private const val ITEMS_BEFORE_FOOTER = "It's required to submit contentItems before footerItem"
+        private const val FORGOT_OVERRIDE_HEADER_VH = "Forgot to override HeaderViewHolder getter"
+        private const val FORGOT_OVERRIDE_FOOTER_VH = "Forgot to override FooterViewHolder getter"
+        private const val FORGOT_OVERRIDE_LOADING_VH = "Forgot to override LoadingViewHolder getter"
+        private const val FORGOT_OVERRIDE_EMPTY_VH = "Forgot to override EmptyViewHolder getter"
+        private const val FORGOT_OVERRIDE_FAILED_VH = "Forgot to override FailedViewHolder getter"
     }
 }

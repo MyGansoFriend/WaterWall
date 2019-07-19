@@ -64,6 +64,7 @@ class SectionInitTest {
             .supportExpandFunction(true)
             .supportShowMoreFunction(true)
             .collapsedItemCount(collapsedItems)
+            .isExpandedByDefault(false)
             .build()
 
         val section = object : TestSection() {

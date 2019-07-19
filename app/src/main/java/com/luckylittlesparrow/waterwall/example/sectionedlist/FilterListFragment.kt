@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.luckylittlesparrow.waterwall.example.R
+import com.luckylittlesparrow.waterwall.example.listsample.Item
 import com.luckylittlesparrow.waterwall.example.listsample.ItemsFactory
 import com.luckylittlesparrow.waterwall.recycler.filterable.FilterableSectionedAdapter
 import com.luckylittlesparrow.waterwall.recycler.section.ItemContainer
@@ -20,7 +21,7 @@ class FilterListFragment : Fragment() {
 
     private val sectionAdapter = FilterableSectionedAdapter()
 
-    private val clickListener = { item: ItemContainer ->
+    private val clickListener = { item: Item ->
         Toast.makeText(context, item.toString(), Toast.LENGTH_SHORT).show()
     }
 
@@ -38,6 +39,7 @@ class FilterListFragment : Fragment() {
         sectionAdapter.supportStickyHeader = true
         filterRecyclerView.adapter = sectionAdapter
         filterRecyclerView.layoutManager = LinearLayoutManager(context)
+        filterRecyclerView.setHasFixedSize(true)
 
 
         val section1 = FilterSection(
