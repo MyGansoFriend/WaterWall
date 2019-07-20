@@ -37,6 +37,7 @@ class FilterListFragment : Fragment() {
         initListeners()
         val filterRecyclerView = view.findViewById<RecyclerView>(R.id.filterRecyclerView)
         sectionAdapter.supportStickyHeader = true
+        sectionAdapter.setDefaultOptimizationSettings()
         filterRecyclerView.adapter = sectionAdapter
         filterRecyclerView.layoutManager = LinearLayoutManager(context)
         filterRecyclerView.setHasFixedSize(true)

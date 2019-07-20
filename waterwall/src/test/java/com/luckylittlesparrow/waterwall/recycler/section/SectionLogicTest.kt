@@ -591,10 +591,9 @@ class SectionLogicTest {
         section.sectionKey = "KEY"
 
         assertFalse(section.isEmpty())
-        assertTrue(section.isNotEmpty())
         section.clearSection()
         assertTrue(section.isEmpty())
-        assertFalse(section.isNotEmpty())
+
 
         verify(section.sectionStateCallback)!!.onSectionContentUpdated(
             previousList,
@@ -623,7 +622,6 @@ class SectionLogicTest {
         section.sectionKey = "KEY"
 
         assertTrue(section.isEmpty())
-        assertFalse(section.isNotEmpty())
         section.clearSection()
 
         verifyNoMoreInteractions(section.sectionStateCallback)

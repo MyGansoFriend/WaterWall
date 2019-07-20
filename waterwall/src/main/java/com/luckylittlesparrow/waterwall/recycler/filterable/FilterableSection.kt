@@ -22,6 +22,7 @@ import com.luckylittlesparrow.waterwall.recycler.section.ItemContainer
 import com.luckylittlesparrow.waterwall.recycler.section.Section
 import com.luckylittlesparrow.waterwall.recycler.section.StubItem
 import com.luckylittlesparrow.waterwall.recycler.state.SectionState
+import com.luckylittlesparrow.waterwall.recycler.util.lazyFast
 
 /**
  * Section with filter support with configured data to be used in [FilterableSectionedAdapter].
@@ -62,7 +63,7 @@ abstract class FilterableSection<H, I, F>(
 
     internal var baseList = ArrayList<ItemContainer>()
 
-    internal val filteredList = ArrayList<ItemContainer>()
+    internal val filteredList by lazyFast { ArrayList<ItemContainer>() }
 
     internal var supportFilterHeader = false
 

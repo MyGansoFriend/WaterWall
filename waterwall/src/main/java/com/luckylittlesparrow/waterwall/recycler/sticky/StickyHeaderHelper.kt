@@ -75,4 +75,8 @@ internal class StickyHeaderHelper(
 
         return -1
     }
+
+    fun getItemByPosition(position: Int): ItemContainer {
+      return items[position]
+    }
 }

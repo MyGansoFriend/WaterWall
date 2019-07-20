@@ -25,6 +25,7 @@ import com.luckylittlesparrow.waterwall.recycler.simple.SimpleSectionedAdapter
 import com.luckylittlesparrow.waterwall.recycler.state.SectionState
 import com.luckylittlesparrow.waterwall.recycler.state.State
 import com.luckylittlesparrow.waterwall.recycler.util.DiffUtilItemCallback
+import com.luckylittlesparrow.waterwall.recycler.util.lazyFast
 
 /**
  * Base Section aka Container with configured data to be used in [SimpleSectionedAdapter].
@@ -59,10 +60,6 @@ abstract class Section<H, I, F>(
     footerItem: ItemContainer? = null,
     key: String? = null
 ) : State() {
-
-    private val headerClickListener: (ItemContainer) -> Unit = {}
-    private val itemClickListener: (ItemContainer) -> Unit = {}
-    private val footerClickListener: (ItemContainer) -> Unit = {}
 
     internal var sectionKey: String? = null
 
@@ -158,10 +155,12 @@ abstract class Section<H, I, F>(
      *
      * @see supportExpandFunction
      */
-    val onExpandClickListener: () -> Unit = {
-        check(supportExpandFunction) { SECTION_SUPPORT_EXPAND }
-        isExpanded = !isExpanded
-        sectionStateCallback?.onSectionExpandChange(sectionKey!!, isExpanded)
+    val onExpandClickListener: () -> Unit? by lazyFast {
+        return@lazyFast {
+            check(supportExpandFunction) { SECTION_SUPPORT_EXPAND }
+            isExpanded = !isExpanded
+            sectionStateCallback?.onSectionExpandChange(provideId(), isExpanded)
+        }
     }
 
     /**
@@ -182,10 +181,12 @@ abstract class Section<H, I, F>(
      * @see supportShowMore
      *
      */
-    val onShowMoreClickListener: () -> Unit = {
-        check(supportShowMore) { SECTION_SUPPORT_SHOW_MORE }
-        isShowMoreClicked = !isShowMoreClicked
-        sectionStateCallback?.onSectionShowMoreChange(sectionKey!!, collapsedItemCount, isShowMoreClicked)
+    val onShowMoreClickListener: () -> Unit? by lazyFast {
+        return@lazyFast {
+            check(supportShowMore) { SECTION_SUPPORT_SHOW_MORE }
+            isShowMoreClicked = !isShowMoreClicked
+            sectionStateCallback?.onSectionShowMoreChange(provideId(), collapsedItemCount, isShowMoreClicked)
+        }
     }
 
     init {

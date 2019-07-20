@@ -32,7 +32,6 @@ import com.luckylittlesparrow.waterwall.recycler.state.SectionStateCallback
 import com.luckylittlesparrow.waterwall.recycler.sticky.StickyHeaderDecoration
 import com.luckylittlesparrow.waterwall.recycler.sticky.StickyHeaderHelper
 import com.luckylittlesparrow.waterwall.recycler.util.*
-import java.lang.ref.WeakReference
 import java.util.*
 import java.util.concurrent.Executors
 
@@ -59,6 +58,21 @@ import java.util.concurrent.Executors
  * @since  1.0
  */
 abstract class BaseListAdapter : RecyclerView.Adapter<BaseViewHolder<Nothing>>() {
+
+    var maxRecycledContentItemViewsPool = 30
+
+    var maxRecycledHeaderItemViewsPool = 0
+
+    var maxRecycledFooterItemViewsPool = 0
+
+    var supportFixedSize = true
+
+    var onFailedToRecycleView = true
+
+    var sameSectionType = true
+
+    var supportStableIds = true
+
     private val sectionBinder = SectionBinder()
 
     private val sectionViewTypeNumbers: MutableMap<String, Int> = LinkedHashMap()
@@ -83,9 +97,9 @@ abstract class BaseListAdapter : RecyclerView.Adapter<BaseViewHolder<Nothing>>()
      */
     var supportStickyHeader = false
         set(value) {
-            field = value
-            sectionBinder.isStickyHeaderSupported = value
-            sectionBinder.clickListener = if (value) WeakReference(clickListener) else null
+//            field = value
+//            sectionBinder.isStickyHeaderSupported = value
+//            sectionBinder.clickListener = if (value) WeakReference(clickListener) else null
         }
 
 
@@ -97,7 +111,7 @@ abstract class BaseListAdapter : RecyclerView.Adapter<BaseViewHolder<Nothing>>()
      * @see RecyclerView.Adapter.setHasStableIds(true)
      */
     fun setDefaultOptimizationSettings() {
-        setHasStableIds(true)
+        setHasStableIds(supportStableIds)
     }
 
     /**
@@ -211,7 +225,7 @@ abstract class BaseListAdapter : RecyclerView.Adapter<BaseViewHolder<Nothing>>()
      * Remove all section inside adapter and return it to initial state
      */
     fun clearList() {
-        if (viewTypeCount > 0)
+        if (viewTypeCount > 0)//
             sectionMediator.clearList()
         sectionViewTypeNumbers.clear()
         viewTypeCount = 0
@@ -231,10 +245,22 @@ abstract class BaseListAdapter : RecyclerView.Adapter<BaseViewHolder<Nothing>>()
             }
         }
 
+        viewHolder?.itemView?.setOnClickListener {
+            if (viewHolder.adapterPosition != RecyclerView.NO_POSITION) {
+                if (viewHolder.isItemNotNull()) {
+                    if (viewHolder.isHeader()) viewHolder.performClick()
+                    else if (supportStickyHeader) {
+                        if (viewHolder.checkForStickyHeader()) viewHolder.performClick()
+                    } else viewHolder.performClick()
+                }
+            }
+        }
+
         return viewHolder!!
     }
 
     override fun getItemId(position: Int): Long {
+        // return stickyHeaderHelper.getItemByPosition(position).ITEM_CONTAINER_ID
         return sectionMediator.getItemByPosition(position).ITEM_CONTAINER_ID
     }
 
@@ -331,6 +357,21 @@ abstract class BaseListAdapter : RecyclerView.Adapter<BaseViewHolder<Nothing>>()
                 )
             )
         }
+
+        recyclerView.recycledViewPool.setMaxRecycledViews(VIEW_TYPE_ITEM, maxRecycledContentItemViewsPool)
+
+        if (maxRecycledHeaderItemViewsPool > 0)
+            recyclerView.recycledViewPool.setMaxRecycledViews(
+                VIEW_TYPE_HEADER,
+                maxRecycledHeaderItemViewsPool
+            )
+
+        if (maxRecycledFooterItemViewsPool > 0)
+            recyclerView.recycledViewPool.setMaxRecycledViews(
+                VIEW_TYPE_FOOTER,
+                maxRecycledFooterItemViewsPool
+            )
+        recyclerView.setHasFixedSize(supportFixedSize)
     }
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
@@ -338,6 +379,10 @@ abstract class BaseListAdapter : RecyclerView.Adapter<BaseViewHolder<Nothing>>()
         this.recyclerView = null
 
         sectionMediator.detachSectionStateCallback()
+    }
+
+    override fun onFailedToRecycleView(holder: BaseViewHolder<Nothing>): Boolean {
+        return onFailedToRecycleView
     }
 
     internal var currentStickyHeader: BaseViewHolder<*>? = null
@@ -441,7 +486,7 @@ abstract class BaseListAdapter : RecyclerView.Adapter<BaseViewHolder<Nothing>>()
         else sectionMediator.addSection(key, section, sectionStateCallback)
 
         sectionViewTypeNumbers[key] = viewTypeCount
-        viewTypeCount += VIEW_TYPE_ITEM
+        if (!sameSectionType) viewTypeCount += VIEW_TYPE_ITEM
 
 
         val newList = sectionMediator.getAllItemsList()
@@ -468,7 +513,7 @@ abstract class BaseListAdapter : RecyclerView.Adapter<BaseViewHolder<Nothing>>()
             if (result) {
                 val key = sectionKey ?: section!!.sectionKey
                 sectionViewTypeNumbers.remove(key)
-                viewTypeCount -= VIEW_TYPE_ITEM
+                if (!sameSectionType) viewTypeCount -= VIEW_TYPE_ITEM
             }
             calculateDiff(oldList, newList)
         }
@@ -484,7 +529,7 @@ abstract class BaseListAdapter : RecyclerView.Adapter<BaseViewHolder<Nothing>>()
         list.forEach {
             newElementsSize += it.sourceList.size
             sectionViewTypeNumbers[it.sectionKey!!] = viewTypeCount
-            viewTypeCount += VIEW_TYPE_ITEM
+            if (!sameSectionType) viewTypeCount += VIEW_TYPE_ITEM
         }
 
         notifyItemRangeInserted(oldList.size + 1, newElementsSize)
@@ -498,7 +543,7 @@ abstract class BaseListAdapter : RecyclerView.Adapter<BaseViewHolder<Nothing>>()
 
         list.forEach {
             sectionViewTypeNumbers[it.sectionKey!!] = viewTypeCount
-            viewTypeCount += VIEW_TYPE_ITEM
+            if (!sameSectionType) viewTypeCount += VIEW_TYPE_ITEM
         }
         val newList = sectionMediator.getAllItemsList()
         if (oldList.isEmpty()) super.notifyItemRangeInserted(0, newList.size) else {

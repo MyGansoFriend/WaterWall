@@ -46,21 +46,18 @@ internal class SectionBinder {
 
     @Suppress("UNCHECKED_CAST")
     fun <T> onBindHeaderViewHolder(itemContainer: ItemContainer, holder: BaseViewHolder<T>) {
-        holder.isStickyHeaderSupported = isStickyHeaderSupported
         holder.clickListener = clickListener
         holder.bindItem(itemContainer as T)
     }
 
     @Suppress("UNCHECKED_CAST")
     fun <T> onBindFooterViewHolder(itemContainer: ItemContainer, holder: BaseViewHolder<T>) {
-        holder.isStickyHeaderSupported = isStickyHeaderSupported
         holder.clickListener = clickListener
         holder.bindItem(itemContainer as T)
     }
 
     @Suppress("UNCHECKED_CAST")
     fun <T> onBindItemViewHolder(itemContainer: ItemContainer, holder: BaseViewHolder<T>) {
-        holder.isStickyHeaderSupported = isStickyHeaderSupported
         holder.clickListener = clickListener
         holder.bindItem(itemContainer as T)
     }

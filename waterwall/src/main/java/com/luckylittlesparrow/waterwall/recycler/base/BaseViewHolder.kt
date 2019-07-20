@@ -19,8 +19,8 @@ package com.luckylittlesparrow.waterwall.recycler.base
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import com.luckylittlesparrow.waterwall.recycler.section.ItemContainer
 import com.luckylittlesparrow.waterwall.recycler.filterable.FilterableSectionedAdapter
+import com.luckylittlesparrow.waterwall.recycler.section.ItemContainer
 import com.luckylittlesparrow.waterwall.recycler.simple.SimpleSectionedAdapter
 import com.luckylittlesparrow.waterwall.recycler.state.SectionState
 import java.lang.ref.WeakReference
@@ -42,7 +42,7 @@ import java.lang.ref.WeakReference
  */
 abstract class BaseViewHolder<T>(
     view: View,
-    private val itemClickedListener: (T) -> Unit = {}
+    val itemClickedListener: (T) -> Unit = {}
 ) : RecyclerView.ViewHolder(view) {
 
     var item: T? = null
@@ -82,21 +82,6 @@ abstract class BaseViewHolder<T>(
     open fun onClickAction() {
     }
 
-    init {
-        view.setOnClickListener {
-            item?.let {
-                if ((item as ItemContainer).isHeader()) {
-                    performClick()
-                } else if (isStickyHeaderSupported) {
-                    if (clickListener?.get()?.onItemClick(item as ItemContainer) == true) {
-                        performClick()
-                    }
-                } else performClick()
-            }
-        }
-
-    }
-
     /**
      * Bind the data to the ViewHolder for sticky item
      *
@@ -109,11 +94,15 @@ abstract class BaseViewHolder<T>(
         bindItem(item as T)
     }
 
-    fun performClick() {
+    internal fun performClick() {
         item?.let { item -> itemClickedListener(item) }
     }
 
-    internal var isStickyHeaderSupported = false
+    internal fun isItemNotNull(): Boolean = item != null
+
+    internal fun checkForStickyHeader(): Boolean = clickListener?.get()?.onItemClick(item as ItemContainer) == true
+
+    internal fun isHeader(): Boolean = (item as ItemContainer).isHeader()
 
     internal var clickListener: WeakReference<OnItemClickListener>? = null
 }

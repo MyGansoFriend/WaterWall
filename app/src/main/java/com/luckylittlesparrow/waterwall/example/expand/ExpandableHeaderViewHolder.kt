@@ -7,7 +7,7 @@ import com.luckylittlesparrow.waterwall.example.R
 import com.luckylittlesparrow.waterwall.recycler.base.BaseViewHolder
 
 class ExpandableHeaderViewHolder constructor(
-    view: View, val expandClickedListener: () -> Unit,
+    view: View, val expandClickedListener: () -> Unit?,
     headerClickListener: (ExpandableHeader) -> Unit
 ) :
     BaseViewHolder<ExpandableHeader>(view, headerClickListener) {
