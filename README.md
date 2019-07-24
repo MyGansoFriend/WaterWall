@@ -16,14 +16,14 @@ Most of the cool features you could search for before on the Internet to impleme
 ## Add Dependency
 Use Gradle:
 ```groovy
-implementation 'com.luckylittlesparrow:waterwall:1.0.4'
+implementation 'com.luckylittlesparrow:waterwall:1.1.4'
 ```
 or Maven:
 ```xml
 <dependency>
   <groupId>com.luckylittlesparrow</groupId>
   <artifactId>waterwall</artifactId>
-  <version>1.0.4</version>
+  <version>1.1.4</version>
   <type>pom</type>
 </dependency>
 ```
