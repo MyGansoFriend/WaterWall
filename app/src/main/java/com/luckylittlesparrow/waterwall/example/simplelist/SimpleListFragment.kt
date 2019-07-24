@@ -42,7 +42,6 @@ class SimpleListFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val section = SimpleSection(clickListener, getExamples())
-        sectionAdapter.setDefaultOptimizationSettings()
         sectionAdapter.addSection(section)
     }
 

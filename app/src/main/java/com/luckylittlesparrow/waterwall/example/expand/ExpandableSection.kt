@@ -4,10 +4,12 @@ import android.view.View
 import com.luckylittlesparrow.waterwall.example.R
 import com.luckylittlesparrow.waterwall.example.listsample.Item
 import com.luckylittlesparrow.waterwall.recycler.base.BaseViewHolder
+import com.luckylittlesparrow.waterwall.recycler.base.Binder
 import com.luckylittlesparrow.waterwall.recycler.section.ItemContainer
 import com.luckylittlesparrow.waterwall.recycler.section.Section
 import com.luckylittlesparrow.waterwall.recycler.section.SectionParams
 import com.luckylittlesparrow.waterwall.recycler.util.DiffUtilItemCallback
+import kotlinx.android.synthetic.main.expandable_section_header.view.*
 
 class ExpandableSection(
     headerItem: ExpandableHeader,
@@ -25,7 +27,7 @@ class ExpandableSection(
     }
 
     override fun getHeaderViewHolder(view: View): BaseViewHolder<ExpandableHeader> {
-        return ExpandableHeaderViewHolder(view, onExpandClickListener, headerClickListener)
+        return ExpandableHeaderViewHolder(view, headerClickListener)
     }
 
     override fun getSectionParams(): SectionParams {
@@ -48,6 +50,14 @@ class ExpandableSection(
 
             override fun areContentsTheSame(oldItem: ItemContainer, newItem: ItemContainer) =
                 (oldItem as Item).body == (newItem as Item).body
+        }
+    }
+
+    override fun provideStickyHeaderBinder(): Binder {
+        return object : Binder {
+            override fun bind(view: View, item: ItemContainer) {
+                view.itemDayTextView.text = (item as ExpandableHeader).title
+            }
         }
     }
 }

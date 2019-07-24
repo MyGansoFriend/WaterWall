@@ -137,7 +137,6 @@ class FilterableSectionedAdapter : BaseListAdapter(), Filterable {
         return object : Filter() {
 
             override fun publishResults(constraint: CharSequence, results: FilterResults) {
-                stickyHeaderHelper.stateChanged()
                 sectionMediator.stateChanged()
                 if (results.values == null) notifyDataSetChanged()
                 else dispatchUpdates((results.values as DiffUtil.DiffResult))

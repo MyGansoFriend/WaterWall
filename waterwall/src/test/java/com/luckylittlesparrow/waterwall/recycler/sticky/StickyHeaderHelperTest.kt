@@ -77,27 +77,6 @@ class StickyHeaderHelperTest {
     }
 
     @Test
-    fun stateChanged() {
-        assertFalse(stickyHeaderHelper.isStateChanged)
-        stickyHeaderHelper.stateChanged()
-
-        assertTrue(stickyHeaderHelper.isStateChanged)
-    }
-
-    @Test
-    fun resetItemsList() {
-        stickyHeaderHelper.isHeader(0)
-
-        assertEquals(
-            stickyHeaderHelper.getField("items").get(stickyHeaderHelper) as List<ItemContainer>,
-            list
-        )
-
-        stickyHeaderHelper.resetItemsList()
-        assertTrue((stickyHeaderHelper.getField("items").get(stickyHeaderHelper) as List<ItemContainer>).isEmpty())
-    }
-
-    @Test
     fun isHeader() {
         assertTrue(stickyHeaderHelper.isHeader(0))
         assertFalse(stickyHeaderHelper.isHeader(1))
@@ -116,11 +95,6 @@ class StickyHeaderHelperTest {
 
         assertEquals(stickyHeaderHelper.getHeaderLayout(0), 0)
         assertEquals(stickyHeaderHelper.getHeaderLayout(1), 0)
-    }
-
-    @Test
-    fun bindHeaderData() {
-        assertEquals(stickyHeaderHelper.bindHeaderData(view, 0), viewHolder to list.first())
     }
 
     @Test

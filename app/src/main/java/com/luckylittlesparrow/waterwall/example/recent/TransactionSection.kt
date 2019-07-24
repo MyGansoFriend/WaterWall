@@ -20,11 +20,12 @@ package com.luckylittlesparrow.waterwall.example.recent
 import android.view.View
 import com.luckylittlesparrow.waterwall.example.R
 import com.luckylittlesparrow.waterwall.recycler.base.BaseViewHolder
+import com.luckylittlesparrow.waterwall.recycler.base.Binder
 import com.luckylittlesparrow.waterwall.recycler.section.ItemContainer
 import com.luckylittlesparrow.waterwall.recycler.section.Section
 import com.luckylittlesparrow.waterwall.recycler.section.SectionParams
 import com.luckylittlesparrow.waterwall.recycler.util.DiffUtilItemCallback
-
+import kotlinx.android.synthetic.main.transaction_header_view_item.view.*
 
 class TransactionSection(
     header: ItemContainer?,
@@ -47,6 +48,14 @@ class TransactionSection(
             .build()
     }
 
+    override fun provideStickyHeaderBinder(): Binder {
+        return object : Binder {
+            override fun bind(view: View, item: ItemContainer) {
+                view.transactionItemDayTextView.text = (item as TransactionHeader).date
+            }
+        }
+    }
+
     override fun getDiffUtilItemCallback(): DiffUtilItemCallback {
         return object : DiffUtilItemCallback() {
 
@@ -64,7 +73,6 @@ class TransactionSection(
                     newItem as TransactionItem
 
                     return@let newItem.value == oldItem.value && newItem.message == oldItem.message
-
                 }
         }
     }

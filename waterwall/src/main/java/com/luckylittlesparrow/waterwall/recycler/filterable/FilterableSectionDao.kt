@@ -30,8 +30,14 @@ internal class FilterableSectionDao<H, I, F>(section: FilterableSection<H, I, F>
     private var lastSearchString = ""
 
     override fun filter(search: CharSequence): Pair<List<ItemContainer>, List<ItemContainer>>? {
-        val searchString = search.toString().toLowerCase()
         val filterableSection = section as FilterableSection
+        if (section.isSwitched) {
+            section.filteredList.clear()
+            lastSearchString = ""
+            return null
+        }
+
+        val searchString = search.toString().toLowerCase()
 
         if (lastSearchString.isNotEmpty() && searchString.contains(lastSearchString) && filterableSection.filteredList.isEmpty()) {
             return null
@@ -103,7 +109,11 @@ internal class FilterableSectionDao<H, I, F>(section: FilterableSection<H, I, F>
     override fun getVisibleItemsList(): List<ItemContainer> {
         section as FilterableSection<H, I, F>
         return when {
-            state() != SectionState.LOADED -> section.baseList.subList(0, 2)
+            !section.isVisible -> emptyList()
+            state() != SectionState.LOADED -> {
+                val pos = if (section.hasHeader) 2 else 1
+                section.sourceList.subList(0, pos)
+            }
             section.filteredList.isEmpty() -> section.baseList
             else -> section.filteredList
         }

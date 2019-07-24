@@ -35,4 +35,6 @@ internal interface SectionStateCallback {
     fun onSectionShowMoreChange(sectionKey: String, collapsedItemCount: Int, isShowMore: Boolean)
 
     fun onSectionContentUpdated(previousList: List<ItemContainer>, newList: List<ItemContainer>, sectionKey: String)
+
+    fun onSectionVisibilityChange(isVisible: Boolean, provideId: String, currentSize: Int)
 }

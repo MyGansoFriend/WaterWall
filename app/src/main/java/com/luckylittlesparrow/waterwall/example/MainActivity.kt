@@ -32,10 +32,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.nav_host)
 
-        listAdapter = SimpleSectionedAdapter().apply {
-            supportStickyHeader = true
-            setDefaultOptimizationSettings()
-        }
+        listAdapter = SimpleSectionedAdapter()
+
+        listAdapter
+            .supportStickyHeader(true)
+            .into(transactionListRecyclerView)
 
         stubSection = StubSection(
             loadingLayoutId = R.layout.loading_layout,
@@ -45,8 +46,10 @@ class MainActivity : AppCompatActivity() {
         bottomSheetBehavior =
             BottomSheetBehavior.from<View>(transactionListBottomSheetView)
 
+        //listAdapter.into(transactionListRecyclerView)
+
         transactionListRecyclerView.adapter = listAdapter
-        transactionListRecyclerView.setHasFixedSize(true)
+
 
         transactionListRecyclerView.addItemDecoration(
             TransactionDecoration(

@@ -11,15 +11,9 @@ import com.luckylittlesparrow.waterwall.recycler.util.DiffUtilItemCallback
 open class FilterTestSection(
     headerItem: TestHeader? = null,
     contentItems: List<TestItem>? = null,
-    footerItem: TestFooter? = null,
-    headerClickListener: (ItemContainer) -> Unit = {},
-    itemClickListener: (ItemContainer) -> Unit = {},
-    footerClickListener: (ItemContainer) -> Unit = {}
+    footerItem: TestFooter? = null
 ) : FilterableSection<TestHeader, TestItem, TestFooter>(
-    headerItem, contentItems, footerItem,
-    itemClickListener = itemClickListener,
-    headerClickListener = headerClickListener,
-    footerClickListener = footerClickListener
+    headerItem, contentItems, footerItem
 ) {
 
     override fun itemFilter(search: String, item: ItemContainer): Boolean {

@@ -126,7 +126,7 @@ abstract class FilterableSection<H, I, F>(
             }
         }
 
-        if (state == SectionState.LOADED) {
+        if (state == SectionState.LOADED && isVisible) {
             if (isNewContent && itemsCount > 0)
                 sectionStateCallback?.onSectionContentAdded(provideId(), itemsCount)
             else {
@@ -173,10 +173,6 @@ abstract class FilterableSection<H, I, F>(
             sourceList.add(footerIndex, it)
             baseList.add(footerIndex, it)
             itemsCount++
-        }
-
-        if (state == SectionState.LOADED) {
-            sectionStateCallback?.onSectionContentUpdated(previousList, sourceList, provideId())
         }
     }
 

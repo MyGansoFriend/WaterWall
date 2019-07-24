@@ -82,6 +82,9 @@ abstract class BaseViewHolder<T>(
     open fun onClickAction() {
     }
 
+    open fun performExpandClick(isExpanded: Boolean) {
+    }
+
     /**
      * Bind the data to the ViewHolder for sticky item
      *
@@ -97,6 +100,8 @@ abstract class BaseViewHolder<T>(
     internal fun performClick() {
         item?.let { item -> itemClickedListener(item) }
     }
+
+    open fun provideViewForExpandClick(): View? = null
 
     internal fun isItemNotNull(): Boolean = item != null
 

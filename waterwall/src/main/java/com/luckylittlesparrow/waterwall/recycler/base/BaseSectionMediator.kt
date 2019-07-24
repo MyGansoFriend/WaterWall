@@ -32,8 +32,21 @@ import kotlin.collections.LinkedHashMap
 internal abstract class BaseSectionMediator : SectionMediator {
     protected val sections: MutableMap<String, SectionDao<Nothing, Nothing, Nothing>> = LinkedHashMap()
 
+    var isStateChanged = false
+        private set
+
+    override var items: List<ItemContainer> = emptyList()
+        get() {
+            if (field.isEmpty() || isStateChanged) {
+                field = getVisibleItemsList()
+                isStateChanged = false
+            }
+            return field
+        }
+
     override fun stateChanged() {
         visibleItemCount = -1
+        isStateChanged = true
     }
 
     private var visibleItemCount = -1

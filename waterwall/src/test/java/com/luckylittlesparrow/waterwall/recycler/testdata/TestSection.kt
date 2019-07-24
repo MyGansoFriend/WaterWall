@@ -12,10 +12,7 @@ open class TestSection(
     headerItem: TestHeader? = null,
     contentItems: List<TestItem>? = null,
     footerItem: TestFooter? = null
-) : Section<TestHeader, TestItem, TestFooter>(headerItem, contentItems, footerItem,
-    itemClickListener = { item: ItemContainer -> },
-    headerClickListener = { item: ItemContainer -> },
-    footerClickListener = { item: ItemContainer -> }) {
+) : Section<TestHeader, TestItem, TestFooter>(headerItem, contentItems, footerItem) {
     override fun getSectionParams(): SectionParams {
         return SectionParams.builder().build()
     }

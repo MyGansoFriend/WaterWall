@@ -14,7 +14,6 @@ import com.luckylittlesparrow.waterwall.example.R
 import com.luckylittlesparrow.waterwall.example.listsample.Item
 import com.luckylittlesparrow.waterwall.example.listsample.ItemsFactory
 import com.luckylittlesparrow.waterwall.recycler.filterable.FilterableSectionedAdapter
-import com.luckylittlesparrow.waterwall.recycler.section.ItemContainer
 import kotlinx.android.synthetic.main.fragment_filter_list.*
 
 class FilterListFragment : Fragment() {
@@ -36,29 +35,41 @@ class FilterListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initListeners()
         val filterRecyclerView = view.findViewById<RecyclerView>(R.id.filterRecyclerView)
-        sectionAdapter.supportStickyHeader = true
-        sectionAdapter.setDefaultOptimizationSettings()
         filterRecyclerView.adapter = sectionAdapter
         filterRecyclerView.layoutManager = LinearLayoutManager(context)
-        filterRecyclerView.setHasFixedSize(true)
 
 
-        val section1 = FilterSection(
-            FilterHeader("today"), ItemsFactory.getNames(),
-            FilterFooter("today footer")
-        )
 
-        val section2 = FilterSection(
-            FilterHeader("yesterday"), ItemsFactory.getNumbersList(),
-            FilterFooter("yesterday footer")
-        )
+        sectionEmpty.isVisible = false
 
 
-        sectionAdapter.addMoreSections(listOf(section1, section2))
+        sectionAdapter.addMoreSections(listOf(section1, section2, sectionEmpty))
     }
 
-    private fun initListeners() {
+    val section1 = FilterSection(
+        FilterHeader("today"), ItemsFactory.getNames(),
+        FilterFooter("today footer")
+    )
 
+    val section2 = FilterSection(
+        FilterHeader("yesterday"), ItemsFactory.getNumbersList(),
+        FilterFooter("yesterday footer")
+    )
+
+    val sectionEmpty = EmptyFilterItemSection(
+        ItemsFactory.getNumbersList()
+    )
+
+    var switch = false
+
+    private fun initListeners() {
+        emptyItemTextView.setOnClickListener {
+            switch = !switch
+            if (switch)
+                sectionAdapter.changeShowedSectionToAnother(listOf(section1, section2), listOf(sectionEmpty))
+            else sectionAdapter.changeShowedSectionToAnother(listOf(sectionEmpty), listOf(section1, section2))
+
+        }
         searchViewEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
