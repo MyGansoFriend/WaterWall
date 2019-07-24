@@ -38,7 +38,8 @@ class StateListFragment : Fragment() {
     }
 
     private fun initListeners() {
-        simpleRecyclerView.adapter = sectionAdapter
+        sectionAdapter.into(simpleRecyclerView)
+
         simpleRecyclerView.layoutManager = LinearLayoutManager(context)
 
         stateFailedButton.setOnClickListener { section.state = SectionState.FAILED }
@@ -46,8 +47,7 @@ class StateListFragment : Fragment() {
         stateLoadingButton.setOnClickListener { section.state = SectionState.LOADING }
 
         stateLoadedButton.setOnClickListener {
-            section.state = SectionState.LOADED
-            section.addMoreItems(ItemBundle(contentItems = ItemsFactory.getNumbersList()))
+            section.submitItemsWithLoadedState(ItemBundle(contentItems = ItemsFactory.getNumbersList()))
         }
 
         stateEmptyButton.setOnClickListener { section.state = SectionState.EMPTY }

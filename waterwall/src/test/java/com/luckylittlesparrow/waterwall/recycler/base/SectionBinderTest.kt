@@ -95,7 +95,6 @@ class SectionBinderTest {
 
     @Test
     fun onBindHeaderViewHolder() {
-        assertFalse(viewHolder.isStickyHeaderSupported)
         assertNull(viewHolder.clickListener)
         sectionBinder.isStickyHeaderSupported = true
         sectionBinder.clickListener = clickListener
@@ -103,13 +102,11 @@ class SectionBinderTest {
 
         sectionBinder.onBindHeaderViewHolder(item, viewHolder)
         assertEquals(viewHolder.item, item)
-        assertTrue(viewHolder.isStickyHeaderSupported)
         assertEquals(viewHolder.clickListener, clickListener)
     }
 
     @Test
     fun onBindFooterViewHolder() {
-        assertFalse(viewHolder.isStickyHeaderSupported)
         assertNull(viewHolder.clickListener)
         sectionBinder.isStickyHeaderSupported = true
         sectionBinder.clickListener = clickListener
@@ -117,13 +114,11 @@ class SectionBinderTest {
 
         sectionBinder.onBindFooterViewHolder(item, viewHolder)
         assertEquals(viewHolder.item, item)
-        assertTrue(viewHolder.isStickyHeaderSupported)
         assertEquals(viewHolder.clickListener, clickListener)
     }
 
     @Test
     fun onBindItemViewHolder() {
-        assertFalse(viewHolder.isStickyHeaderSupported)
         assertNull(viewHolder.clickListener)
         sectionBinder.isStickyHeaderSupported = true
         sectionBinder.clickListener = clickListener
@@ -131,7 +126,6 @@ class SectionBinderTest {
 
         sectionBinder.onBindItemViewHolder(item, viewHolder)
         assertEquals(viewHolder.item, item)
-        assertTrue(viewHolder.isStickyHeaderSupported)
         assertEquals(viewHolder.clickListener, clickListener)
     }
 }

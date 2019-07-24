@@ -56,7 +56,7 @@ object ItemsFactory {
     fun getNumbersList(): List<Item> {
         val cards = ArrayList<Item>()
 
-        for (i in 1 until 15) {
+        for (i in 1 until 35) {
             cards.add(Item(i.toString()))
         }
 

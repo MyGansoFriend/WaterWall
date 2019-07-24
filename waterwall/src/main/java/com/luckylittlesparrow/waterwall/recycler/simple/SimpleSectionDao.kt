@@ -76,6 +76,7 @@ internal open class SimpleSectionDao<H, I, F>(override val section: Section<H, I
     }
 
     override fun getVisibleItemsList(): List<ItemContainer> {
+        if (!section.isVisible) return emptyList()
         return if (section.isExpanded && section.isNotEmpty()) {
             if (state() != SectionState.LOADED) {
                 return section.sourceList.subList(0, 2)

@@ -18,18 +18,6 @@ class FilterSectionAddItemsTest {
         var itemCheck = false
         var footerCheck = false
 
-        val headerClickLister = { item: ItemContainer ->
-            headerCheck = true
-        }
-
-        val footerClickLister = { item: ItemContainer ->
-            footerCheck = true
-        }
-
-        val itemClickLister = { item: ItemContainer ->
-            itemCheck = true
-        }
-
         val sectionParameters = SectionParams.builder()
             .headerResourceId(headerResourceId)
             .itemResourceId(itemResourceId)
@@ -37,19 +25,12 @@ class FilterSectionAddItemsTest {
             .build()
 
         val section = object : FilterTestSection(
-            headerItem = TestItemsFactory.header,
-            headerClickListener = headerClickLister,
-            itemClickListener = itemClickLister,
-            footerClickListener = footerClickLister
+            headerItem = TestItemsFactory.header
         ) {
             override fun getSectionParams(): SectionParams {
                 return sectionParameters
             }
         }
-
-        section.headerClickListener.invoke(mock())
-        section.footerClickListener.invoke(mock())
-        section.itemClickListener.invoke(mock())
 
         assertTrue(headerCheck && footerCheck && itemCheck)
 

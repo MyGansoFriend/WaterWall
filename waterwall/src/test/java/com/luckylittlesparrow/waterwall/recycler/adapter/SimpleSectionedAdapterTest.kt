@@ -128,7 +128,6 @@ class SimpleSectionedAdapterTest {
         val item = TestItemsFactory.footer
         val view: View = mock()
         val viewHolder = spy(EmptyViewHolder<TestFooter>(view))
-        adapter.currentStickyHeader = viewHolder
 
         viewHolder.bindItem(item)
         var result = adapter.getClickListener().onItemClick(item)
@@ -230,25 +229,25 @@ class SimpleSectionedAdapterTest {
         verify(sectionMediator).getVisibleItemCount()
     }
 
-    @Ignore
-    @Test
-    fun onSectionContentUpdated() {
-        assertFalse(adapter.stickyHeaderHelper.isStateChanged)
-        val sectionStateCallback = getField("sectionStateCallback").get(adapter) as SectionStateCallback
-
-        val oldList = TestItemsFactory.getNumbersList()
-        val newList = TestItemsFactory.getNames()
-
-        sectionStateCallback.onSectionContentUpdated(
-            oldList,
-            newList,
-            "sectionKey"
-        )
-
-        assertTrue(adapter.stickyHeaderHelper.isStateChanged)
-        assertEquals(adapter.diffListUtilBySections.getField("oldList").get(adapter.diffListUtilBySections), oldList)
-        assertEquals(adapter.diffListUtilBySections.getField("newList").get(adapter.diffListUtilBySections), newList)
-    }
+//    @Ignore
+//    @Test
+//    fun onSectionContentUpdated() {
+//        assertFalse(adapter.stickyHeaderHelper.isStateChanged)
+//        val sectionStateCallback = getField("sectionStateCallback").get(adapter) as SectionStateCallback
+//
+//        val oldList = TestItemsFactory.getNumbersList()
+//        val newList = TestItemsFactory.getNames()
+//
+//        sectionStateCallback.onSectionContentUpdated(
+//            oldList,
+//            newList,
+//            "sectionKey"
+//        )
+//
+//        assertTrue(adapter.stickyHeaderHelper.isStateChanged)
+//        assertEquals(adapter.diffListUtilBySections.getField("oldList").get(adapter.diffListUtilBySections), oldList)
+//        assertEquals(adapter.diffListUtilBySections.getField("newList").get(adapter.diffListUtilBySections), newList)
+//    }
 
 
     @Ignore
@@ -257,7 +256,6 @@ class SimpleSectionedAdapterTest {
 
 
         val spyAdapter = spy(adapter)
-        assertFalse(spyAdapter.stickyHeaderHelper.isStateChanged)
         val sectionStateCallback = getField("sectionStateCallback").get(spyAdapter) as SectionStateCallback
 
 
@@ -278,7 +276,6 @@ class SimpleSectionedAdapterTest {
         )
 
 
-        assertTrue(spyAdapter.stickyHeaderHelper.isStateChanged)
         verify(spyAdapter).notifyItemRangeInserted(
             startPosition + startPosition,
             sectionDao.sectionCurrentSize() - 1 - startPosition

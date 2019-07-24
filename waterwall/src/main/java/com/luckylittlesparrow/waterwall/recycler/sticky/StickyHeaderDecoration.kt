@@ -22,8 +22,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.luckylittlesparrow.waterwall.recycler.base.BaseListAdapter
-import com.luckylittlesparrow.waterwall.recycler.base.BaseViewHolder
 
 /**
  * @author Andrei Gusev
@@ -33,7 +31,6 @@ internal class StickyHeaderDecoration(private val stickyHeaderHelper: StickyHead
     RecyclerView.ItemDecoration() {
 
     private var headerViewHeight: Int = 0
-    private var currentStickyHeader: BaseViewHolder<*>? = null
 
     override fun onDrawOver(canvas: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         super.onDrawOver(canvas, parent, state)
@@ -57,17 +54,14 @@ internal class StickyHeaderDecoration(private val stickyHeaderHelper: StickyHead
         }
 
         drawHeader(canvas, currentHeader)
-        (parent.adapter as BaseListAdapter).currentStickyHeader = currentStickyHeader
     }
 
     private fun getHeaderViewForItem(headerPosition: Int, parent: RecyclerView): View {
         val layoutResId = stickyHeaderHelper.getHeaderLayout(headerPosition)
         val header = LayoutInflater.from(parent.context).inflate(layoutResId, parent, false)
-        val pair = stickyHeaderHelper.bindHeaderData(header, headerPosition)
+        val pair = stickyHeaderHelper.getBinder(headerPosition)
 
-        currentStickyHeader = pair.first
-
-        runCatching { pair.first.bindStickyItem(pair.second) }
+        runCatching { pair.first.bind(header, pair.second) }
 
         return header
     }

@@ -47,7 +47,6 @@ class BaseViewHolderTest {
         viewHolder.bindEmptyView()
         viewHolder.bindFailedView()
         viewHolder.bindLoadingView()
-        viewHolder.onClickAction()
         viewHolder.performClick()
     }
 
@@ -64,44 +63,5 @@ class BaseViewHolderTest {
 
         viewHolder.bindStickyItem(item)
         assertEquals(viewHolder.item, item)
-    }
-
-    @Test
-    fun testClickOnHeader() {
-
-        var result = false
-        val itemClickListener = { item: ItemContainer ->
-            result = true
-        }
-        val viewHolder = object : BaseViewHolder<TestHeader>(view, itemClickListener) {}
-        viewHolder.bindItem(TestItemsFactory.header)
-
-        captor.value.onClick(view)
-        assertTrue(result)
-    }
-
-    @Test
-    fun testClickSticky() {
-        var result = false
-        val adapterClick = object : OnItemClickListener {
-            override fun onItemClick(item: ItemContainer): Boolean {
-                return true
-            }
-        }
-
-        val itemClickListener = { item: ItemContainer ->
-            result = true
-        }
-        val viewHolder = object : BaseViewHolder<TestItem>(view, itemClickListener) {}
-        viewHolder.clickListener = WeakReference(adapterClick)
-        viewHolder.bindItem(TestItemsFactory.getNames()[0])
-
-        captor.value.onClick(view)
-        assertTrue(result)
-
-        result = false
-        viewHolder.isStickyHeaderSupported = true
-        captor.value.onClick(view)
-        assertTrue(result)
     }
 }

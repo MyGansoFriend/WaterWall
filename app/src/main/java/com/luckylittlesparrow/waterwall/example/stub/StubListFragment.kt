@@ -48,7 +48,6 @@ class StubListFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        sectionAdapter.setDefaultOptimizationSettings()
         stubSection.state = SectionState.EMPTY
         sectionAdapter.addSection(stubSection)
         section.addMoreItems(ItemBundle(contentItems = ItemsFactory.getNumbersList()))
@@ -72,7 +71,7 @@ class StubListFragment : Fragment() {
         stateEmptyButton.setOnClickListener { stubSection.state = SectionState.EMPTY }
 
         swipeContainer.setOnRefreshListener {
-            section.submitItems(
+            section.submitItemsWithLoadedState(
                 ItemBundle(
                     headerItem = ExpandableHeader("HEADER"),
                     contentItems = ItemsFactory.getNames()

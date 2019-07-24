@@ -20,11 +20,13 @@ package com.luckylittlesparrow.waterwall.recycler.section
 import android.view.View
 import androidx.annotation.LayoutRes
 import com.luckylittlesparrow.waterwall.recycler.base.BaseViewHolder
+import com.luckylittlesparrow.waterwall.recycler.base.Binder
 import com.luckylittlesparrow.waterwall.recycler.base.EmptyViewHolder
 import com.luckylittlesparrow.waterwall.recycler.simple.SimpleSectionedAdapter
 import com.luckylittlesparrow.waterwall.recycler.state.SectionState
 import com.luckylittlesparrow.waterwall.recycler.state.State
 import com.luckylittlesparrow.waterwall.recycler.util.DiffUtilItemCallback
+import com.luckylittlesparrow.waterwall.recycler.util.lazyFast
 
 /**
  * Base Section aka Container with configured data to be used in [SimpleSectionedAdapter].
@@ -60,15 +62,13 @@ abstract class Section<H, I, F>(
     key: String? = null
 ) : State() {
 
-    private val headerClickListener: (ItemContainer) -> Unit = {}
-    private val itemClickListener: (ItemContainer) -> Unit = {}
-    private val footerClickListener: (ItemContainer) -> Unit = {}
-
     internal var sectionKey: String? = null
 
     internal val sourceList = ArrayList<ItemContainer>()
 
     internal val stateItem = StubItem()
+
+    internal var isSwitched = false
 
     @LayoutRes
     internal var itemResourceId: Int? = null
@@ -86,8 +86,11 @@ abstract class Section<H, I, F>(
     @LayoutRes
     internal var emptyResourceId: Int? = null
 
-    internal var isVisible = true
-
+    var isVisible = true
+        set(value) {
+            field = value
+            //sectionStateCallback?.onSectionVisibilityChange(value, provideId(), currentSize())
+        }
     /**
      * Check if section has header.
      */
@@ -104,7 +107,7 @@ abstract class Section<H, I, F>(
      * Check if section expanded.
      */
     var isExpanded: Boolean = true
-        private set
+        internal set
 
     /**
      * Check if section support [SectionState].
@@ -140,29 +143,6 @@ abstract class Section<H, I, F>(
     var isShowMoreClicked: Boolean = false
         private set
 
-    /**
-     * Click listener to call, when section need to expand/collapse.
-     *
-     * Usage: In your section implementation put this listener to viewHolder
-     *
-     *     override fun getHeaderViewHolder(view: View): BaseViewHolder<ExpandableHeader> {
-     *             return ExpandableHeaderViewHolder(view, onExpandClickListener, headerClickListener)
-     *      }
-     *
-     * and invoke it on the view listener ->
-     *
-     *  expandItem.setOnClickListener {
-     *      expandClickedListener.invoke()
-     *      isExpanded = !isExpanded
-     *    }
-     *
-     * @see supportExpandFunction
-     */
-    val onExpandClickListener: () -> Unit = {
-        check(supportExpandFunction) { SECTION_SUPPORT_EXPAND }
-        isExpanded = !isExpanded
-        sectionStateCallback?.onSectionExpandChange(sectionKey!!, isExpanded)
-    }
 
     /**
      * Click listener to call, when section need to showMore/showLess.
@@ -182,10 +162,12 @@ abstract class Section<H, I, F>(
      * @see supportShowMore
      *
      */
-    val onShowMoreClickListener: () -> Unit = {
-        check(supportShowMore) { SECTION_SUPPORT_SHOW_MORE }
-        isShowMoreClicked = !isShowMoreClicked
-        sectionStateCallback?.onSectionShowMoreChange(sectionKey!!, collapsedItemCount, isShowMoreClicked)
+    val onShowMoreClickListener: () -> Unit? by lazyFast {
+        return@lazyFast {
+            check(supportShowMore) { SECTION_SUPPORT_SHOW_MORE }
+            isShowMoreClicked = !isShowMoreClicked
+            sectionStateCallback?.onSectionShowMoreChange(provideId(), collapsedItemCount, isShowMoreClicked)
+        }
     }
 
     init {
@@ -249,7 +231,17 @@ abstract class Section<H, I, F>(
      *
      * @return [true] if section is empty, [false] otherwise
      */
-    override fun isEmpty() = sourceList.first() is StubItem
+    fun isEmpty() = sourceList.first() is StubItem
+
+
+    override fun shouldUpdate(): Boolean {
+        return when {
+            !isVisible -> false
+            state == SectionState.LOADED && isEmpty() -> false
+            !isExpanded -> false
+            else -> true
+        }
+    }
 
     /**
      * Check if section is not empty.
@@ -396,7 +388,6 @@ abstract class Section<H, I, F>(
         }
 
         itemBundle.contentItems?.let {
-            //itemsCount += sourceList.size
             itemsCount += it.size
             if (!isEmpty && hasFooter && sourceList.last().isFooter()) addItemsWithFooter(it)
             else {
@@ -414,7 +405,7 @@ abstract class Section<H, I, F>(
             }
         }
 
-        if (state == SectionState.LOADED) {
+        if (state == SectionState.LOADED && isVisible) {
             if (isNewContent && itemsCount > 0)
                 sectionStateCallback?.onSectionContentAdded(provideId(), itemsCount)
             else {
@@ -431,9 +422,8 @@ abstract class Section<H, I, F>(
      * @param itemBundle bundle with items to add
      */
     open fun submitItemsWithLoadedState(itemBundle: ItemBundle) {
-        sourceList.clear()
-        state = SectionState.LOADED
         submitItems(itemBundle)
+        state = SectionState.LOADED
     }
 
     /**
@@ -468,9 +458,6 @@ abstract class Section<H, I, F>(
             itemsCount++
         }
 
-        if (state == SectionState.LOADED) {
-            sectionStateCallback?.onSectionContentUpdated(previousList, sourceList, provideId())
-        }
     }
 
     /**
@@ -483,6 +470,14 @@ abstract class Section<H, I, F>(
         sourceList.clear()
         sourceList.add(StubItem())
         sectionStateCallback?.onSectionContentUpdated(previousList, sourceList, provideId())
+    }
+
+    open fun provideStickyHeaderBinder(): Binder {
+        throw (IllegalStateException(SECTION_SUPPORT_STIKY))
+    }
+
+    internal val stickyHeaderBinder: Binder by lazyFast {
+        provideStickyHeaderBinder()
     }
 
     internal open fun currentSize(): Int {
@@ -519,7 +514,8 @@ abstract class Section<H, I, F>(
 
     companion object {
         private const val FORGOT_HEADER = "Forgot to provide header item"
-        private const val SECTION_SUPPORT_EXPAND = "Section must support expand functionality"
+        private const val SECTION_SUPPORT_STIKY =
+            "Section must override getStickyHeaderBinder method in order to support functionality"
         private const val SECTION_SUPPORT_SHOW_MORE = "Section must support \"show more\" functionality"
         private const val HEADER_ITEM_BEFORE_ITEMS = "Submit header item before contentItems"
         private const val ITEMS_BEFORE_FOOTER = "It's required to submit contentItems before footerItem"
