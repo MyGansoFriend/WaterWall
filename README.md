@@ -1,4 +1,6 @@
 # WaterWall
+
+# CURRENTLY NOT SUPPORTED
 Multifunctional RecyclerVIew library with sections/states support
 
 [![Build Status](https://travis-ci.com/LuckyLittleSparrow/WaterWall.svg?branch=master)](https://travis-ci.com/LuckyLittleSparrow/WaterWall)
